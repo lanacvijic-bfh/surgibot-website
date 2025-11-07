@@ -1,5 +1,3 @@
 # surgibot-website
-Repository for SurgiBot training platform for surgical residents to practice informed consent discussions with virtual patients. 
+SurgiBot is a training platform that enables surgical residents to safely practice informed consent discussions with virtual patients.
 
-
-Hello!
