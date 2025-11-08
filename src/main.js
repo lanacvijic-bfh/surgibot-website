@@ -1,7 +1,32 @@
-import './style.css'
+import "./style.css";
 
-document.querySelector('SurgiBot').innerHTML = `
-  <div class="min-h-screen flex flex-col">
-    <!-- your navbar + hero + sections here, using Tailwind classes -->
-  </div>
-`;
+document.addEventListener("DOMContentLoaded", () => {
+  const learnBtn = document.getElementById("learn-button");
+  const vignetteBtn = document.getElementById("vignette-library-button");
+  const practiceBtn = document.getElementById("practice-button");
+  const feedbackBtn = document.getElementById("feedback-button");
+
+  if (learnBtn) {
+    learnBtn.addEventListener("click", () => {
+      window.location.href = "index.html"; // main / learning module
+    });
+  }
+
+  if (vignetteBtn) {
+    vignetteBtn.addEventListener("click", () => {
+      window.location.href = "vignette-library.html";
+    });
+  }
+
+  if (practiceBtn) {
+    practiceBtn.addEventListener("click", () => {
+      window.location.href = "practice-module.html";
+    });
+  }
+
+  if (feedbackBtn) {
+    feedbackBtn.addEventListener("click", () => {
+      window.location.href = "feedback-module.html";
+    });
+  }
+});

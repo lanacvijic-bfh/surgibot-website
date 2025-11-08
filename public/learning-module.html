@@ -3,13 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SurgiBot: Master informed consent</title>
+    <title>Learning module</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="./style.css" />
   </head>
+
   <body>
     <!-- Header -->
-    <header class="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-sm shadow-md">
+    <header
+      class="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-sm shadow-md"
+    >
       <div class="max-w-6xl mx-auto flex items-center gap-6 px-4 py-3">
         <a href="index.html" class="flex items-center gap-2 shrink-0">
           <img
@@ -19,11 +22,12 @@
           />
           <span class="text-2xl font-semibold text-slate-900">SurgiBot</span>
         </a>
+
         <div class="flex-1 flex justify-center">
           <div class="flex items-center gap-3">
             <a
               href="learning-module.html"
-              class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl"
+              class="nav-link flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl"
             >
               <img
                 src="./public/icons/learn-button.png"
@@ -34,6 +38,7 @@
                 Learning module
               </span>
             </a>
+
             <a
               href="vignette-library.html"
               class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl"
@@ -47,6 +52,7 @@
                 Vignette library
               </span>
             </a>
+
             <a
               href="practice-module.html"
               class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl"
@@ -60,6 +66,7 @@
                 Practice module
               </span>
             </a>
+
             <a
               href="feedback-module.html"
               class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl"
@@ -78,142 +85,178 @@
       </div>
     </header>
 
-    <!-- SurgiBot Landing Page Content -->
+    <!-- SurgiBot Website Study Page Content -->
     <main class="pt-24">
-      <!-- Intro / Hero -->
       <section class="max-w-3xl mx-auto text-center px-4">
+        <!-- "Hero Section" - What is the purpose of this training platform -->
         <div class="inline-block px-5 py-1 mb-4 rounded-full bg-blue-100 text-blue-600 text-xs font-semibold">
-          AI-powered communciation training platform
+          Step 1: Learn the theoretical foundation
         </div>
         <h1 class="text-l md:text-4xl font-extrabold text-slate-900 mb-3">
-          Master informed consent
+          Introduction to surgical informed consent
         </h1>
-        <p class="text-sm md:text-lg text-gray-600">
-          We help young surgeons to master the art of informed consent with simulated patients.
-        </p>
+        <p class="text-sm md:text-base text-gray-700 mb-5 leading-relaxed">
+          Master the theoretical foundation for surgical informed consent discussions. 
       </section>
 
-      <!-- What is SurgiBot? / Website overview -->
+      <!-- Introduction: What is surgical informed consent? -->
       <section class="mt-10">
         <div
-          class="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-200/70 md:p-8"
+          class="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-3xl shadow-sm
+                 border border-gray-200/70 md:p-8"
         >
           <!-- Title -->
           <div class="flex items-center gap-4 mb-6">
             <!-- Icon container -->
-            <div class="flex items-center justify-center w-14 h-14 rounded-3xl bg-blue-100">
+            <div
+              class="flex items-center justify-center w-14 h-14 rounded-3xl bg-blue-100"
+            >
               <img
-                src="./public/icons/surgibot-website-logo.png"
+                src="./public/icons/informed-consent.png"
                 alt="Informed consent icon"
                 class="w-8 h-8"
               />
             </div>
+
             <!-- Text block -->
             <div class="flex flex-col">
               <h2 class="text-xl md:text-2xl font-semibold text-slate-900 text-left">
-                What is SurgiBot?
+                What is surgical informed consent?
               </h2>
-              <p class="text-sm text-blue-500 mt-0.5 text-left">
-                Modules and learning objectives
+              <p class="text-sm text-blue-500 mt-0.5 text-left mt-0.5">
+                Definition and purpose
               </p>
             </div>
           </div>
+
           <!-- Description -->
           <p class="text-sm md:text-base text-gray-700 mb-5 leading-relaxed text-left">
-            SurgiBot is an interactive training platform designed to help young surgeons 
-            enhance their skills in conducting informed consent discussions with patients. 
-            SurgiBot provides learning objectives that focus on effective communication and patient-centered 
-            care. The goal is to enable young surgeons to build confidence and competence in obtaining informed consent.
+            Surgical informed consent is a respectful, transparent conversation in which patients 
+            receive clear information about their surgery and can make a voluntary, well-considered 
+            decision. It goes beyond a signature and is built on trust, open dialogue, and support 
+            tailored to each patient's needs and values.
           </p>
+
           <!-- Key elements box -->
-          <div class="mt-2 bg-gray-100 dark:bg-gray-900/40 rounded-3xl px-5 py-4">
+          <div
+            class="mt-2 bg-gray-100 rounded-3xl px-5 py-4"
+          >
             <p class="font-semibold text-gray-800 mb-3 text-left">
-              SurgiBot comprises of 4 modules:
+              Key elements:
             </p>
+
             <ul class="space-y-2 text-sm text-gray-700">
               <!-- 1 -->
               <li class="flex items-center gap-3 text-left">
-                <div class="flex items-center justify-center w-14 h-14 rounded-3xl bg-white">
+                <div
+                  class="flex items-center justify-center w-6 h-6 rounded-full bg-white"
+                >
                   <img
-                    src="./public/icons/learn-button.png"
-                    alt="Study icon"
-                    class="w-8 h-8"
+                    src="./public/icons/check-mark.png"
+                    alt="Voluntary icon"
+                    class="w-3.5 h-3.5"
                   />
                 </div>
-                <span>Understand informed consent process, patients' needs and communication strategies.</span>
+                <span>Surgeon provides comprehensive information about the surgery.</span>
               </li>
+
               <!-- 2 -->
               <li class="flex items-center gap-3 text-left">
-                <div class="flex items-center justify-center w-14 h-14 rounded-3xl bg-white">
+                <div
+                  class="flex items-center justify-center w-6 h-6 rounded-full bg-white"
+                >
                   <img
-                    src="./public/icons/vignette-library-button.png"
-                    alt="Library icon"
-                    class="w-8 h-8"
+                    src="./public/icons/check-mark.png"
+                    alt="Capacity icon"
+                    class="w-3.5 h-3.5"
                   />
                 </div>
-                <span>Review the patient vignettes from the library and explore diverse cases.</span>
+                <span>Patient is able to understand and make an informed decision.</span>
               </li>
+
               <!-- 3 -->
               <li class="flex items-center gap-3 text-left">
-                <div class="flex items-center justify-center w-14 h-14 rounded-3xl bg-white">
+                <div
+                  class="flex items-center justify-center w-6 h-6 rounded-full bg-white"
+                >
                   <img
-                    src="./public/icons/practice-button.png"
-                    alt="Practice icon"
-                    class="w-8 h-8"
+                    src="./public/icons/check-mark.png"
+                    alt="Disclosure icon"
+                    class="w-3.5 h-3.5"
                   />
                 </div>
-                <span>Apply your knowledge by communicating with diverse AI-simulated patients.</span>
-              </li>
-              <!-- 4 -->
-              <li class="flex items-center gap-3 text-left">
-                <div class="flex items-center justify-center w-14 h-14 rounded-3xl bg-white">
-                  <img
-                    src="./public/icons/feedback-button.png"
-                    alt="Feedback icon"
-                    class="w-8 h-8"
-                  />
-                </div>
-                <span>Receive feedback on medical and human aspects and improve your knowledge.</span>
+                <span>Patient decides freely, without pressure or coercion.</span>
               </li>
             </ul>
           </div>
         </div>
       </section>
 
-      <!-- What are patient vignettes? -->
+      <!-- Time limit -->
       <section class="mt-10">
         <div
-          class="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-200/70 px-6 py-6 md:p-8"
+          class="max-w-4xl mx-auto bg-blue-50 rounded-3xl shadow-sm border border-blue-200/70 md:p-6 flex items-start gap-4"
         >
-          <!-- Icon + Question + Subtitle aligned like 'What is SurgiBot?' -->
-          <div class="flex items-center gap-4 mb-4">
-            <div class="flex items-center justify-center w-14 h-14 rounded-3xl bg-blue-100">
+          <!-- Pinned note icon -->
+          <div class="flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-200 shrink-0">
+            <img
+              src="./public/icons/disclaimer.png"
+              alt="Disclaimer icon"
+              class="w-8 h-8"
+            />
+          </div>
+          <!-- Important note text -->
+          <div>
+            <p class="text-base font-semibold text-black mb-1 text-left">Time is limited!</p>
+            <p class="text-sm text-black text-left">
+              Informed consent discussions are usually conducted within <span class="font-bold">10 to 15 minutes</span>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Structure of the surgical informed consent -->
+      <section class="mt-10">
+        <div
+          class="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-3xl shadow-sm
+                 border border-gray-200/70 md:p-8"
+        >
+          <!-- Title -->
+          <div class="flex items-center gap-4 mb-6">
+            <!-- Icon container -->
+            <div
+              class="flex items-center justify-center w-14 h-14 rounded-3xl bg-blue-100"
+            >
               <img
-                src="./public/icons/question-mark.png"
-                alt="Patient vignette icon"
+                src="./public/icons/process.png"
+                alt="Informed consent icon"
                 class="w-8 h-8"
               />
             </div>
+
+            <!-- Text block -->
             <div class="flex flex-col">
-              <h2 class="text-xl md:text-2xl font-semibold text-slate-900">
-                What are patient vignettes?
+              <h2 class="text-xl md:text-2xl font-semibold text-slate-900 text-left">
+                Overview of the informed consent process
               </h2>
-              <p class="text-sm text-blue-500 mt-0.5">
-                Definition and key parameters
+              <p class="text-sm text-blue-500 mt-0.5 text-left mt-0.5">
+                Structure and main steps
               </p>
             </div>
           </div>
+
           <!-- Description -->
-          <p class="text-sm md:text-base text-gray-700 leading-relaxed mb-5">
-            Patient vignettes are short, realistic patient stories that include medical and non-medical details. 
-            They are designed to help you practice informed consent discussions in a safe and controlled environment.
+          <p class="text-sm md:text-base text-gray-700 mb-5 leading-relaxed text-left">
+            The diagram below outlines the key stages of a surgical informed consent discussion, along with the recommended time allocation for each step.
           </p>
-          <!-- Parameters that are included in the patient vignette -->
-          <img
-            src="./public/icons/patient-vignette-parameters.png"
-            alt="Example of a patient vignette"
-            class="w-full rounded-3xl border border-gray-200/70 object-cover"
-          />
+
+          <div class="flex justify-center my-6">
+            <img
+              src="./public/icons/informed-consent-process-figure.jpg"
+              alt="Informed consent process diagram"
+              class="w-full"
+            />
+          </div>
         </div>
       </section>
     </main>
@@ -225,6 +268,7 @@
         <p class="opacity-80">Designed & developed by Lana Cvijic.</p>
       </div>
     </footer>
+
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
