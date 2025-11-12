@@ -1,0 +1,64 @@
+{
+  "type": "object",
+  "properties": {
+    "id": { "type": "string", "description": "UID" },
+    "title": { "type": "string" },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "discipline": { "type": "string", "description": "General surgery" },
+    "difficulty_level": { "type": "string", "enum": ["beginner", "intermediate", "advanced"] },
+    "demographics": {
+      "type": "object",
+      "required": ["name", "age", "gender", "nationality", "education_level", "current_job"],
+      "properties": {
+        "name": { "type": "string" },
+        "age": { "type": "integer", "minimum": 0 },
+        "gender": { "type": "string" },
+        "nationality": { "type": "string" },
+        "education_level": { "type": "string" },
+        "current_job": { "type": "string" }
+      }
+    },
+    "clinical_profile": {
+      "type": "object",
+      "required": ["current_diagnosis", "current_symptoms", "planned_surgery"],
+      "properties": {
+        "current_diagnosis": { "type": "string" },
+        "current_symptoms": { "type": "array", "items": { "type": "string" } },
+        "other_conditions": { "type": "string" },
+        "medications": { "type": "string" },
+        "allergies": { "type": "string" },
+        "disabilities": { "type": "string" },
+        "cognitive_state": { "type": "string" },
+        "planned_surgery": { "type": "string" }
+      }
+    },
+    "communication_personality": {
+      "type": "object",
+      "required": ["language_proficiency", "communication_style", "psychological_profile"],
+      "properties": {
+        "language_proficiency": { "type": "string" },
+        "communication_style": { "type": "string" },
+        "psychological_profile": { "type": "string" }
+      }
+    },
+    "social_lifestyle": {
+      "type": "object",
+      "required": ["marital_status", "children", "key_responsibilities", "social_support", "hobbies"],
+      "properties": {
+        "marital_status": { "type": "string" },
+        "children": { "type": ["integer", "string"], "description": "Number or short description" },
+        "key_responsibilities": { "type": "string" },
+        "social_support": { "type": "string" },
+        "hobbies": { "type": "string" }
+      }
+    },
+    "culture_beliefs": {
+      "type": "object",
+      "required": ["cultural_background", "religious_affiliation"],
+      "properties": {
+        "cultural_background": { "type": "string" },
+        "religious_affiliation": { "type": "string" }
+      }
+    }
+  }
+}
