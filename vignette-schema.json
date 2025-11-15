@@ -4,7 +4,7 @@
     "id": { "type": "string", "description": "UID" },
     "title": { "type": "string" },
     "tags": { "type": "array", "items": { "type": "string" } },
-    "discipline": { "type": "string", "description": "General surgery" },
+    "discipline": { "type": "string", "description": "general surgery" },
     "difficulty_level": { "type": "string", "enum": ["beginner", "intermediate", "advanced"] },
     "demographics": {
       "type": "object",

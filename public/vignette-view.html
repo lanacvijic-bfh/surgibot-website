@@ -3,15 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Feedback module</title>
+    <title>Vignette details</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="./style.css" />
   </head>
 
-  <body>
-    <!-- Choose between the different modules of SurgiBot -->
+  <body class="bg-slate-50">
+    <!-- Top navigation (same as other pages) -->
     <header
-      class="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-sm shadow-md"
+      class="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-sm shadow-md z-20"
     >
       <div class="max-w-6xl mx-auto flex items-center gap-6 px-4 py-3">
         <a href="index.html" class="flex items-center gap-2 shrink-0">
@@ -41,7 +41,7 @@
 
             <a
               href="./vignette-library.html"
-              class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl"
+              class="flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200"
             >
               <img
                 src="./icons/vignette-library-button.png"
@@ -69,7 +69,7 @@
 
             <a
               href="./feedback-module.html"
-              class="flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200"
+              class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl"
             >
               <img
                 src="./icons/feedback-button.png"
@@ -85,19 +85,33 @@
       </div>
     </header>
 
-    <!-- What is the vignette library? -->
-    <main class="pt-24">
-      <section class="max-w-3xl mx-auto text-center px-4">
-        <div class="inline-block px-5 py-1 mb-4 rounded-full bg-blue-100 text-blue-600 text-xs font-semibold border border-blue-200">
-          Step 4: Recieve feedback and improve your knowledge
-        </div>
-        <h1 class="text-l md:text-4xl font-extrabold text-slate-900 mb-3">
-          Feedback based on your performance
-        </h1>
-        <p class="text-sm md:text-base text-gray-700 mb-5 leading-relaxed">
-          Review detailed feedback on your performance with virtual patients. 
-      </section>
-    </main>
+    <main class="pt-24 pb-16">
+  <section class="max-w-5xl mx-auto px-4">
+    <!-- Back link -->
+    <a
+      href="vignette-library.html"
+      class="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700 mb-4"
+    >
+      ← Back to vignette library
+    </a>
+
+    <!-- Vignette header -->
+    <div id="vignette-header" class="mb-6 border-b border-slate-200 pb-4">
+      <!-- Filled by JS -->
+    </div>
+
+    <!-- Two-column layout -->
+    <div class="grid gap-6 md:grid-cols-3">
+      <div class="md:col-span-2 space-y-4" id="vignette-main">
+        <!-- Main sections injected here -->
+      </div>
+
+      <aside class="space-y-4" id="vignette-side">
+        <!-- Side info (difficulty, tags, button) injected here -->
+      </aside>
+    </div>
+  </section>
+</main>
 
 <!-- Footer -->
 <footer class="fixed inset-x-0 bottom-0 bg-blue-400 text-white z-20">
@@ -109,6 +123,8 @@
   </div>
 </footer>
 
-    <script type="module" src="/src/main.js"></script>
+
+    <!-- Page-specific JS -->
+    <script type="module" src="/src/vignette-view.js"></script>
   </body>
 </html>
