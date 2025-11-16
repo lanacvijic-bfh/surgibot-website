@@ -32,13 +32,13 @@ function createVignetteCard(v) {
     <div class="mt-4 flex flex-wrap justify-center gap-3 w-full">
       <a
         href="/vignette-view.html?vignette=${encodeURIComponent(v.id)}"
-        class="flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200 text-xs md:text-sm font-semibold text-blue-600 hover:bg-blue-200 transition-colors"
+        class="flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200 text-xs md:text-sm font-semibold text-black hover:bg-blue-200 transition-colors"
       >
         View details
       </a>
       <a
         href="/practice-module.html?vignette=${encodeURIComponent(v.id)}"
-        class="flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200 text-xs md:text-sm font-semibold text-blue-600 hover:bg-blue-200 transition-colors"
+        class="flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200 text-xs md:text-sm font-semibold text-black hover:bg-blue-200 transition-colors"
       >
         Practice with this vignette
       </a>

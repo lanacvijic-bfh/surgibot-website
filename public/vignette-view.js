@@ -47,35 +47,39 @@ function renderVignette(v) {
   const side = document.getElementById("vignette-side");
   const promptEl = document.getElementById("vignette-prompt");
 
-  // Header with bigger title + styled button (no underline)
   if (header) {
-    header.innerHTML = `
-  <div class="flex flex-col gap-3 pb-4">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-      <!-- TEXT BLOCK: takes available space -->
-      <div class="flex-1 min-w-0">
-        <h1 class="text-2xl md:text-4xl font-extrabold text-slate-900 mb-1 break-words">
-          ${v.title}
-        </h1>
-        <p class="text-sm md:text-base text-slate-600">
-          ${v.discipline} · ${v.difficulty_level} · ${v.demographics.age}-year-old patient
-        </p>
-      </div>
+  header.innerHTML = `
+    <div class="flex flex-col gap-4 pb-4">
+      <div class="flex flex-col gap-3 text-center">
+        <!-- TEXT BLOCK -->
+        <div class="flex-1 min-w-0">
+          <h1 class="text-2xl md:text-4xl font-extrabold text-slate-900 mb-1 break-words">
+            ${v.title}
+          </h1>
+          <p class="text-sm md:text-base text-slate-600">
+            <span class="font-semibold">Specialty:</span> ${v.discipline}
+            · <span class="font-semibold">Difficulty level:</span> ${v.difficulty_level}
+          </p>
+        </div>
 
-      <!-- BUTTON BLOCK: fixed, does not shrink -->
-      <div class="shrink-0">
-        <a
-          href="/practice-module.html?vignette=${encodeURIComponent(v.id)}"
-          class="flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200 text-xs md:text-sm font-semibold text-blue-600 hover:bg-blue-200 transition-colors"
-        >
-          Practice with this vignette
-        </a>
+        <!-- BUTTON BLOCK: centered, larger, black text -->
+        <div class="flex justify-center mt-2">
+          <a
+            href="/practice-module.html?vignette=${encodeURIComponent(v.id)}"
+            class="inline-flex items-center gap-3 px-6 py-3 bg-blue-100 rounded-2xl border border-blue-200 text-sm md:text-base font-semibold text-black hover:bg-blue-200 transition-colors"
+          >
+            <img 
+              src="./icons/practice-button.png" 
+              alt="Practice icon" 
+              class="w-8 h-8"
+            />
+            <span>Practice with this patient</span>
+          </a>
+        </div>
       </div>
     </div>
-  </div>
-`;
-
-  }
+  `;
+}
 
   // Display different sections and parameters of the patient vignette
   if (main) {
