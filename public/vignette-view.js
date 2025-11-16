@@ -71,7 +71,7 @@ function renderVignette(v) {
     `;
   }
 
-  // Make main span the full grid width
+  // Display different sections and parameters of the patient vignette
   if (main) {
     main.style.gridColumn = "1 / -1";
 
