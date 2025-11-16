@@ -1,4 +1,4 @@
-import { vignettes } from "./lib/vignettes.js";
+import { vignettes } from "../src/lib/vignettes.js";
 
 console.log("[practice-module] script loaded");
 
