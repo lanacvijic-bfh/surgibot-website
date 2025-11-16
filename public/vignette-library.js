@@ -1,4 +1,4 @@
-import { vignettes } from "./lib/vignettes.js";
+import { vignettes } from "../src/lib/vignettes.js";
 
 console.log("[vignette-library] script loaded");
 console.log("[vignette-library] vignettes:", vignettes);
