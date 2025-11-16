@@ -18,54 +18,53 @@ function renderNoVignette() {
     return;
   }
 
-  summary.innerHTML = `
+summary.innerHTML = `
+  <div class="text-center">
     <h2 class="text-sm font-semibold text-slate-900 mb-2">
       No vignette selected
     </h2>
-    <p class="mb-2">
+    <p class="mb-4">
       Go back to the vignette library and choose a patient case you want to
       practice with.
     </p>
     <a
-      href="/vignette-library.html"
-      class="inline-flex items-center justify-center w-full px-3 py-2 rounded-xl bg-blue-600 text-white font-semibold text-xs hover:bg-blue-700"
-    >
+      href="./vignette-library.html"
+      class="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200 text-xs md:text-sm font-semibold text-blue-600 hover:bg-blue-200 transition-colors mx-auto">
       Go to vignette library
     </a>
-  `;
+  </div>
+`;
 }
 
 function renderVignetteSummary(v) {
   const summary = document.getElementById("practice-vignette-summary");
   if (!summary) return;
 
-  summary.innerHTML = `
-    <h2 class="text-sm md:text-base font-semibold text-slate-900">
-      My patient vignette
+summary.innerHTML = `
+  <div class="space-y-4">
+    <h2 class="text-base md:text-l font-semibold text-slate-900 text-center">
+      Key patient information
     </h2>
-    <p class="text-[11px] text-slate-500 mb-3">
-      ${v.title}
-    </p>
 
-<!-- Part 1: Patient information -->
-<section class="mb-4 rounded-2xl border border-slate-200 bg-white shadow-sm px-4 py-4">
-  <h3 class="text-xs md:text-sm font-semibold text-slate-900 mb-3">
-    Patient information
-  </h3>
-  <dl class="grid grid-cols-[auto,1fr] gap-x-6 gap-y-2 text-[11px] md:text-[12px] text-slate-700">
-    <dt class="font-semibold text-slate-900">Name:</dt>
-    <dd>${v.demographics.name}</dd>
+    <!-- Part 1: Patient information -->
+    <section class="mb-4 rounded-2xl border border-slate-200 bg-white shadow-sm px-4 py-4">
+      <dl class="grid grid-cols-[auto,1fr] gap-x-6 gap-y-2 text-[15px] md:text-[12px] text-slate-700">
+        <dt class="font-semibold text-slate-900">Name:</dt>
+        <dd>${v.demographics.name}</dd>
 
-    <dt class="font-semibold text-slate-900">Age:</dt>
-    <dd>${v.demographics.age}</dd>
+        <dt class="font-semibold text-slate-900">Age:</dt>
+        <dd>${v.demographics.age}</dd>
 
-    <dt class="font-semibold text-slate-900">Diagnosis:</dt>
-    <dd>${v.clinical_profile.current_diagnosis}</dd>
+        <dt class="font-semibold text-slate-900">Job:</dt>
+        <dd>${v.demographics.current_job}</dd>
 
-    <dt class="font-semibold text-slate-900">Planned surgery:</dt>
-    <dd>${v.clinical_profile.planned_surgery}</dd>
-  </dl>
-</section>
+        <dt class="font-semibold text-slate-900">Diagnosis:</dt>
+        <dd>${v.clinical_profile.current_diagnosis}</dd>
+
+        <dt class="font-semibold text-slate-900">Planned surgery:</dt>
+        <dd>${v.clinical_profile.planned_surgery}</dd>
+      </dl>
+    </section>
 
 
     <!-- Actions -->

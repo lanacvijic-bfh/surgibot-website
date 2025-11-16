@@ -29,7 +29,7 @@ function renderNotFound() {
   if (side) {
     side.innerHTML = `
       <a
-        href="/vignette-library.html"
+        href="./vignette-library.html"
         class="inline-flex items-center justify-center w-full px-3 py-2 rounded-xl bg-blue-600 text-white font-semibold text-xs hover:bg-blue-700"
       >
         Back to vignette library
@@ -50,25 +50,31 @@ function renderVignette(v) {
   // Header with bigger title + styled button (no underline)
   if (header) {
     header.innerHTML = `
-      <div class="flex flex-col gap-3 pb-4">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-          <div>
-            <h1 class="text-2xl md:text-4xl font-extrabold text-slate-900 mb-1">
-              ${v.title}
-            </h1>
-            <p class="text-sm md:text-base text-slate-600">
-              ${v.discipline} · ${v.difficulty_level} · ${v.demographics.age}-year-old ${v.demographics.gender}
-            </p>
-          </div>
-          <a
-            href="/practice-module.html?vignette=${encodeURIComponent(v.id)}"
-            class="flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200 text-xs md:text-sm font-semibold text-blue-600 hover:bg-blue-200 transition-colors"
-          >
-            Practice with this vignette
-          </a>
-        </div>
+  <div class="flex flex-col gap-3 pb-4">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <!-- TEXT BLOCK: takes available space -->
+      <div class="flex-1 min-w-0">
+        <h1 class="text-2xl md:text-4xl font-extrabold text-slate-900 mb-1 break-words">
+          ${v.title}
+        </h1>
+        <p class="text-sm md:text-base text-slate-600">
+          ${v.discipline} · ${v.difficulty_level} · ${v.demographics.age}-year-old patient
+        </p>
       </div>
-    `;
+
+      <!-- BUTTON BLOCK: fixed, does not shrink -->
+      <div class="shrink-0">
+        <a
+          href="/practice-module.html?vignette=${encodeURIComponent(v.id)}"
+          class="flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200 text-xs md:text-sm font-semibold text-blue-600 hover:bg-blue-200 transition-colors"
+        >
+          Practice with this vignette
+        </a>
+      </div>
+    </div>
+  </div>
+`;
+
   }
 
   // Display different sections and parameters of the patient vignette
@@ -250,6 +256,10 @@ function renderVignette(v) {
               <div class="flex items-start gap-10">
                 <dt class="w-64 font-semibold text-slate-900">Psychological profile:</dt>
                 <dd class="flex-1">${v.communication_personality.psychological_profile}</dd>
+              </div>
+              <div class="flex items-start gap-10">
+                <dt class="w-64 font-semibold text-slate-900">Personality type:</dt>
+                <dd class="flex-1">${v.communication_personality.personality_archetype}</dd>
               </div>
             </dl>
           </div>

@@ -6,7 +6,7 @@ console.log("[vignette-library] vignettes:", vignettes);
 function createVignetteCard(v) {
   const card = document.createElement("article");
   card.className =
-    "bg-white/90 rounded-2xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 items-center text-center hover:shadow-md transition-shadow";
+    "bg-white/90 rounded-2xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 items-center text-center hover:shadow-md transition-shadow h-full";
 
   card.innerHTML = `
     <a 
@@ -26,11 +26,7 @@ function createVignetteCard(v) {
     </a>
 
     <p class="text-xs md:text-[13px] text-slate-600">
-      ${v.discipline} · Difficulty level: <span class="font-medium">beginner</span>
-    </p>
-
-    <p class="text-sm text-slate-700 max-w-xs">
-      Diagnosis: ${v.clinical_profile.current_diagnosis}
+      ${v.discipline} · Difficulty level: <span class="font-medium">${v.difficulty_level}</span>
     </p>
 
     <div class="mt-4 flex flex-wrap justify-center gap-3 w-full">

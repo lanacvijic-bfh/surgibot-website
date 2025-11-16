@@ -5,7 +5,7 @@
     "title": { "type": "string" },
     "tags": { "type": "array", "items": { "type": "string" } },
     "discipline": { "type": "string", "description": "general surgery" },
-    "difficulty_level": { "type": "string", "enum": ["beginner", "intermediate", "advanced"] },
+    "difficulty_level": { "type": "string", "enum": ["easy", "medium", "hard"] },
     "demographics": {
       "type": "object",
       "required": ["name", "age", "gender", "nationality", "education_level", "current_job"],
@@ -38,7 +38,8 @@
       "properties": {
         "language_proficiency": { "type": "string" },
         "communication_style": { "type": "string" },
-        "psychological_profile": { "type": "string" }
+        "psychological_profile": { "type": "string" },
+        "personality_archetype": { "type": "string" }
       }
     },
     "social_lifestyle": {
