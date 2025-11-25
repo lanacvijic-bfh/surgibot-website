@@ -30,6 +30,7 @@ Patient vignette metadata:
 - Language proficiency: ${v.communication_personality.language_proficiency}
 - Communication style: ${v.communication_personality.communication_style}
 - Psychological profile: ${v.communication_personality.psychological_profile}
+- Personality archetype: ${v.communication_personality.personality_archetype}
 
 [Social & lifestyle]
 - Marital status: ${v.social_lifestyle.marital_status}

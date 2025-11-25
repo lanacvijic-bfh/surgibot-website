@@ -1,672 +1,1322 @@
-// vignettes.js
+// Patient vignettes are defined as JavaScript objects
 
 export const vignettes = [
-  {
-    id: "GS-001",
-    title: "Elderly Swiss farmer with right-sided colon cancer",
-    tags: ["colon cancer", "older adult", "oncologic surgery", "pre-operative"],
-    discipline: "General surgery",
-    difficulty_level: "Hard",
-    demographics: {
-      name: "Hans Meier",
-      age: 78,
-      gender: "Male",
-      nationality: "Swiss",
-      education_level: "Completed primary school",
-      current_job: "Retired dairy farmer"
-    },
-    clinical_profile: {
-      current_diagnosis: "Right-sided colon adenocarcinoma",
-      current_symptoms: [
-        "Fatigue",
-        "unintentional weight loss",
-        "iron-deficiency anemia",
-        "intermittent abdominal discomfort"
-      ],
-      other_conditions: "Hypertension, mild chronic kidney disease stage 3a",
-      medications: "ACE inhibitor, low-dose aspirin, calcium and vitamin D supplements",
-      allergies: "No known drug allergies",
-      disabilities: "Mild hearing impairment, uses hearing aids",
-      cognitive_state: "Alert and oriented, occasionally forgetful but manages own affairs",
-      planned_surgery: "Elective right hemicolectomy with primary anastomosis"
-    },
-    communication_personality: {
-      language_proficiency:
-        "Native Swiss German; understands standard German, very limited English",
-      communication_style:
-        "Speaks slowly and simply, prefers concrete explanations and visual aids",
-      psychological_profile:
-        "Generally calm and trusting of doctors, somewhat worried about the cancer diagnosis but does not easily show emotions. His personality is practical, responsible, and detail-focused; he feels safest when things are well organized, prefers clear step-by-step plans, and values stability and tradition over change.",
-      personality_archetype:
-        "Practical, responsible, detail-focused, tradition-oriented, structure-seeking"
-    },
-    social_lifestyle: {
-      marital_status: "Married",
-      children: 3,
-      key_responsibilities:
-        "Helps wife with household tasks, manages small family garden",
-      social_support:
-        "Strong support from wife, adult children living nearby, and close-knit village community",
-      hobbies: "Tending the garden, playing cards with neighbors, watching local football matches"
-    },
-    culture_beliefs: {
-      cultural_background: "Rural Swiss-German background, traditional values",
-      religious_affiliation: "Protestant Christian, attends church on major holidays"
-    }
-  },
-  {
-    id: "GS-002",
-    title: "Young Nigerian student with acute appendicitis",
-    tags: ["appendicitis", "young adult", "international student", "emergency surgery"],
-    discipline: "General surgery",
-    difficulty_level: "Easy",
-    demographics: {
-      name: "Adaeze Okafor",
-      age: 22,
-      gender: "Female",
-      nationality: "Nigerian",
-      education_level: "Bachelor's student",
-      current_job: "Full-time medical informatics student"
-    },
-    clinical_profile: {
-      current_diagnosis: "Acute uncomplicated appendicitis",
-      current_symptoms: [
-        "Periumbilical pain migrating to right lower quadrant",
-        "nausea",
-        "low-grade fever",
-        "reduced appetite"
-      ],
-      other_conditions: "None known",
-      medications: "Occasional ibuprofen for menstrual cramps",
-      allergies: "No known drug allergies",
-      disabilities: "None known",
-      cognitive_state: "Alert, oriented, slightly distressed by pain",
-      planned_surgery: "Urgent laparoscopic appendectomy"
-    },
-    communication_personality: {
-      language_proficiency: "Native English; basic German phrases only",
-      communication_style:
-        "Asks many clarifying questions, prefers detailed explanations and digital information (emails, patient portals)",
-      psychological_profile:
-        "Generally optimistic but anxious about her first hospital stay in a foreign country. Her personality is curious, analytical, and logic-oriented; she likes to understand how systems work, compares options in her head, and tends to make decisions only after she has gathered enough information.",
-      personality_archetype:
-        "curious, analytical, logic-focused, information-seeking, thoughtful decision-maker"
-    },
-    social_lifestyle: {
-      marital_status: "Single",
-      children: 0,
-      key_responsibilities:
-        "Managing studies, part-time responsibility in a student association",
-      social_support:
-        "Close friends in student dormitory; family lives abroad but keeps daily contact via video calls",
-      hobbies: "Coding side projects, Afrobeat dance classes, watching anime"
-    },
-    culture_beliefs: {
-      cultural_background: "Urban Nigerian background, accustomed to large extended family networks",
-      religious_affiliation:
-        "Christian, prays privately and appreciates being asked about spiritual needs"
-    }
-  },
-  {
-    id: "GS-003",
-    title: "Middle-aged Turkish homemaker with gallstones",
-    tags: ["cholelithiasis", "gallstones", "language barrier", "middle-aged"],
-    discipline: "General surgery",
-    difficulty_level: "Medium",
-    demographics: {
-      name: "Ayşe Kaya",
-      age: 46,
-      gender: "Female",
-      nationality: "Turkish",
-      education_level: "Completed lower secondary school",
-      current_job: "Homemaker"
-    },
-    clinical_profile: {
-      current_diagnosis: "Symptomatic cholelithiasis with recurrent biliary colic",
-      current_symptoms: [
-        "Episodic right upper quadrant pain after fatty meals",
-        "nausea",
-        "bloating"
-      ],
-      other_conditions: "Obesity (BMI 33), mild knee osteoarthritis",
-      medications:
-        "Occasional paracetamol for pain, proton pump inhibitor for reflux symptoms",
-      allergies: "No known drug allergies",
-      disabilities: "None, but knee pain limits long walking distances",
-      cognitive_state: "Fully oriented, appears reserved in unfamiliar settings",
-      planned_surgery: "Elective laparoscopic cholecystectomy"
-    },
-    communication_personality: {
-      language_proficiency:
-        "Native Turkish; limited German (A2 level); understands a few basic health-related phrases",
-      communication_style:
-        "Prefers to speak through her adult daughter who often interprets; tends not to ask questions unless encouraged",
-      psychological_profile:
-        "Shy in medical settings, fears complications and scars, and trusts medical staff once a relationship is established. Her personality is caring, loyal, and very devoted to her family; she often puts others' needs before her own ress.",
-      personality_archetype:
-        "Caring, loyal, family-focused, harmony-seeking, conflict-avoidant"
-    },
-    social_lifestyle: {
-      marital_status: "Married",
-      children: 4,
-      key_responsibilities:
-        "Managing household, cooking, caring for youngest child and occasionally for grandchildren",
-      social_support:
-        "Strong support from husband, children, and extended Turkish-speaking community in the neighborhood",
-      hobbies: "Cooking traditional dishes, watching Turkish TV series, attending women-only community gatherings"
-    },
-    culture_beliefs: {
-      cultural_background:
-        "First-generation migrant from a small town in Turkey, values family decision-making",
-      religious_affiliation:
-        "Muslim, observes main religious holidays and daily prayers when possible"
-    }
-  },
-  {
-    id: "GS-004",
-    title: "Frail Italian widow with inguinal hernia",
-    tags: ["inguinal hernia", "frailty", "older adult", "pre-operative assessment"],
-    discipline: "General surgery",
-    difficulty_level: "Hard",
-    demographics: {
-      name: "Maria Rossi",
-      age: 82,
-      gender: "Female",
-      nationality: "Italian",
-      education_level: "Completed primary school",
-      current_job: "Retired seamstress"
-    },
-    clinical_profile: {
-      current_diagnosis: "Symptomatic right inguinal hernia",
-      current_symptoms: [
-        "Groin bulge",
-        "discomfort when standing or lifting",
-        "occasional sharp pain when coughing"
-      ],
-      other_conditions:
-        "Coronary artery disease with prior stent, atrial fibrillation, osteoporosis",
-      medications: "Beta-blocker, oral anticoagulant, statin, calcium plus vitamin D",
-      allergies: "Allergic rash to penicillin",
-      disabilities: "Uses a walking cane due to frailty and balance issues",
-      cognitive_state:
-        "Mild cognitive impairment; sometimes repeats questions and needs extra time to process information",
-      planned_surgery:
-        "Elective open inguinal hernia repair under regional or general anesthesia (to be decided)"
-    },
-    communication_personality: {
-      language_proficiency:
-        "Native Italian; speaks some basic local language phrases learned over years; understands simple, slow speech",
-      communication_style:
-        "Talkative, tells long stories, easily distracted from the main topic; appreciates staff taking time to listen",
-      psychological_profile:
-        "Lonely since her husband's death, anxious about losing independence and moving to a nursing home. Her personality is warm, intuitive, and relationship-focused; she looks for deeper meaning in events, reads between the lines, and cares a lot about emotional connection and being understood.",
-      personality_archetype:
-        "Warm, intuitive, relationship-focused, meaning-seeking, emotionally expressive"
-    },
-    social_lifestyle: {
-      marital_status: "Widowed",
-      children: 2,
-      key_responsibilities:
-        "Managing own small apartment, caring for indoor plants, organizing medications",
-      social_support:
-        "Adult son lives in another city and visits monthly; daughter lives abroad; neighbors occasionally help with groceries",
-      hobbies: "Knitting, watching classic movies, attending church social events when physically able"
-    },
-    culture_beliefs: {
-      cultural_background:
-        "Southern Italian origin with strong family-centered values, now living in a multicultural urban neighborhood",
-      religious_affiliation: "Roman Catholic, prays daily and finds comfort in religious rituals"
-    }
-  },
-  {
-    id: "GS-005",
-    title: "Indian software engineer with umbilical hernia",
-    tags: ["umbilical hernia", "working adult", "elective surgery"],
-    discipline: "General surgery",
-    difficulty_level: "Medium",
-    demographics: {
-      name: "Rahul Sharma",
-      age: 39,
-      gender: "Male",
-      nationality: "Indian",
-      education_level: "Master's degree in computer science",
-      current_job: "Senior software engineer"
-    },
-    clinical_profile: {
-      current_diagnosis: "Symptomatic umbilical hernia without obstruction",
-      current_symptoms: [
-        "Periumbilical bulge",
-        "discomfort when sitting long hours",
-        "occasional dull pain after heavy meals"
-      ],
-      other_conditions: "Type 2 diabetes mellitus, overweight (BMI 29)",
-      medications: "Metformin, statin, occasional over-the-counter antacid",
-      allergies: "No known drug allergies",
-      disabilities: "None known",
-      cognitive_state: "Fully oriented, highly analytical and detail-focused",
-      planned_surgery: "Elective open umbilical hernia repair with mesh"
-    },
-    communication_personality: {
-      language_proficiency:
-        "Native Hindi; fluent English; intermediate German (B1 level)",
-      communication_style:
-        "Likes structured information, asks for data, risks, and probabilities; often takes notes on his phone",
-      psychological_profile:
-        "Perfectionistic, worries about taking time off work and the impact on project deadlines. His personality is strategic and future-oriented; he prefers clear frameworks and efficient solutions, enjoys planning ahead, and trusts well-reasoned arguments more than spontaneous decisions.",
-      personality_archetype:
-        "Strategic, future-oriented, structured, efficiency-focused, logic-driven"
-    },
-    social_lifestyle: {
-      marital_status: "Married",
-      children: 1,
-      key_responsibilities:
-        "Providing financially for family, sharing childcare, working on software projects with tight deadlines",
-      social_support:
-        "Lives with spouse and child; has a supportive group of friends from work and local Indian community",
-      hobbies: "Playing chess online, weekend hiking, cooking regional Indian dishes"
-    },
-    culture_beliefs: {
-      cultural_background:
-        "Urban Indian professional background; values education, career progression, and family cohesion",
-      religious_affiliation:
-        "Hindu, observes major festivals; open to combining traditional remedies with modern medicine"
-    }
-  },
-  {
-    id: "GS-006",
-    title: "Single mother with Crohn's disease requiring surgery",
-    tags: ["Crohn's disease", "bowel resection", "single parent", "chronic illness"],
-    discipline: "general surgery",
-    difficulty_level: "Hard",
-    demographics: {
-      name: "Laura Keller",
-      age: 34,
-      gender: "Female",
-      nationality: "Swiss",
-      education_level: "Vocational training in office administration",
-      current_job: "Part-time administrative assistant"
-    },
-    clinical_profile: {
-      current_diagnosis:
-        "Crohn's disease with ileocecal stricture refractory to medical therapy",
-      current_symptoms: [
-        "Crampy right lower quadrant pain",
-        "chronic diarrhea",
-        "fatigue",
-        "occasional low-grade fevers"
-      ],
-      other_conditions: "Iron-deficiency anemia, past history of depression",
-      medications:
-        "Biologic therapy for Crohn's, iron supplements, occasional antidepressant use (currently stopped with psychiatrist's agreement)",
-      allergies: "Allergic to latex (contact rash)",
-      disabilities:
-        "No formal disability, but frequent flares limit ability to work full-time",
-      cognitive_state: "Alert and oriented; sometimes appears exhausted and overwhelmed",
-      planned_surgery: "Elective laparoscopic ileocecal resection"
-    },
-    communication_personality: {
-      language_proficiency:
-        "Native Swiss German; fluent in standard German and good English",
-      communication_style:
-        "Direct and honest; appreciates when clinicians acknowledge her lived experience with chronic disease",
-      psychological_profile:
-        "Resilient but worries about her long-term ability to care for her child; wants to be involved in every decision. Her personality is empathetic and people-centered; she is motivated by helping others and being a good mother, and she prefers collaborative decision-making where values and relationships are taken seriously.",
-      personality_archetype:
-        "Empathetic, people-centered, collaborative, value-driven, responsibility-focused"
-    },
-    social_lifestyle: {
-      marital_status: "Single",
-      children: 1,
-      key_responsibilities:
-        "Primary caregiver for her 6-year-old child, managing household and part-time job despite fatigue",
-      social_support:
-        "Parents live 30 minutes away and help with childcare; a close friend occasionally assists during flares",
-      hobbies: "Reading crime novels, short walks in nature, crafting with her child"
-    },
-    culture_beliefs: {
-      cultural_background:
-        "Urban Swiss background with pragmatic attitudes towards health and work",
-      religious_affiliation:
-        "No formal religious affiliation; describes herself as 'spiritual but not religious'"
-    }
-  },
-  {
-    id: "GS-007",
-    title: "Retired construction worker with gallstone complications",
-    tags: ["acute cholecystitis", "older adult", "migrant background"],
-    discipline: "General surgery",
-    difficulty_level: "Hard",
-    demographics: {
-      name: "Milan Hadžić",
-      age: 69,
-      gender: "male",
-      nationality: "Bosnian",
-      education_level: "Completed primary school",
-      current_job: "Retired construction worker"
-    },
-    clinical_profile: {
-      current_diagnosis: "Acute cholecystitis on top of chronic cholelithiasis",
-      current_symptoms: [
-        "Right upper quadrant pain for 24 hours",
-        "fever",
-        "nausea",
-        "reduced appetite"
-      ],
-      other_conditions: "Long history of smoking (quit 5 years ago), mild COPD, hypertension",
-      medications: "Inhaled bronchodilator, ACE inhibitor, low-dose diuretic",
-      allergies: "No known drug allergies",
-      disabilities:
-        "Reduced exercise tolerance due to COPD; mild knee pain from prior injuries",
-      cognitive_state:
-        "Alert but irritable when in pain; sometimes appears suspicious of new information",
-      planned_surgery: "Early laparoscopic cholecystectomy during same admission"
-    },
-    communication_personality: {
-      language_proficiency:
-        "Native Bosnian; understands and speaks conversational local language but cannot read complex documents well",
-      communication_style:
-        "Brief answers at first, opens up when addressed respectfully; dislikes feeling rushed",
-      psychological_profile:
-        "Proud of his physical past work; reluctant to show vulnerability; worried about being a burden to family. His personality is independent, pragmatic, and hands-on; he trusts practical experience more than theory, prefers straightforward language, and likes to see concrete evidence that a plan will work.",
-      personality_archetype:
-        "Independent, pragmatic, hands-on, straightforward, experience-oriented"
-    },
-    social_lifestyle: {
-      marital_status: "married",
-      children: 2,
-      key_responsibilities:
-        "Helps with grandchildren after school, does small repairs around the house",
-      social_support:
-        "Lives with wife; strong connection to local Bosnian community and extended family",
-      hobbies: "Fishing, watching football, meeting friends at a local café"
-    },
-    culture_beliefs: {
-      cultural_background:
-        "Bosnian migrant who moved during the 1990s; values loyalty and solidarity within the community",
-      religious_affiliation:
-        "Identifies as Muslim culturally; practice is moderate and mostly around holidays"
-    }
-  },
-  {
-    id: "GS-008",
-    title: "Japanese PhD student with perianal abscess",
-    tags: ["perianal abscess", "young adult", "short-stay surgery"],
-    discipline: "General surgery",
-    difficulty_level: "Easy",
-    demographics: {
-      name: "Yuki Tanaka",
-      age: 29,
-      gender: "Male",
-      nationality: "Japanese",
-      education_level: "PhD candidate in physics",
-      current_job: "Doctoral researcher at university"
-    },
-    clinical_profile: {
-      current_diagnosis: "Perianal abscess requiring surgical drainage",
-      current_symptoms: [
-        "Severe perianal pain",
-        "difficulty sitting",
-        "low-grade fever",
-        "sleep disturbance due to pain"
-      ],
-      other_conditions: "No chronic illnesses documented",
-      medications: "Occasional ibuprofen for headaches; no regular medications",
-      allergies: "No known drug allergies",
-      disabilities: "None known",
-      cognitive_state: "Fully oriented; seems embarrassed discussing symptoms",
-      planned_surgery:
-        "Incision and drainage of perianal abscess under general or regional anesthesia"
-    },
-    communication_personality: {
-      language_proficiency:
-        "Native Japanese; fluent English; basic German (A2)",
-      communication_style:
-        "Very polite, rarely interrupts; hesitant to talk about intimate details unless asked sensitively",
-      psychological_profile:
-        "Perfectionistic, feels guilty for missing lab work, and worries how this affects his reliability. His personality is reflective and analytical; he thinks deeply before speaking, focuses on precision and accuracy, and can be quite self-critical when he feels he has made a mistake.",
-      personality_archetype:
-        "reflective, analytical, precision-focused, self-critical, conscientious"
-    },
-    social_lifestyle: {
-      marital_status: "single",
-      children: 0,
-      key_responsibilities:
-        "Completing research project and thesis, assisting in teaching undergraduate labs",
-      social_support:
-        "Lives in a shared flat with other students; keeps close contact with family in Japan via messaging apps",
-      hobbies: "Playing violin, reading science fiction, attending university board game nights"
-    },
-    culture_beliefs: {
-      cultural_background:
-        "Urban Japanese background; values politeness, indirect communication, and respect for authority",
-      religious_affiliation:
-        "No formal religious practice; occasionally visits temples when in Japan"
-    }
-  },
-  {
-    id: "GS-009",
-    title: "Albanian taxi driver with ventral hernia",
-    tags: ["ventral hernia", "working adult", "physical job"],
-    discipline: "General surgery",
-    difficulty_level: "Medium",
-    demographics: {
-      name: "Arben Kola",
-      age: 56,
-      gender: "male",
-      nationality: "Albanian",
-      education_level: "completed secondary school",
-      current_job: "taxi driver"
-    },
-    clinical_profile: {
-      current_diagnosis: "Symptomatic ventral incisional hernia after previous laparotomy",
-      current_symptoms: [
-        "Anterior abdominal wall bulge",
-        "aching pain when lifting luggage",
-        "occasional feeling of heaviness"
-      ],
-      other_conditions: "Hypertension, hyperlipidemia, former smoker",
-      medications: "ACE inhibitor, statin",
-      allergies: "No known drug allergies",
-      disabilities: "None, but pain limits prolonged lifting",
-      cognitive_state: "Alert and oriented, appears skeptical at first consultation",
-      planned_surgery: "Elective laparoscopic ventral hernia repair with mesh"
-    },
-    communication_personality: {
-      language_proficiency:
-        "Native Albanian; speaks functional local language but struggles with medical terminology; intermediate Italian from previous work abroad",
-      communication_style:
-        "Talks a lot when comfortable, uses humor; initially questions necessity and timing of surgery",
-      psychological_profile:
-        "Worried about losing working days and income; wants a clear plan and reassurance about return to work. His personality is energetic, action-oriented, and adaptable; he enjoys fast-paced situations, decides quickly, and often relies on his instincts in the moment rather than long theoretical discussions.",
-      personality_archetype:
-        "energetic, action-oriented, adaptable, instinct-driven, spontaneous"
-    },
-    social_lifestyle: {
-      marital_status: "married",
-      children: 3,
-      key_responsibilities:
-        "Main family income earner; supports elderly parents in home country financially",
-      social_support:
-        "Lives with wife and one teenage child; strong diaspora network of friends who share experiences about local hospitals",
-      hobbies: "Playing cards with friends, watching football matches, weekend trips with family"
-    },
-    culture_beliefs: {
-      cultural_background:
-        "Albanian migrant with strong family and community ties; values direct speech and personal recommendations",
-      religious_affiliation: "Identifies as Muslim but not strictly observant"
-    }
-  },
-  {
-    id: "GS-010",
-    title: "Eritrean cleaner with hemorrhoidal disease",
-    tags: ["hemorrhoids", "language barrier", "manual labor"],
-    discipline: "General surgery",
-    difficulty_level: "Medium",
-    demographics: {
-      name: "Selam Tesfay",
-      age: 41,
-      gender: "Female",
-      nationality: "Eritrean",
-      education_level: "completed secondary school",
-      current_job: "evening shift cleaner in office buildings"
-    },
-    clinical_profile: {
-      current_diagnosis:
-        "Symptomatic grade III hemorrhoidal disease with thrombosed external hemorrhoid",
-      current_symptoms: [
-        "Rectal pain",
-        "bleeding during defecation",
-        "itching",
-        "difficulty sitting for long periods"
-      ],
-      other_conditions: "Chronic constipation, mild iron-deficiency anemia",
-      medications:
-        "Stool softeners prescribed by GP, over-the-counter topical creams",
-      allergies: "No known drug allergies",
-      disabilities: "None known",
-      cognitive_state:
-        "Fully oriented but appears embarrassed and avoids eye contact when discussing symptoms",
-      planned_surgery: "Elective hemorrhoidectomy after optimization of bowel habits"
-    },
-    communication_personality: {
-      language_proficiency:
-        "Native Tigrinya; understands some English; very limited German and prefers professional interpreter",
-      communication_style:
-        "Soft-spoken, answers briefly; finds it difficult to talk about intimate symptoms without interpreter of same gender",
-      psychological_profile:
-        "Concerned about pain after surgery and time off work; values reassurance and empathetic communication. Her personality is gentle, considerate, and conflict-avoiding; she is sensitive to others’ feelings, tries hard not to disturb anyone, and may downplay her own needs unless explicitly invited to share them.",
-      personality_archetype:
-        "gentle, considerate, harmony-seeking, sensitive, self-effacing"
-    },
-    social_lifestyle: {
-      marital_status: "married",
-      children: 2,
-      key_responsibilities:
-        "Caring for children, contributing to household income with evening cleaning shifts",
-      social_support:
-        "Lives with husband and children; close-knit Eritrean community that provides practical support and child care",
-      hobbies: "Attending community gatherings, cooking traditional dishes, listening to Eritrean music"
-    },
-    culture_beliefs: {
-      cultural_background:
-        "Eritrean diaspora background; used to community-based support and shared childcare",
-      religious_affiliation:
-        "Orthodox Christian, regularly attends church and appreciates possibility of prayer before surgery"
-    }
-  },
-  {
-    id: "GS-011",
-    title: "Teen Syrian refugee with acute appendicitis requiring surgery",
-    tags: ["appendicitis", "adolescent", "refugee", "trauma history"],
-    discipline: "General surgery",
-    difficulty_level: "Medium",
-    demographics: {
-      name: "Omar Al-Hassan",
-      age: 16,
-      gender: "Male",
-      nationality: "Syrian",
-      education_level: "attending secondary school",
-      current_job: "student"
-    },
-    clinical_profile: {
-      current_diagnosis: "Acute appendicitis",
-      current_symptoms: [
-        "Right lower quadrant abdominal pain",
-        "loss of appetite",
-        "nausea",
-        "low-grade fever"
-      ],
-      other_conditions:
-        "History of war-related trauma; occasional nightmares and sleep difficulties reported",
-      medications: "None regularly; occasional paracetamol at home",
-      allergies: "No known drug allergies",
-      disabilities:
-        "None physically, but psychological stress affects concentration",
-      cognitive_state:
-        "Alert but visibly tense; startles easily at loud noises in hospital environment",
-      planned_surgery: "Urgent laparoscopic appendectomy"
-    },
-    communication_personality: {
-      language_proficiency:
-        "Native Arabic; basic conversational German from school; limited English",
-      communication_style:
-        "Answers questions briefly; looks to his mother for reassurance; benefits from interpreter support",
-      psychological_profile:
-        "Shy with strangers and initially distrustful due to past experiences; calms down when staff explain steps clearly and involve his mother. His personality is sensitive and idealistic; he is deeply affected by what happens around him, often keeps worries inside, and values close, trusting relationships where he feels safe to open up.",
-      personality_archetype:
-        "sensitive, idealistic, inwardly focused, relationship-seeking, cautious"
-    },
-    social_lifestyle: {
-      marital_status: "single",
-      children: 0,
-      key_responsibilities:
-        "Attending school, helping with translation for younger siblings in daily life situations",
-      social_support:
-        "Lives with parents and three younger siblings; family connected with local refugee support organization",
-      hobbies: "Playing football in a local youth club, gaming on his phone, drawing"
-    },
-    culture_beliefs: {
-      cultural_background:
-        "Syrian refugee background, family-oriented; decisions often discussed together with parents",
-      religious_affiliation:
-        "Muslim, practices mainly within the family; appreciates respect for dietary rules"
-    }
-  },
-  {
-    id: "GS-012",
-    title: "Retired French teacher with rectal cancer",
-    tags: ["rectal cancer", "older adult", "oncologic surgery"],
-    discipline: "General surgery",
-    difficulty_level: "Hard",
-    demographics: {
-      name: "Claire Dubois",
-      age: 72,
-      gender: "female",
-      nationality: "French",
-      education_level: "university degree in literature",
-      current_job: "retired high school teacher"
-    },
-    clinical_profile: {
-      current_diagnosis: "Low rectal adenocarcinoma after neoadjuvant chemoradiotherapy",
-      current_symptoms: [
-        "Change in bowel habits",
-        "rectal bleeding prior to treatment",
-        "fatigue from recent chemoradiation"
-      ],
-      other_conditions: "Well-controlled hypertension, osteopenia",
-      medications: "Antihypertensive medication, calcium and vitamin D supplements",
-      allergies: "Allergy to shellfish (hives)",
-      disabilities:
-        "No major physical disability; mild decreased stamina when walking uphill",
-      cognitive_state:
-        "Clear and articulate; sometimes overwhelmed by complex information",
-      planned_surgery:
-        "Elective low anterior resection with possible temporary diverting ileostomy"
-    },
-    communication_personality: {
-      language_proficiency:
-        "Native French; fluent English; understands some German but prefers French for complex discussions",
-      communication_style:
-        "Very verbal, asks many nuanced questions about quality of life, stoma impact, and long-term prognosis",
-      psychological_profile:
-        "Intellectually curious; alternates between optimism and fear; worries about loss of autonomy and body image. Her personality combines rational analysis with strong personal values; she likes to weigh options carefully, examine arguments from different angles, and then commit firmly to a choice that feels both logical and ethically right to her.",
-      personality_archetype:
-        "analytical, value-driven, reflective, autonomy-seeking, careful decision-maker"
-    },
-    social_lifestyle: {
-      marital_status: "divorced",
-      children: 1,
-      key_responsibilities:
-        "Maintaining her own household, caring for a small dog, active in a local book club",
-      social_support:
-        "Adult daughter lives in another country but can visit for a few weeks after surgery; several close friends nearby",
-      hobbies: "Reading novels, attending theatre performances, traveling by train to visit cultural sites"
-    },
-    culture_beliefs: {
-      cultural_background:
-        "French intellectual and cultural background, values autonomy and shared decision-making",
-      religious_affiliation:
-        "Non-religious; finds meaning in art, relationships, and nature rather than formal religion"
-    }
-  }
+{
+id: "GS-001",
+title: "Young Indian student with acute appendicitis in the emergency department",
+tags: ["acute appendicitis", "young adult", "emergency", "pre-operative"],
+discipline: "General surgery",
+difficulty_level: "Easy",
+demographics: {
+name: "Arjun Patel",
+age: 22,
+gender: "Male",
+nationality: "Indian",
+education_level: "Undergraduate university student",
+current_job: "Engineering student"
+},
+clinical_profile: {
+current_diagnosis: "Acute uncomplicated appendicitis",
+current_symptoms: [
+"24-hour history of right lower quadrant abdominal pain",
+"nausea and loss of appetite",
+"low-grade fever"
+],
+other_conditions: "None known",
+medications: "Occasional ibuprofen for headaches",
+allergies: "No known drug allergies",
+disabilities: "None",
+cognitive_state: "Alert, fully oriented, thinking clearly but distracted by pain",
+planned_surgery: "Emergency laparoscopic appendectomy"
+},
+communication_personality: {
+language_proficiency:
+"Native Hindi and Gujarati; English is fluent from university studies, comfortable speaking without interpreter.",
+communication_style:
+"Speaks quickly and uses informal language, asks many short questions to clarify what will happen today and when he can go home.",
+psychological_profile:
+"Anxious about surgery as it is his first time in hospital, worries about missing an exam and disappointing his parents; generally cooperative and open once he feels listened to.",
+personality_archetype:
+"Curious, energetic problem-solver who likes clear explanations and practical next steps."
+},
+social_lifestyle: {
+marital_status: "Single",
+children: 0,
+key_responsibilities:
+"Focused on university coursework and upcoming exams, worried about missing an important test and group project.",
+social_support:
+"Supportive parents reachable by phone in India and a close roommate who accompanied him to the hospital.",
+hobbies: "Playing cricket, online gaming with friends, watching tech review videos"
+},
+culture_beliefs: {
+cultural_background:
+"Urban Indian background, studying abroad in an international setting; used to respecting doctors but also familiar with modern, patient-centered care.",
+religious_affiliation: "Hindu, moderate personal importance"
+}
+},
+{
+id: "GS-002",
+title: "Brazilian restaurant worker with symptomatic gallstones considering elective surgery",
+tags: ["symptomatic gallstones", "biliary colic", "elective surgery", "pre-operative"],
+discipline: "General surgery",
+difficulty_level: "Easy",
+demographics: {
+name: "Carolina Alves",
+age: 35,
+gender: "Female",
+nationality: "Brazilian",
+education_level: "Completed secondary school",
+current_job: "Waitress in a busy restaurant"
+},
+clinical_profile: {
+current_diagnosis: "Symptomatic gallstones with recurrent biliary colic",
+current_symptoms: [
+"Several episodes of right upper quadrant abdominal pain after fatty meals",
+"intermittent nausea",
+"no fever or jaundice"
+],
+other_conditions: "Overweight, mild gastroesophageal reflux disease",
+medications: "Occasional antacid syrup, over-the-counter paracetamol",
+allergies: "No known drug allergies",
+disabilities: "None",
+cognitive_state: "Alert, oriented, follows conversation well when language is simplified",
+planned_surgery: "Elective laparoscopic cholecystectomy"
+},
+communication_personality: {
+language_proficiency:
+"Native Portuguese; English is conversational but she struggles with medical vocabulary and fast speech. She prefers having her English-speaking partner present and may benefit from a professional interpreter.",
+communication_style:
+"Expressive and uses hand gestures, asks questions in simple English and sometimes switches to Portuguese when emotional or in pain.",
+psychological_profile:
+"Worried about taking time off work and losing income, more focused on short-term consequences than long-term risks; becomes tearful when thinking about being unable to send money home to family.",
+personality_archetype:
+"Warm, relationship-oriented person who values trust and encouragement more than technical detail."
+},
+social_lifestyle: {
+marital_status: "In a relationship",
+children: 1,
+key_responsibilities:
+"Shares a small apartment with her partner, sends money to support her young daughter living with grandparents in Brazil, concerned about missing shifts and rent payments.",
+social_support:
+"Emotional and language support from her partner and Brazilian friends from church community.",
+hobbies: "Dancing, cooking Brazilian dishes, attending church events"
+},
+culture_beliefs: {
+cultural_background:
+"Brazilian migrant working in an international city, values close family ties and community; tends to rely on advice from friends who have had similar surgeries.",
+religious_affiliation: "Catholic Christian, faith is important and she often prays when anxious"
+}
+},
+{
+id: "GS-003",
+title: "British retired engineer with left-sided colon cancer discussing surgery and stoma",
+tags: ["colorectal cancer", "older adult", "oncologic surgery", "pre-operative"],
+discipline: "General surgery",
+difficulty_level: "Hard",
+demographics: {
+name: "Michael Thompson",
+age: 68,
+gender: "Male",
+nationality: "British",
+education_level: "University degree in mechanical engineering",
+current_job: "Retired mechanical engineer"
+},
+clinical_profile: {
+current_diagnosis: "Left-sided colon adenocarcinoma",
+current_symptoms: [
+"Several months of change in bowel habit with increasing constipation",
+"intermittent rectal bleeding",
+"unintentional weight loss of 5 kg over 3 months"
+],
+other_conditions: "Hypertension, type 2 diabetes, hyperlipidemia",
+medications: "ACE inhibitor, metformin, long-acting insulin, statin, low-dose aspirin",
+allergies: "No known drug allergies",
+disabilities: "Mild peripheral neuropathy in the feet, wears reading glasses",
+cognitive_state: "Alert, highly oriented and analytical, intact memory and executive function",
+planned_surgery:
+"Elective laparoscopic left hemicolectomy with possible conversion to open surgery and potential need for temporary or permanent colostomy"
+},
+communication_personality: {
+language_proficiency:
+"Native English speaker; fully fluent and comfortable with complex explanations and written information.",
+communication_style:
+"Asks very specific, technical questions about staging, survival statistics, and complication rates; appreciates diagrams and written materials, takes notes during the consultation.",
+psychological_profile:
+"Tries to appear stoic and rational but is deeply worried about cancer recurrence and the possibility of a permanent stoma; trusts evidence-based medicine but may challenge vague or emotional language.",
+personality_archetype:
+"Analytical, methodical planner who prefers data-driven discussions, clear risk estimates, and logically structured plans."
+},
+social_lifestyle: {
+marital_status: "Married",
+children: 2,
+key_responsibilities:
+"Helps care for his grandchildren one day per week and manages household finances; wants to stay independent and avoid being a burden.",
+social_support:
+"Strong support from his wife and adult children, as well as friends from a local chess club.",
+hobbies: "Reading historical novels, playing chess, doing DIY projects at home"
+},
+culture_beliefs: {
+cultural_background:
+"British, middle-class background with strong belief in public healthcare and shared decision-making between doctor and patient.",
+religious_affiliation: "Agnostic, does not attend religious services but open to chaplain support if offered"
+}
+},
+{
+id: "GS-004",
+title: "Elderly Chinese woman post-lumpectomy for breast cancer with positive margins",
+tags: ["breast cancer", "older adult", "post-operative", "oncologic surgery"],
+discipline: "General surgery",
+difficulty_level: "Hard",
+demographics: {
+name: "Li Hua Zhang",
+age: 74,
+gender: "Female",
+nationality: "Chinese",
+education_level: "Completed primary school",
+current_job: "Retired factory worker"
+},
+clinical_profile: {
+current_diagnosis: "Invasive ductal carcinoma of the left breast, post-lumpectomy with positive margins",
+current_symptoms: [
+"Post-operative breast pain and bruising",
+"fatigue after surgery",
+"difficulty sleeping due to worry about cancer"
+],
+other_conditions: "Hypertension, osteoarthritis of the knees",
+medications: "Amlodipine, paracetamol as needed, calcium and vitamin D supplements",
+allergies: "Allergy to penicillin (rash)",
+disabilities: "Mild hearing impairment in noisy environments, limited mobility due to knee pain",
+cognitive_state:
+"Alert and oriented, but tends to rely heavily on her daughter for understanding complex information and making decisions",
+planned_surgery:
+"Discussion of further surgical management, including re-excision of margins and sentinel lymph node biopsy versus mastectomy, and referral to oncology for adjuvant therapy planning"
+},
+communication_personality: {
+language_proficiency:
+"Native Mandarin; very limited English. She understands only a few basic English words and sentences. Her adult daughter provides informal interpretation, but a professional interpreter is available and recommended.",
+communication_style:
+"Speaks softly, rarely asks direct questions, often looks to her daughter to speak on her behalf and to the doctor for guidance.",
+psychological_profile:
+"Deeply worried but avoids talking openly about cancer; tends to internalize fear and prefers to hear reassuring messages rather than detailed survival statistics.",
+personality_archetype:
+"Reserved, harmony-seeking elder who values family consensus and prefers trusted others to guide complex medical decisions."
+},
+social_lifestyle: {
+marital_status: "Widowed",
+children: 2,
+key_responsibilities:
+"Helps with light household tasks and occasionally cares for her grandchildren; dependent on her daughter for transportation and navigating the healthcare system.",
+social_support:
+"Lives with her daughter and son-in-law; strong extended family support and connection to a local Chinese community group.",
+hobbies: "Cooking traditional dishes, watching Chinese TV dramas, practicing gentle morning exercises"
+},
+culture_beliefs: {
+cultural_background:
+"Elderly woman from rural China now living with family in an international city; prefers indirect communication about serious illness and often views doctors as authority figures who should make clear recommendations.",
+religious_affiliation: "No formal religious affiliation; maintains traditional Chinese spiritual practices and respect for ancestors"
+}
+},
+{
+id: "GS-005",
+title: "Syrian refugee with incarcerated inguinal hernia needing emergency surgery",
+tags: ["inguinal hernia", "emergency", "refugee", "complication risk"],
+discipline: "General surgery",
+difficulty_level: "Medium",
+demographics: {
+name: "Omar Al-Hassan",
+age: 45,
+gender: "Male",
+nationality: "Syrian",
+education_level: "Completed secondary school",
+current_job: "Construction worker on temporary contracts"
+},
+clinical_profile: {
+current_diagnosis: "Incarcerated right inguinal hernia with early signs of bowel obstruction",
+current_symptoms: [
+"Sudden onset of severe right groin pain with irreducible bulge",
+"abdominal distension and vomiting",
+"no passage of stool or gas in the last 12 hours"
+],
+other_conditions: "History of trauma-related chronic back pain, mild chronic obstructive pulmonary disease from smoking, post-traumatic stress symptoms",
+medications: "Occasional ibuprofen for pain, short-acting bronchodilator inhaler",
+allergies: "No known drug allergies",
+disabilities: "None documented, but limited physical endurance due to chronic pain and breathlessness on exertion",
+cognitive_state:
+"Alert and oriented but distracted by severe pain and anxiety, reacts strongly to loud noises and sudden movements",
+planned_surgery:
+"Urgent open repair of incarcerated right inguinal hernia with possible bowel resection depending on intra-operative findings"
+},
+communication_personality: {
+language_proficiency:
+"Native Arabic; only basic English phrases. A professional Arabic interpreter is present and essential for consent and explanation.",
+communication_style:
+"Uses short English words when in pain but relies on interpreter for full sentences; may appear reserved or abrupt because of pain and past experiences.",
+psychological_profile:
+"Highly anxious about hospitals and surgery, worried about being unable to work and support his family; previous negative experiences with authorities make him initially distrustful until he senses genuine respect.",
+personality_archetype:
+"Guarded, cautious survivor who opens up slowly when he feels safe, respected, and clearly informed."
+},
+social_lifestyle: {
+marital_status: "Married",
+children: 3,
+key_responsibilities:
+"Primary breadwinner for his family, supports his wife and three children in the host country and sends money to relatives still abroad; fears losing his job if he cannot work.",
+social_support:
+"Lives with his immediate family and has limited but growing support from a local refugee community and social worker.",
+hobbies: "Playing football with his children, attending community center events, watching Arabic news channels"
+},
+culture_beliefs: {
+cultural_background:
+"Syrian refugee with strong family bonds and traditional views; tends to see the doctor as an authority but appreciates when his dignity and privacy are carefully respected.",
+religious_affiliation: "Muslim, faith is central to coping and he may wish to pray before surgery"
+}
+},
+{
+id: "GS-006",
+title: "Nigerian school principal with rectal cancer facing low anterior resection and stoma",
+tags: ["rectal cancer", "oncologic surgery", "stoma counseling", "pre-operative"],
+discipline: "General surgery",
+difficulty_level: "Hard",
+demographics: {
+name: "Ngozi Okafor",
+age: 60,
+gender: "Female",
+nationality: "Nigerian",
+education_level: "Master's degree in education",
+current_job: "Secondary school principal"
+},
+clinical_profile: {
+current_diagnosis: "Mid-rectal adenocarcinoma, clinical stage II after neoadjuvant chemoradiotherapy",
+current_symptoms: [
+"Persistent change in bowel habit with urgency",
+"intermittent rectal discomfort",
+"fatigue related to recent chemoradiotherapy"
+],
+other_conditions: "Hypertension, obesity",
+medications: "Amlodipine, hydrochlorothiazide, low-dose aspirin, multivitamins",
+allergies: "No known drug allergies",
+disabilities: "Mild limitation in mobility due to knee osteoarthritis",
+cognitive_state:
+"Fully oriented, articulate and organized, able to weigh complex information and recall prior consultations accurately",
+planned_surgery:
+"Elective low anterior resection with total mesorectal excision and planned temporary diverting loop ileostomy"
+},
+communication_personality: {
+language_proficiency:
+"Native Igbo and English; English is fluent and used daily in her professional life, no interpreter needed.",
+communication_style:
+"Speaks formally and clearly, asks structured questions about prognosis, stoma reversal timing, and how surgery will affect her work and sexual function.",
+psychological_profile:
+"Project-managing her illness like a major work task, outwardly confident but deeply concerned about body image, continence, and impact on her role as a leader and mother.",
+personality_archetype:
+"Confident, goal-oriented leader who values transparent, well-organized information and shared decision-making."
+},
+social_lifestyle: {
+marital_status: "Married",
+children: 3,
+key_responsibilities:
+"Responsible for overseeing a large school, mentoring teachers, and supporting her university-age children; worried about prolonged time away from work and appearing weak in front of staff.",
+social_support:
+"Strong support from her husband, adult children, and church community, though some family members encourage more traditional remedies.",
+hobbies: "Reading biographies, attending church choir rehearsals, organizing school events"
+},
+culture_beliefs: {
+cultural_background:
+"Urban Nigerian professional with a blend of traditional and modern health beliefs; respects medical expertise but may also seek advice from trusted community members.",
+religious_affiliation: "Christian, very active in church and prayer is an important part of her coping strategy"
+}
+},
+{
+id: "GS-007",
+title: "Young Swiss mother with post-operative wound infection after appendectomy",
+tags: ["acute appendicitis", "post-operative complication", "young adult", "wound infection"],
+discipline: "General surgery",
+difficulty_level: "Medium",
+demographics: {
+name: "Lena Schmid",
+age: 28,
+gender: "Female",
+nationality: "Swiss",
+education_level: "Vocational training in tourism management",
+current_job: "Receptionist in a mountain hotel, currently on maternity leave"
+},
+clinical_profile: {
+current_diagnosis: "Superficial wound infection at umbilical port site after laparoscopic appendectomy",
+current_symptoms: [
+"Increasing redness and tenderness around the umbilical incision",
+"small amount of purulent discharge from the wound",
+"low-grade fever and feeling generally unwell"
+],
+other_conditions: "Recent postpartum anemia after vaginal delivery 2 months ago",
+medications: "Oral iron supplements, paracetamol as needed, combined oral contraceptive pill",
+allergies: "No known drug allergies",
+disabilities: "None",
+cognitive_state:
+"Alert and oriented but fatigued and somewhat overwhelmed by caring for a newborn and her own recovery",
+planned_surgery:
+"No further major surgery planned; requires wound opening, drainage, local care and short course of antibiotics, with discussion about signs of worsening infection"
+},
+communication_personality: {
+language_proficiency:
+"Native Swiss German; speaks very good English from working in tourism but occasionally lacks specific medical vocabulary.",
+communication_style:
+"Open and emotionally expressive, asks the same questions in different ways to make sure she has understood how this will affect breastfeeding and lifting her baby.",
+psychological_profile:
+"Tearful and anxious, worries that she has done something wrong to cause the infection and fears being separated from her baby; sensitive to tone of voice and reassurance.",
+personality_archetype:
+"Warm, empathetic caregiver who needs emotional validation and simple, concrete guidance to feel safe."
+},
+social_lifestyle: {
+marital_status: "Married",
+children: 1,
+key_responsibilities:
+"Primary caregiver for her 2-month-old baby while her husband works full-time; concerned about managing wound care at home while sleep-deprived.",
+social_support:
+"Supportive husband and nearby parents who can help with childcare, though she sometimes feels guilty asking for help.",
+hobbies: "Hiking in the mountains, baking, taking photos of her baby"
+},
+culture_beliefs: {
+cultural_background:
+"Swiss-German background with strong value placed on self-reliance and returning to normal life quickly after illness.",
+religious_affiliation: "No active religious practice, culturally Christian background"
+}
+},
+{
+id: "GS-008",
+title: "American IT manager abroad with acute cholecystitis and diabetes",
+tags: ["acute cholecystitis", "gallbladder", "middle-aged adult", "pre-operative"],
+discipline: "General surgery",
+difficulty_level: "Medium",
+demographics: {
+name: "David Miller",
+age: 52,
+gender: "Male",
+nationality: "American",
+education_level: "Bachelor's degree in computer science",
+current_job: "IT project manager working abroad on a long-term contract"
+},
+clinical_profile: {
+current_diagnosis: "Acute calculous cholecystitis",
+current_symptoms: [
+"Right upper quadrant abdominal pain for 24 hours",
+"fever with chills",
+"nausea and vomiting"
+],
+other_conditions: "Type 2 diabetes mellitus, obesity, hyperlipidemia",
+medications: "Metformin, long-acting insulin, statin, low-dose aspirin",
+allergies: "No known drug allergies",
+disabilities: "None, but reduced exercise tolerance due to obesity",
+cognitive_state:
+"Fully oriented, cognitively sharp and able to process complex information despite pain",
+planned_surgery:
+"Early laparoscopic cholecystectomy during the same admission, with discussion of operative risks in the context of diabetes and possible conversion to open surgery"
+},
+communication_personality: {
+language_proficiency:
+"Native English speaker; fully fluent and comfortable with technical details and written information.",
+communication_style:
+"Direct and assertive, uses business-like language and wants to compare options such as early versus delayed surgery, risk percentages, and expected downtime.",
+psychological_profile:
+"Slightly skeptical due to a previous surgical complication after knee surgery; wants to feel in control and may push for second opinions if he senses uncertainty.",
+personality_archetype:
+"Results-driven strategist who appreciates frank, detailed discussions and collaborative decision-making."
+},
+social_lifestyle: {
+marital_status: "Married",
+children: 2,
+key_responsibilities:
+"Primary income earner for his family living abroad; worried about project deadlines and potential impact of sick leave on his job.",
+social_support:
+"Lives with his spouse, who is supportive but also worried, and has remote emotional support from extended family in the United States.",
+hobbies: "Running when able, playing online strategy games, watching American football"
+},
+culture_beliefs: {
+cultural_background:
+"American expatriate with strong belief in patient autonomy and the right to question medical recommendations.",
+religious_affiliation: "Non-religious, identifies as secular but open to psychological and social support"
+}
+},
+{
+id: "GS-009",
+title: "Very elderly Polish widow with symptomatic inguinal hernia considering elective repair",
+tags: ["inguinal hernia", "older adult", "elective surgery", "risk discussion"],
+discipline: "General surgery",
+difficulty_level: "Medium",
+demographics: {
+name: "Zofia Kowalska",
+age: 82,
+gender: "Female",
+nationality: "Polish",
+education_level: "Completed primary school",
+current_job: "Retired seamstress"
+},
+clinical_profile: {
+current_diagnosis: "Symptomatic right inguinal hernia in an elderly patient",
+current_symptoms: [
+"Long-standing groin bulge that has become more painful while walking",
+"discomfort when coughing and lifting shopping bags",
+"no episodes of complete obstruction yet"
+],
+other_conditions: "Atrial fibrillation, hypertension, mild chronic kidney disease",
+medications: "Beta-blocker, warfarin, thiazide diuretic, calcium and vitamin D supplements",
+allergies: "No known drug allergies",
+disabilities: "Mild hearing impairment, walks with a cane due to osteoarthritis",
+cognitive_state:
+"Mostly oriented but has mild short-term memory difficulties; able to consent with clear explanations and support from her son.",
+planned_surgery:
+"Elective open inguinal hernia repair under regional or general anesthesia, with discussion of conservative management versus surgery and peri-operative cardiac risk"
+},
+communication_personality: {
+language_proficiency:
+"Native Polish; only basic English phrases. Her adult son speaks good English and usually interprets during visits, though a professional interpreter is available.",
+communication_style:
+"Very polite, nods frequently and rarely interrupts; tends to say she understands even when she may not fully grasp the details.",
+psychological_profile:
+"Values independence and fears becoming bedbound or being placed in a nursing home more than she fears death; anxious about anesthesia and stroke.",
+personality_archetype:
+"Gentle, tradition-oriented elder who avoids conflict and prefers trusted family and doctors to guide her decisions."
+},
+social_lifestyle: {
+marital_status: "Widowed",
+children: 2,
+key_responsibilities:
+"Manages her small apartment alone with some help from her son; wants to remain able to walk to church and the local market.",
+social_support:
+"Receives regular visits and practical help from her son and neighbors, and emotional support from her church community.",
+hobbies: "Knitting, attending church services, watching Polish TV shows"
+},
+culture_beliefs: {
+cultural_background:
+"Elderly Polish woman with strong respect for doctors and traditional roles; may feel uncomfortable challenging medical recommendations.",
+religious_affiliation: "Catholic Christian, faith is central and she may ask for a priest's blessing before surgery"
+}
+},
+{
+id: "GS-010",
+title: "Kenyan university student with chronic pilonidal sinus embarrassed about surgery",
+tags: ["pilonidal disease", "young adult", "elective surgery", "embarrassment"],
+discipline: "General surgery",
+difficulty_level: "Easy",
+demographics: {
+name: "Brian Otieno",
+age: 19,
+gender: "Male",
+nationality: "Kenyan",
+education_level: "First-year university student",
+current_job: "Full-time student in business studies"
+},
+clinical_profile: {
+current_diagnosis: "Chronic pilonidal sinus with recurrent abscess formation",
+current_symptoms: [
+"Recurrent painful swelling near the sacrum for the past year",
+"serosanguinous discharge staining underwear",
+"difficulty sitting for long periods during lectures"
+],
+other_conditions: "None known",
+medications: "Occasional ibuprofen for pain when abscess flares",
+allergies: "No known drug allergies",
+disabilities: "None",
+cognitive_state:
+"Alert and fully oriented, no cognitive impairment; understands explanations when language is clear and jargon is avoided",
+planned_surgery:
+"Elective excision of pilonidal sinus with off-midline closure and discussion of wound care and recurrence risk"
+},
+communication_personality: {
+language_proficiency:
+"Native Swahili and Luo; English is fluent and is the main language used at university, no interpreter required.",
+communication_style:
+"Initially quiet and avoids eye contact when sensitive areas are discussed, then becomes more talkative once he feels the doctor is non-judgmental; asks practical questions about pain, sports, and showering.",
+psychological_profile:
+"Embarrassed about the location of the disease and worried his friends will tease him; fears long absence from classes more than the surgery itself.",
+personality_archetype:
+"Good-natured, flexible young man who responds well to informal, friendly explanations and reassurance about everyday routines."
+},
+social_lifestyle: {
+marital_status: "Single",
+children: 0,
+key_responsibilities:
+"Focused on coursework and part-time tutoring, wants to maintain his scholarship and continue playing football.",
+social_support:
+"Close circle of friends at university and supportive parents living several hours away.",
+hobbies: "Playing football, watching comedy shows, hanging out with friends"
+},
+culture_beliefs: {
+cultural_background:
+"Urban Kenyan student comfortable with modern medicine but influenced by peers' stories about 'bad surgeries' and scars.",
+religious_affiliation: "Christian, moderate importance; occasionally attends church with friends"
+}
+},
+{
+id: "GS-011",
+title: "Mexican cleaner with stage II breast cancer fearful of mastectomy and job loss",
+tags: ["breast cancer", "oncologic surgery", "middle-aged adult", "body image"],
+discipline: "General surgery",
+difficulty_level: "Hard",
+demographics: {
+name: "María López",
+age: 65,
+gender: "Female",
+nationality: "Mexican",
+education_level: "Completed primary school",
+current_job: "Hotel cleaner"
+},
+clinical_profile: {
+current_diagnosis: "Stage II invasive ductal carcinoma of the right breast",
+current_symptoms: [
+"Palpable breast lump present for several months",
+"occasional breast discomfort",
+"no systemic symptoms yet"
+],
+other_conditions: "Hypertension, type 2 diabetes mellitus",
+medications: "ACE inhibitor, metformin, low-dose aspirin, statin",
+allergies: "No known drug allergies",
+disabilities: "Mild diabetic neuropathy causing tingling in feet",
+cognitive_state:
+"Alert and oriented, able to follow explanations but may struggle with complex terminology and numerical risk information",
+planned_surgery:
+"Discussion of modified radical mastectomy versus breast-conserving surgery with axillary staging and adjuvant radiotherapy"
+},
+communication_personality: {
+language_proficiency:
+"Native Spanish; English is conversational from hotel work, but she struggles with abstract medical terms and prefers explanations in simple, concrete language. Often relies on her bilingual granddaughter to help interpret.",
+communication_style:
+"Very polite and hesitant to interrupt, tends to smile and nod even when uncertain; expresses fear more through tears and body language than through direct questions.",
+psychological_profile:
+"Deeply fearful of cancer, associates it strongly with death; worried about losing her breast, her job, and her ability to support family members; tends to prioritize her family's needs over her own.",
+personality_archetype:
+"Warm, self-sacrificing caretaker who needs gentle encouragement to express her own fears and preferences openly."
+},
+social_lifestyle: {
+marital_status: "Widowed",
+children: 3,
+key_responsibilities:
+"Helps care for grandchildren and relies on her cleaning job for income; worried that time off and physical limitations after surgery will make her lose work.",
+social_support:
+"Close relationship with her daughters and grandchildren, emotional support from parish priest and church friends.",
+hobbies: "Cooking traditional dishes for family, attending church, listening to romantic music"
+},
+culture_beliefs: {
+cultural_background:
+"Mexican woman with strong family orientation and traditional gender roles; may believe in the power of prayer and home remedies alongside medical treatment.",
+religious_affiliation: "Catholic Christian, very important in daily life and decision-making"
+}
+},
+{
+id: "GS-012",
+title: "Filipino nurse with thyroid nodule suspicious for cancer seeking detailed risk information",
+tags: ["thyroid nodule", "oncologic surgery", "health professional", "pre-operative"],
+discipline: "General surgery",
+difficulty_level: "Easy",
+demographics: {
+name: "Angela Reyes",
+age: 38,
+gender: "Female",
+nationality: "Filipino",
+education_level: "Bachelor of Science in Nursing",
+current_job: "Registered nurse on a medical ward"
+},
+clinical_profile: {
+current_diagnosis:
+"Solitary right thyroid nodule suspicious for papillary thyroid carcinoma on cytology (Bethesda V)",
+current_symptoms: [
+"Painless anterior neck mass noticed several months ago",
+"mild sensation of throat fullness when swallowing",
+"no voice changes or breathing difficulties"
+],
+other_conditions: "Mild intermittent asthma",
+medications: "Inhaled salbutamol as needed, combined oral contraceptive pill",
+allergies: "No known drug allergies",
+disabilities: "None",
+cognitive_state:
+"Fully oriented, medically knowledgeable, able to understand and recall complex information and statistics",
+planned_surgery:
+"Elective right hemithyroidectomy with possible conversion to total thyroidectomy depending on intra-operative findings and final pathology"
+},
+communication_personality: {
+language_proficiency:
+"Native Filipino (Tagalog) and English; English is near-native and used daily in professional practice, very comfortable with medical terminology.",
+communication_style:
+"Asks detailed, technical questions about nerve injury, hypocalcemia, and guideline recommendations; may challenge explanations that seem vague or inconsistent with what she has read.",
+psychological_profile:
+"Generally calm and pragmatic but worried about potential voice changes as she sings in a church choir and about planning surgery around her rotating shifts.",
+personality_archetype:
+"Organized, knowledgeable professional who prefers collaborative, evidence-based discussions and clear plans."
+},
+social_lifestyle: {
+marital_status: "Single",
+children: 0,
+key_responsibilities:
+"Balances full-time shift work with financial support for parents in the Philippines; concerned about scheduling surgery without leaving her colleagues short-staffed.",
+social_support:
+"Close friends among nursing colleagues, supportive extended family living abroad, and church community.",
+hobbies: "Singing in a church choir, cooking Filipino food with friends, watching medical dramas"
+},
+culture_beliefs: {
+cultural_background:
+"Filipino health professional living in an international city, comfortable with Western medicine but also values family opinions in major decisions.",
+religious_affiliation: "Catholic Christian, faith is important and she often prays before major decisions"
+}
+}, 
+{
+id: "GS-013",
+title: "Young French apprentice with acute appendicitis far from family",
+tags: ["acute appendicitis", "young adult", "emergency", "pre-operative"],
+discipline: "General surgery",
+difficulty_level: "Easy",
+demographics: {
+name: "Thomas Dubois",
+age: 18,
+gender: "Male",
+nationality: "French",
+education_level: "Completed secondary school",
+current_job: "Apprentice electrician"
+},
+clinical_profile: {
+current_diagnosis: "Acute uncomplicated appendicitis",
+current_symptoms: [
+"12-hour history of migrating periumbilical to right lower quadrant abdominal pain",
+"nausea with one episode of vomiting",
+"low-grade fever and loss of appetite"
+],
+other_conditions: "None known",
+medications: "Occasional ibuprofen for sports-related aches",
+allergies: "No known drug allergies",
+disabilities: "None",
+cognitive_state:
+"Alert and fully oriented, understands simple explanations but becomes distracted when very anxious",
+planned_surgery: "Emergency laparoscopic appendectomy"
+},
+communication_personality: {
+language_proficiency:
+"Native French; school-taught English at a basic-to-conversational level. He can describe simple symptoms in English but struggles with medical terms and complex explanations. A professional French interpreter would significantly improve understanding.",
+communication_style:
+"Speaks in short sentences, often looks to staff for reassurance; frequently says 'yes' even when uncertain and asks few spontaneous questions unless prompted.",
+psychological_profile:
+"First time away from home in a hospital, very anxious about anesthesia and pain, misses his parents and worries about telling them bad news; tends to bottle up fears until directly asked.",
+personality_archetype:
+"Sensitive, somewhat shy young man who needs gentle prompting and clear, step-by-step reassurance to feel secure."
+},
+social_lifestyle: {
+marital_status: "Single",
+children: 0,
+key_responsibilities:
+"Starting his apprenticeship and eager not to lose his position; concerned about missing work and disappointing his supervisor.",
+social_support:
+"Lives in a shared apartment with other apprentices, maintains close phone contact with parents in France but no family locally.",
+hobbies: "Playing football, video gaming, watching car repair tutorials online"
+},
+culture_beliefs: {
+cultural_background:
+"French working-class background with trust in public healthcare but limited experience navigating hospitals independently.",
+religious_affiliation: "Non-religious, culturally Catholic"
+}
+},
+{
+id: "GS-014",
+title: "Saudi businessman with recurrent biliary colic considering elective cholecystectomy",
+tags: ["symptomatic gallstones", "biliary colic", "elective surgery", "pre-operative"],
+discipline: "General surgery",
+difficulty_level: "Medium",
+demographics: {
+name: "Faisal Al Saud",
+age: 48,
+gender: "Male",
+nationality: "Saudi Arabian",
+education_level: "Bachelor's degree in business administration",
+current_job: "Owner of a small trading company"
+},
+clinical_profile: {
+current_diagnosis: "Symptomatic gallstones with recurrent biliary colic and one previous episode of mild acute cholecystitis",
+current_symptoms: [
+"Recurrent right upper quadrant pain after heavy meals",
+"occasional nausea",
+"disturbed sleep due to pain episodes"
+],
+other_conditions: "Type 2 diabetes mellitus, obesity, hyperlipidemia",
+medications: "Metformin, statin, low-dose aspirin, proton pump inhibitor",
+allergies: "No known drug allergies",
+disabilities: "None",
+cognitive_state:
+"Alert and oriented, able to reason clearly but easily distracted by phone calls and business concerns",
+planned_surgery: "Elective laparoscopic cholecystectomy with intra-operative cholangiography if needed"
+},
+communication_personality: {
+language_proficiency:
+"Native Arabic; English is conversational from business travel but he struggles with medical terminology and complex written documents. He prefers to have his English-speaking cousin present and could benefit from a professional Arabic interpreter for consent.",
+communication_style:
+"Speaks confidently, may interrupt to ask about hospital stay length and when he can fly again; prefers big-picture summaries over detailed statistics.",
+psychological_profile:
+"Concerned about pain and complications but even more about cancelling business trips and appearing weak to colleagues; tends to delay decisions and hopes for a 'quick fix'.",
+personality_archetype:
+"Charismatic, big-picture negotiator who prefers clear options and practical implications rather than in-depth technical details."
+},
+social_lifestyle: {
+marital_status: "Married",
+children: 4,
+key_responsibilities:
+"Provides financially for his family and oversees several employees; worries about maintaining business continuity during recovery.",
+social_support:
+"Strong family support, particularly from his wife and cousin, and close ties with an extended family network.",
+hobbies: "Weekend desert trips with friends, watching football, dining out at new restaurants"
+},
+culture_beliefs: {
+cultural_background:
+"Saudi Arabian man with traditional family structure and expectation that doctors guide decisions while family is involved in discussions.",
+religious_affiliation: "Muslim, prays daily and may request space and time to pray before surgery"
+}
+},
+{
+id: "GS-015",
+title: "Japanese office worker with elective inguinal hernia repair",
+tags: ["inguinal hernia", "elective surgery", "middle-aged adult"],
+discipline: "General surgery",
+difficulty_level: "Easy",
+demographics: {
+name: "Kenji Sato",
+age: 50,
+gender: "Male",
+nationality: "Japanese",
+education_level: "Bachelor's degree in economics",
+current_job: "Office worker in a logistics company"
+},
+clinical_profile: {
+current_diagnosis: "Reducible left inguinal hernia causing intermittent discomfort",
+current_symptoms: [
+"Groin bulge that appears when standing or lifting boxes",
+"dull aching discomfort at the end of workdays",
+"no history of acute irreducibility or obstruction"
+],
+other_conditions: "Mild hypertension, long-term smoker",
+medications: "Amlodipine",
+allergies: "No known drug allergies",
+disabilities: "None",
+cognitive_state:
+"Alert and fully oriented, meticulously attentive to details and instructions",
+planned_surgery: "Elective open mesh repair of left inguinal hernia under general or regional anesthesia"
+},
+communication_personality: {
+language_proficiency:
+"Native Japanese; English at conversational level from school and work but he is self-conscious about speaking. He often uses a translation app on his phone and may benefit from a professional interpreter.",
+communication_style:
+"Polite and formal, listens carefully and nods; rarely interrupts but asks precise, practical questions if invited, such as when he can return to work and whether he can still wear a support belt.",
+psychological_profile:
+"Moderately anxious about surgical complications and scarring, fears being seen as unreliable at work; values following instructions correctly and avoiding conflict.",
+personality_archetype:
+"Quiet, conscientious planner who prefers written instructions, clear timelines, and predictable routines."
+},
+social_lifestyle: {
+marital_status: "Married",
+children: 2,
+key_responsibilities:
+"Supports his family financially and helps care for his elderly mother on weekends; concerned about taking extended time off and burdening his colleagues.",
+social_support:
+"Supportive wife and children, some emotional support from work friends though he prefers not to share personal problems at work.",
+hobbies: "Reading detective novels, playing casual golf, watching baseball"
+},
+culture_beliefs: {
+cultural_background:
+"Urban Japanese background emphasizing politeness, respect for authority, and not wanting to inconvenience others.",
+religious_affiliation: "No strong religious affiliation, occasional visits to Shinto shrines and Buddhist temples on holidays"
+}
+},
+{
+id: "GS-016",
+title: "Canadian teacher after rectal cancer surgery with concern for anastomotic leak",
+tags: ["rectal cancer", "post-operative", "complication", "oncologic surgery"],
+discipline: "General surgery",
+difficulty_level: "Hard",
+demographics: {
+name: "Sarah Mitchell",
+age: 59,
+gender: "Female",
+nationality: "Canadian",
+education_level: "Master's degree in education",
+current_job: "High school history teacher"
+},
+clinical_profile: {
+current_diagnosis: "Mid-rectal adenocarcinoma, post low anterior resection with temporary diverting ileostomy",
+current_symptoms: [
+"On post-operative day 5: increased abdominal pain and distension",
+"low-grade fever and tachycardia",
+"reduced appetite and feeling generally unwell"
+],
+other_conditions: "Hypertension, hypothyroidism",
+medications: "Atenolol, levothyroxine, paracetamol and opioids as needed post-operatively",
+allergies: "No known drug allergies",
+disabilities: "None pre-operatively; currently reduced mobility due to pain and weakness",
+cognitive_state:
+"Alert and oriented but fatigued; able to understand complex information and recall prior conversations about surgical risks",
+planned_surgery:
+"Planned CT scan to evaluate for possible anastomotic leak with potential need for re-operation and modification of stoma if leak is confirmed"
+},
+communication_personality: {
+language_proficiency:
+"Native English speaker; fluent and comfortable with medical terminology, has read extensively about her condition.",
+communication_style:
+"Asks detailed questions about possible complications, survival rates, and how re-operation might affect long-term bowel function; wants the surgeon to be honest even about difficult topics.",
+psychological_profile:
+"Balances rational understanding with underlying fear about cancer recurrence and losing independence; feels frustrated that complications may delay her return to teaching and travel plans.",
+personality_archetype:
+"Insightful, reflective thinker who values honesty, nuanced explanations, and involvement in complex decisions."
+},
+social_lifestyle: {
+marital_status: "Divorced",
+children: 1,
+key_responsibilities:
+"Supports herself and helps her adult daughter with occasional childcare for a grandchild; worried about being unable to drive or babysit for several months.",
+social_support:
+"Close relationship with her daughter and a small circle of loyal friends; active in an online support group for colorectal cancer survivors.",
+hobbies: "Reading historical biographies, hiking, volunteering at a local literacy program"
+},
+culture_beliefs: {
+cultural_background:
+"Canadian with strong belief in shared decision-making and patient rights; comfortable seeking second opinions if needed.",
+religious_affiliation: "Spiritual but not religious, occasionally attends meditation groups"
+}
+},
+{
+id: "GS-017",
+title: "Young Nigerian teacher with newly diagnosed triple-negative breast cancer",
+tags: ["breast cancer", "oncologic surgery", "young adult"],
+discipline: "General surgery",
+difficulty_level: "Medium",
+demographics: {
+name: "Amina Yusuf",
+age: 32,
+gender: "Female",
+nationality: "Nigerian",
+education_level: "Bachelor's degree in education",
+current_job: "Primary school teacher"
+},
+clinical_profile: {
+current_diagnosis: "Stage II triple-negative invasive ductal carcinoma of the left breast",
+current_symptoms: [
+"Firm, non-tender breast lump noticed for several months",
+"occasional discomfort in the breast",
+"no weight loss or systemic symptoms yet"
+],
+other_conditions: "None known",
+medications: "None regularly",
+allergies: "No known drug allergies",
+disabilities: "None",
+cognitive_state:
+"Alert, fully oriented, able to understand explanations and remember details from previous consultations",
+planned_surgery:
+"Initial plan for neoadjuvant chemotherapy followed by breast-conserving surgery or mastectomy depending on response and genetic testing results"
+},
+communication_personality: {
+language_proficiency:
+"Native Yoruba and English; English is fluent and used daily at work, no interpreter required.",
+communication_style:
+"Speaks clearly and assertively, asks many questions about fertility, hair loss, and whether surgery can preserve the breast; wants to see diagrams and before–after examples.",
+psychological_profile:
+"Shocked and frightened by the diagnosis at a young age; worries about stigma and how parents at her school will react; determined to fight the disease but vacillates between optimism and despair.",
+personality_archetype:
+"Idealistic, compassionate educator who seeks meaning and hope while still wanting realistic information and clear options."
+},
+social_lifestyle: {
+marital_status: "Engaged",
+children: 0,
+key_responsibilities:
+"Supports her younger siblings with part of her salary and is planning a wedding; concerned about delaying marriage and possible infertility from chemotherapy.",
+social_support:
+"Close-knit family, supportive fiancé, strong church community; some relatives suggest herbal remedies and may question chemotherapy.",
+hobbies: "Singing in church choir, reading novels, organizing school drama productions"
+},
+culture_beliefs: {
+cultural_background:
+"Urban Nigerian woman negotiating between modern medical approaches and extended family expectations, sometimes receiving conflicting advice.",
+religious_affiliation: "Christian, faith is central and she frequently seeks prayer and spiritual counseling"
+}
+},
+{
+id: "GS-018",
+title: "Elderly Irish farmer with obstructing right-sided colon cancer needing emergency surgery",
+tags: ["colon cancer", "bowel obstruction", "older adult", "emergency"],
+discipline: "General surgery",
+difficulty_level: "Hard",
+demographics: {
+name: "Patrick O'Connor",
+age: 83,
+gender: "Male",
+nationality: "Irish",
+education_level: "Completed primary school",
+current_job: "Retired cattle farmer, still helps on family farm"
+},
+clinical_profile: {
+current_diagnosis: "Obstructing right-sided colon adenocarcinoma",
+current_symptoms: [
+"Several days of worsening abdominal distension and crampy pain",
+"no passage of stool or gas for 48 hours",
+"nausea and vomiting with poor oral intake"
+],
+other_conditions:
+"Ischemic heart disease with previous myocardial infarction, chronic heart failure, atrial fibrillation on anticoagulation",
+medications:
+"Beta-blocker, ACE inhibitor, loop diuretic, warfarin, statin, low-dose aspirin",
+allergies: "No known drug allergies",
+disabilities: "Hearing impairment requiring hearing aids, limited exercise tolerance and shortness of breath on exertion",
+cognitive_state:
+"Generally oriented but mildly confused when in pain or sleep-deprived; decision-making supported by his eldest son.",
+planned_surgery:
+"Urgent right hemicolectomy with possible formation of an ileostomy, with discussion of high peri-operative cardiac risk and potential for intensive care stay"
+},
+communication_personality: {
+language_proficiency:
+"Native English (Irish), understands medical explanations but may mishear details if hearing aids are not properly in place.",
+communication_style:
+"Speaks slowly with a strong accent, uses humor to mask anxiety; prefers straightforward, plain language and often asks, 'What would you do, doctor?'",
+psychological_profile:
+"Accepts aging and risk of death more easily than the idea of prolonged dependence or institutional care; worries about leaving unfinished tasks on the farm and whether his son can cope.",
+personality_archetype:
+"Stoic, practical elder who values honest, concise communication and guidance in making difficult choices."
+},
+social_lifestyle: {
+marital_status: "Widowed",
+children: 3,
+key_responsibilities:
+"Advises his son on farm management, feels responsible for family land and livestock; reluctant to stop helping with physical work.",
+social_support:
+"Lives with his son and daughter-in-law, supported by extended family and a close rural community.",
+hobbies: "Listening to traditional Irish music, watching farming programs, attending local pub gatherings"
+},
+culture_beliefs: {
+cultural_background:
+"Rural Irish background with strong community ties and a pragmatic attitude toward illness and death.",
+religious_affiliation: "Catholic Christian, regularly attends mass and may appreciate chaplain support"
+}
+},
+{
+id: "GS-019",
+title: "Ethiopian domestic worker with acute cholecystitis worried about job security",
+tags: ["acute cholecystitis", "gallbladder", "young adult", "migrant"],
+discipline: "General surgery",
+difficulty_level: "Medium",
+demographics: {
+name: "Selam Tesfaye",
+age: 30,
+gender: "Female",
+nationality: "Ethiopian",
+education_level: "Completed secondary school",
+current_job: "Live-in domestic worker and nanny"
+},
+clinical_profile: {
+current_diagnosis: "Acute calculous cholecystitis",
+current_symptoms: [
+"Sudden onset right upper quadrant pain radiating to the back",
+"fever and chills for 24 hours",
+"nausea and vomiting, cannot keep food down"
+],
+other_conditions: "Recent pregnancy, delivered vaginally 3 months ago",
+medications: "Iron supplements postpartum, occasional paracetamol",
+allergies: "No known drug allergies",
+disabilities: "None",
+cognitive_state:
+"Alert and oriented but distressed and tearful due to pain and worries about employment",
+planned_surgery:
+"Early laparoscopic cholecystectomy during current admission, with peri-operative antibiotics and discussion of breastfeeding and lifting restrictions"
+},
+communication_personality: {
+language_proficiency:
+"Native Amharic; only basic English words and short phrases. She relies heavily on a professional Amharic interpreter or, if unavailable, her employer's adult daughter who speaks both languages.",
+communication_style:
+"Soft-spoken and hesitant to ask questions; often waits for the employer's daughter to speak first and may defer to her when answering.",
+psychological_profile:
+"Extremely worried about losing her job and accommodation if she needs a prolonged recovery; feels guilty about being away from her baby and sends money home to family in Ethiopia.",
+personality_archetype:
+"Quiet, duty-focused caregiver who puts others first and needs encouragement to express her own needs and fears."
+},
+social_lifestyle: {
+marital_status: "Married",
+children: 1,
+key_responsibilities:
+"Cares for her infant son and works long hours for her employer family, including childcare, cleaning, and cooking; sends part of her salary to relatives in Ethiopia.",
+social_support:
+"Limited local support apart from her employer's family and occasional contact with other Ethiopian domestic workers on her day off.",
+hobbies: "Listening to Ethiopian music on her phone, video calls with family, cooking traditional dishes on rare free days"
+},
+culture_beliefs: {
+cultural_background:
+"Ethiopian migrant with strong family obligations and respect for authority; may perceive it as inappropriate to question doctors or employers.",
+religious_affiliation: "Orthodox Christian, faith provides comfort especially through prayer and religious music"
+}
+},
+{
+id: "GS-020",
+title: "Older American woman with recurrent incisional hernia after colon surgery",
+tags: ["incisional hernia", "older adult", "elective surgery"],
+discipline: "General surgery",
+difficulty_level: "Easy",
+demographics: {
+name: "Margaret Johnson",
+age: 71,
+gender: "Female",
+nationality: "American",
+education_level: "Completed community college",
+current_job: "Retired administrative assistant"
+},
+clinical_profile: {
+current_diagnosis: "Large recurrent midline incisional hernia after previous colon resection",
+current_symptoms: [
+"Visible abdominal bulge increasing in size over the last two years",
+"discomfort and pulling sensation when standing or coughing",
+"difficulty finding supportive clothing and abdominal binder that fits"
+],
+other_conditions: "Obesity, chronic obstructive pulmonary disease, osteoarthritis",
+medications: "Inhaled bronchodilator, inhaled corticosteroid, NSAIDs as needed, calcium and vitamin D supplements",
+allergies: "Allergy to codeine (nausea and vomiting)",
+disabilities: "Limited mobility due to knee and hip pain; uses a walker for longer distances",
+cognitive_state:
+"Alert, oriented, and able to understand and recall complex information; occasionally overwhelmed by too many choices at once",
+planned_surgery:
+"Elective abdominal wall reconstruction with mesh reinforcement, with discussion of watchful waiting versus surgery given comorbidities and potential complications"
+},
+communication_personality: {
+language_proficiency:
+"Native English speaker; fluent and comfortable reading pamphlets and online information.",
+communication_style:
+"Talkative and friendly, shares long stories about previous hospital experiences; asks many questions about pain control, length of stay, and risk of another recurrence.",
+psychological_profile:
+"Somewhat anxious given prior surgery and fear of 'another big scar', but also motivated to improve quality of life and body image; worries about post-operative dependence on her daughter.",
+personality_archetype:
+"Sociable, story-telling optimist who appreciates empathy, humor, and clear prioritization of key information."
+},
+social_lifestyle: {
+marital_status: "Widowed",
+children: 2,
+key_responsibilities:
+"Lives alone with support from her nearby daughter; wants to maintain independence in shopping, cooking, and attending social clubs.",
+social_support:
+"Good support from daughter and a group of friends from a local senior center.",
+hobbies: "Knitting, participating in book club, playing cards at the senior center"
+},
+culture_beliefs: {
+cultural_background:
+"American, values autonomy and being fully informed of risks and alternatives; comfortable asking for second opinions.",
+religious_affiliation: "Protestant Christian, moderately important to her and a source of comfort"
+}
+},
+{
+id: "GS-021",
+title: "Chinese-American non-binary young adult with early breast cancer considering mastectomy",
+tags: ["breast cancer", "young adult", "gender identity", "oncologic surgery"],
+discipline: "General surgery",
+difficulty_level: "Hard",
+demographics: {
+name: "Alex Chen",
+age: 27,
+gender: "Non-binary",
+nationality: "American",
+education_level: "Bachelor's degree in graphic design",
+current_job: "Freelance graphic designer"
+},
+clinical_profile: {
+current_diagnosis: "Stage I hormone receptor-positive invasive ductal carcinoma of the right breast",
+current_symptoms: [
+"Small palpable lump in the right breast found incidentally",
+"no pain or discharge",
+"no systemic symptoms"
+],
+other_conditions: "Mild anxiety disorder previously treated with counseling",
+medications: "Combined oral contraceptive pill, occasional propranolol for performance anxiety",
+allergies: "No known drug allergies",
+disabilities: "None",
+cognitive_state:
+"Alert, highly articulate, and able to understand complex medical information; sometimes emotionally overwhelmed by the volume of decisions.",
+planned_surgery:
+"Choice between breast-conserving surgery with radiotherapy and mastectomy, with discussion of possible contralateral prophylactic mastectomy and reconstruction options"
+},
+communication_personality: {
+language_proficiency:
+"Native English speaker; also speaks conversational Mandarin with parents. Fully fluent in English and comfortable with medical and psychosocial terminology.",
+communication_style:
+"Direct and open, explicitly states pronouns and corrects staff politely when misgendered; asks detailed questions about long-term outcomes, body image, and how surgery options align with their gender identity.",
+psychological_profile:
+"Experiencing significant distress around cancer diagnosis layered on top of ongoing gender dysphoria; fears not being taken seriously by family or healthcare staff; values having control over decisions and language used.",
+personality_archetype:
+"Introspective, values-driven idealist who seeks alignment between personal identity, medical decisions, and future life goals."
+},
+social_lifestyle: {
+marital_status: "In a relationship",
+children: 0,
+key_responsibilities:
+"Maintains freelance work schedule and contributes financially to a shared apartment; worried about maintaining income during recovery.",
+social_support:
+"Supportive partner and close friends; relationship with parents is loving but strained by limited understanding of non-binary identity.",
+hobbies: "Digital illustration, attending LGBTQ+ community events, rock climbing"
+},
+culture_beliefs: {
+cultural_background:
+"Second-generation Chinese-American balancing traditional family expectations with more individualistic Western values; aware that some relatives may see breast removal as extreme.",
+religious_affiliation: "Non-religious, occasionally engaged with mindfulness and meditation practices"
+}
+},
+{
+id: "GS-022",
+title: "Russian taxi driver with chronic pain after inguinal hernia mesh repair",
+tags: ["inguinal hernia", "post-operative", "chronic pain"],
+discipline: "General surgery",
+difficulty_level: "Medium",
+demographics: {
+name: "Sergey Ivanov",
+age: 62,
+gender: "Male",
+nationality: "Russian",
+education_level: "Technical college diploma",
+current_job: "Taxi driver"
+},
+clinical_profile: {
+current_diagnosis: "Chronic post-herniorrhaphy inguinal pain after open mesh repair",
+current_symptoms: [
+"Persistent burning and stabbing pain in the right groin for 8 months after surgery",
+"worsening pain when sitting long hours while driving",
+"occasional paresthesia radiating to inner thigh"
+],
+other_conditions: "Hypertension, long-term smoker",
+medications: "Amlodipine, over-the-counter NSAIDs, occasional tramadol obtained from previous prescriptions",
+allergies: "No known drug allergies",
+disabilities: "Chronic pain limiting work hours, no structural disability identified",
+cognitive_state:
+"Alert and oriented but frustrated and preoccupied with pain; tends to focus on negative past experiences with healthcare",
+planned_surgery:
+"Discussion of non-surgical pain management, nerve blocks, and potential mesh or nerve revision surgery if conservative treatment fails"
+},
+communication_personality: {
+language_proficiency:
+"Native Russian; basic English phrases but cannot follow complex explanations in English. A professional Russian interpreter is necessary for nuanced discussion.",
+communication_style:
+"Speaks loudly and emotionally through the interpreter, repeatedly describes pain as 'unbearable'; tends to dominate conversation and may interrupt when he feels not understood.",
+psychological_profile:
+"Feels betrayed by previous surgery which he believes 'ruined' his life; distrustful of doctors and worried about being dismissed as exaggerating; anger masks underlying fear of losing his livelihood.",
+personality_archetype:
+"Defensive, justice-seeking individual who needs validation of his suffering and clear, respectful exploration of options."
+},
+social_lifestyle: {
+marital_status: "Married",
+children: 1,
+key_responsibilities:
+"Main financial provider for his household; worries that reducing his driving hours will jeopardize mortgage payments.",
+social_support:
+"Supportive wife but limited wider social network due to long working hours.",
+hobbies: "Watching football, repairing his car, playing chess online"
+},
+culture_beliefs: {
+cultural_background:
+"Russian man with strong expectation that surgery should 'fix' problems; may view persistent pain as medical failure and is skeptical of psychological explanations.",
+religious_affiliation: "Russian Orthodox Christian, occasionally attends church on major holidays"
+}
+},
+{
+id: "GS-023",
+title: "Pakistani medical student with acute appendicitis wanting non-operative management",
+tags: ["acute appendicitis", "young adult", "health professional"],
+discipline: "General surgery",
+difficulty_level: "Easy",
+demographics: {
+name: "Bilal Ahmed",
+age: 24,
+gender: "Male",
+nationality: "Pakistani",
+education_level: "Final-year medical student",
+current_job: "Medical student and part-time research assistant"
+},
+clinical_profile: {
+current_diagnosis: "Uncomplicated acute appendicitis confirmed on imaging",
+current_symptoms: [
+"18-hour history of right lower quadrant pain after initial periumbilical pain",
+"mild fever and anorexia",
+"nausea but no vomiting"
+],
+other_conditions: "None known",
+medications: "Occasional ibuprofen for headaches, no regular medications",
+allergies: "No known drug allergies",
+disabilities: "None",
+cognitive_state:
+"Fully oriented, highly knowledgeable about medical issues, occasionally over-analytical about his own symptoms",
+planned_surgery:
+"Discussion of standard laparoscopic appendectomy versus trial of antibiotic-only management, including recurrence risk and need for close follow-up"
+},
+communication_personality: {
+language_proficiency:
+"Native Urdu and Punjabi; English is fluent and used daily in medical school, very comfortable with medical terminology.",
+communication_style:
+"Asks highly technical questions, references recent journal articles on non-operative management of appendicitis, and may challenge standard practice; occasionally slips into medical jargon that his family would not understand.",
+psychological_profile:
+"Anxious about being a patient and losing control; concerned about surgical scars and missing important exams; fears being judged by peers for needing time off.",
+personality_archetype:
+"Analytical, detail-focused trainee who prefers evidence-based, shared decision-making and wants to feel like an active partner rather than a passive patient."
+},
+social_lifestyle: {
+marital_status: "Single",
+children: 0,
+key_responsibilities:
+"Preparing for final exams, working on a research project, and helping his parents with some household tasks when at home.",
+social_support:
+"Supportive parents and siblings, strong peer network among medical students who offer advice and share experiences.",
+hobbies: "Cricket, reading medical blogs, playing strategy board games"
+},
+culture_beliefs: {
+cultural_background:
+"Pakistani middle-class family with high value placed on education and professional achievement; family tends to trust doctors but expects clear explanations.",
+religious_affiliation: "Muslim, prays regularly and may wish to schedule care around prayer times when possible"
+}
+},
+{
+id: "GS-024",
+title: "South African farmer with perforated sigmoid colon cancer requiring emergency surgery",
+tags: ["colon cancer", "perforation", "emergency", "older adult"],
+discipline: "General surgery",
+difficulty_level: "Hard",
+demographics: {
+name: "Johan van der Merwe",
+age: 67,
+gender: "Male",
+nationality: "South African",
+education_level: "Completed secondary school",
+current_job: "Cattle and crop farmer"
+},
+clinical_profile: {
+current_diagnosis: "Perforated sigmoid colon adenocarcinoma with generalized peritonitis",
+current_symptoms: [
+"Sudden onset severe generalized abdominal pain on a background of several months of altered bowel habit",
+"fever and chills",
+"abdominal distension and inability to pass stool or gas"
+],
+other_conditions: "Type 2 diabetes mellitus, hypertension, long history of heavy smoking",
+medications: "Metformin, ACE inhibitor, thiazide diuretic, low-dose aspirin",
+allergies: "No known drug allergies",
+disabilities: "Mild chronic cough and reduced exercise tolerance due to smoking-related lung disease",
+cognitive_state:
+"Alert but in severe pain, intermittently confused when hypotensive; decisions discussed with his wife and adult son as potential surrogates if he deteriorates.",
+planned_surgery:
+"Emergency laparotomy with resection of perforated sigmoid colon and likely Hartmann's procedure with end colostomy; discussion of high operative risk and potential need for intensive care"
+},
+communication_personality: {
+language_proficiency:
+"Native Afrikaans; speaks good conversational English from business dealings but prefers complex explanations in Afrikaans where possible. Professional interpreter or Afrikaans-speaking staff are helpful for nuanced risk discussions.",
+communication_style:
+"Straightforward, uses few words when in pain; once stabilized, asks practical questions about survival odds, how long he will be away from the farm, and whether the colostomy can be reversed.",
+psychological_profile:
+"Fears being unable to return to the physically demanding work he loves and worries that his son will struggle to manage the farm; reluctant to show fear and wants to 'stay strong' for his family.",
+personality_archetype:
+"Hard-working, pragmatic problem-solver who values directness, realism, and a clear plan even when the news is bad."
+},
+social_lifestyle: {
+marital_status: "Married",
+children: 2,
+key_responsibilities:
+"Manages farm operations, finances, and maintenance; feels responsible for workers' livelihoods and family's income.",
+social_support:
+"Supportive wife and adult son involved in the farm, as well as a tight-knit rural community that often helps in times of crisis.",
+hobbies: "Working with livestock, braai (barbecue) gatherings with friends, watching rugby"
+},
+culture_beliefs: {
+cultural_background:
+"Afrikaans-speaking South African farmer with a strong sense of independence and self-reliance; may be uncomfortable discussing emotional fears openly.",
+religious_affiliation: "Reformed Christian, faith is important and he may appreciate pastoral support before high-risk surgery"
+}
+}
 ];
+
+
+
