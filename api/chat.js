@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { buildPatientSystemPrompt } from "./lib/patient-prompt.js";
+import { buildPatientSystemPrompt } from "./patient-prompt.js";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -45,28 +45,13 @@ export default async function handler(req, res) {
     const body = req.body ?? {};
     const vignette = body.vignette;
 
-    const scenario =
-      typeof body.scenario === "string" && body.scenario.trim().length > 0
-        ? body.scenario.trim().slice(0, 8000)
-        : "General pre-op/informed consent conversation.";
-
     const messages = sanitizeMessages(body.messages);
     const safeMessages =
       messages.length > 0 ? messages : [{ role: "user", content: "Hello." }];
 
     const instructions = isLikelyVignette(vignette)
       ? buildPatientSystemPrompt(vignette)
-      : `You are role-playing as a PATIENT so a surgical resident can practice communication.
-
-SCENARIO:
-${scenario}
-
-Rules:
-- Stay in character as the patient.
-- Use simple, everyday language.
-- Ask realistic questions (risks, anesthesia, recovery, alternatives).
-- Ask for clarification if jargon is used.
-- Keep replies concise (1–4 sentences).`;
+      : `You are a surgical patient in an informed consent conversation. Stay in character, use simple language, ask questions, and keep replies short.`;
 
     const response = await client.responses.create({
       model: "gpt-4.1-mini",

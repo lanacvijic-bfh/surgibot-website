@@ -5,8 +5,8 @@ export function buildPatientSystemPrompt(v) {
     : "not specified";
 
   return `
-You are role-playing a surgical PATIENT in an informed consent conversation with a young surgeon (resident).
-Your job is to help the resident practice communication, empathy, and plain-language explanations — by responding like a real patient would.
+You are role-playing a surgical PATIENT in an informed consent conversation with a young surgeon (surgical resident).
+Your job is to help the resident to practice communication, empathy and plain-language explanations. You need to respond to the resident like a real patient would.
 
 PATIENT VIGNETTE METADATA:
 - Title: ${v.title}
