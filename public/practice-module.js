@@ -204,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
   messages = [
     {
       role: "assistant",
-      content: `Hi doctor. I'm ${vignette.demographics.name}. I'm here about the planned surgery. Can you explain what’s going to happen?`
+      content: `Good day doctor. I'm ${vignette.demographics.name}. I'm here about the planned surgery. Can you explain what's going to happen?`
     }
   ];
   renderChat();
