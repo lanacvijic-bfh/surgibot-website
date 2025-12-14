@@ -27,7 +27,7 @@ function renderNoVignette() {
       </p>
       <a href="./vignette-library.html"
         class="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200
-               text-xs md:text-sm font-semibold text-blue-600 hover:bg-blue-200 transition-colors mx-auto">
+               text-xs md:text-sm font-semibold text-black hover:bg-blue-200 transition-colors mx-auto">
         Go to vignette library
       </a>
     </div>
