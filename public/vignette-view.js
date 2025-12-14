@@ -1,10 +1,10 @@
 import { vignettes } from "./lib/vignettes.js";
-import { buildPatientSystemPrompt } from "./lib/patient-prompt.js";
+import { buildPatientSystemPrompt } from "./api/patient-prompt.js";
 // ^ IMPORTANT: file name has a dash, so import it exactly like this
 
 function getVignetteIdFromUrl() {
   const params = new URLSearchParams(window.location.search);
-  return params.get("vignette");
+  return params.get("vignette") || params.get("id");
 }
 
 function renderNotFound() {
@@ -235,7 +235,7 @@ function renderVignette(v) {
           >
             <span class="flex items-center gap-3">
               <img
-                src="/icons/communication-personality-info.png"
+                src="./icons/communication-personality.png"
                 alt="Communication icon"
                 class="w-8 h-8 md:w-9 md:h-9"
               />
@@ -279,7 +279,7 @@ function renderVignette(v) {
           >
             <span class="flex items-center gap-3">
               <img
-                src="/icons/social-lifestyle-info.png"
+                src="./icons/social-lifestyle-info.png"
                 alt="Social and lifestyle icon"
                 class="w-8 h-8 md:w-9 md:h-9"
               />
@@ -402,7 +402,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.body.classList.remove("bg-slate-50", "bg-slate-100", "bg-slate-200");
 
   const id = getVignetteIdFromUrl();
-  const vignette = vignettes.find((v) => v.id === id);
+  const vignette = vignettes.find((v) => String(v.id) === String(id));
   if (!vignette) {
     renderNotFound();
   } else {
