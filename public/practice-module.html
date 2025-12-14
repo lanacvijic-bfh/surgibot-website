@@ -70,10 +70,10 @@
           <div class="flex items-center gap-3">
             <div class="text-left">
               <h2 class="text-sm md:text-base font-semibold text-slate-900">
-                Virtual patient conversation
+                Informed consent discussion
               </h2>
               <p class="text-xs text-gray-600">
-                This space will host the chat with the LLM-based virtual patient.
+                In this section, you can conduct the informed consent discussion with a patient.
               </p>
             </div>
           </div>
@@ -88,7 +88,7 @@
             <input id="chatInput" type="text" placeholder="Type your question to the patient..."
               class="flex-1 text-xs rounded-xl border border-slate-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500" />
             <button id="sendBtn" type="submit"
-              class="px-3 py-2 text-xs rounded-xl bg-blue-600 text-white hover:bg-blue-700">
+              class="px-3 py-2 text-xs rounded-xl bg-blue-100 border border-blue-200 font-semibold text-slate-900 hover:bg-blue-200 transition-colors">
               Send
             </button>
           </form>
@@ -105,7 +105,7 @@
     <p class="opacity-80">Designed & developed by Lana Cvijic.</p>
     </div>
     </footer>
-    
+
 
   <!-- Practice-module JS (loads vignette based on ?vignette=...) -->
   <script type="module" src="./practice-module.js"></script>

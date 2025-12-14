@@ -110,7 +110,7 @@ function renderChat() {
 
     const bubble = document.createElement("div");
     bubble.className = isUser
-      ? "max-w-[85%] rounded-2xl px-3 py-2 text-xs bg-blue-600 text-white"
+      ? "max-w-[85%] rounded-2xl px-3 py-2 text-xs bg-blue-100 border border-blue-200 text-slate-900 font-normal"
       : "max-w-[85%] rounded-2xl px-3 py-2 text-xs bg-white text-slate-900 border border-gray-200";
 
     bubble.innerHTML = escapeHtml(m.content).replaceAll("\n", "<br/>");
@@ -122,14 +122,15 @@ function renderChat() {
   chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
 }
 
+
 function setSending(isSending) {
-  if (!chatInput || !sendBtn) return;
   chatInput.disabled = isSending;
   sendBtn.disabled = isSending;
+
   sendBtn.textContent = isSending ? "Sending..." : "Send";
   sendBtn.className = isSending
     ? "px-3 py-2 text-xs rounded-xl bg-slate-200 text-slate-500 cursor-not-allowed"
-    : "px-3 py-2 text-xs rounded-xl bg-blue-600 text-white hover:bg-blue-700";
+    : "px-3 py-2 text-xs rounded-xl bg-blue-100 border border-blue-200 font-semibold text-slate-900 hover:bg-blue-200 transition-colors";
 }
 
 function vignetteToScenario(v) {
@@ -157,9 +158,9 @@ async function sendMessage(userText) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        scenario: vignetteToScenario(selectedVignette),
-        messages
-      })
+      vignette: selectedVignette,
+      messages
+  })
     });
 
     const data = await res.json();
