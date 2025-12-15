@@ -1,6 +1,5 @@
 import { vignettes } from "./lib/vignettes.js";
 import { buildPatientSystemPrompt } from "./lib/patient-prompt.js";
-// ^ IMPORTANT: file name has a dash, so import it exactly like this
 
 function getVignetteIdFromUrl() {
   const params = new URLSearchParams(window.location.search);

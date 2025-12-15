@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { buildPatientSystemPrompt } from "./patient-prompt.js";
+import { buildPatientSystemPrompt } from "./lib/patient-prompt.js";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
