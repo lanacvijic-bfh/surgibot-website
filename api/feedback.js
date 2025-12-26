@@ -13,10 +13,7 @@ function sanitizeMessages(raw) {
         (m.role === "user" || m.role === "assistant") &&
         typeof m.content === "string"
     )
-    .map((m) => ({
-      role: m.role,
-      content: m.content.slice(0, 4000),
-    }));
+    .map((m) => ({ role: m.role, content: m.content.slice(0, 4000) }));
 }
 
 function isLikelyVignette(v) {
@@ -30,22 +27,14 @@ function isLikelyVignette(v) {
   );
 }
 
-function toTranscript(messages) {
+// Turn index refers to index in the sanitized conversation array.
+function toIndexedTranscript(messages) {
   return messages
-    .map((m) => {
+    .map((m, idx) => {
       const speaker = m.role === "user" ? "SURGEON" : "PATIENT";
-      return `${speaker}: ${m.content.trim()}`;
+      return `TURN ${idx} | ${speaker}: ${m.content.trim()}`;
     })
     .join("\n\n");
-}
-
-function ratingFromScore(score) {
-  if (score >= 85) return "Excellent";
-  if (score >= 70) return "Good";
-  if (score >= 55) return "Satisfactory";
-  if (score >= 40) return "Fair";
-  if (score >= 25) return "Poor";
-  return "Needs Improvement";
 }
 
 export default async function handler(req, res) {
@@ -76,109 +65,181 @@ export default async function handler(req, res) {
       });
     }
 
-    const transcript = toTranscript(conversationHistory);
+    const transcript = toIndexedTranscript(conversationHistory);
 
     const vignetteContext = isLikelyVignette(patientVignette)
       ? JSON.stringify(patientVignette, null, 2)
       : "No valid vignette provided.";
 
-    // JSON Schema expected by your public/feedback-module.js UI
+    // This schema matches your current public/feedback-module.js renderer
     const FEEDBACK_SCHEMA = {
       type: "object",
       additionalProperties: false,
       properties: {
-        overall_score: { type: "integer", minimum: 0, maximum: 100 },
-        overall_rating: {
-          type: "string",
-          enum: ["Excellent", "Good", "Satisfactory", "Fair", "Poor", "Needs Improvement"],
-        },
-        summary: { type: "string" },
-
-        completeness: {
-          type: "object",
-          additionalProperties: false,
-          properties: {
-            score: { type: "integer", minimum: 0, maximum: 100 },
-            details: { type: "string" },
-            covered: { type: "array", items: { type: "string" } },
-            missed: { type: "array", items: { type: "string" } },
-          },
-          required: ["score", "details", "covered", "missed"],
-        },
-
-        communication: {
-          type: "object",
-          additionalProperties: false,
-          properties: {
-            rating: {
-              type: "string",
-              enum: ["Excellent", "Good", "Satisfactory", "Fair", "Poor", "Needs Improvement"],
+        coverage_checklist: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+              item: { type: "string" },
+              status: { type: "string", enum: ["covered", "partially", "not_covered"] },
+              quality_note: { type: "string" },
+              evidence: {
+                type: "array",
+                items: {
+                  type: "object",
+                  additionalProperties: false,
+                  properties: {
+                    turn_index: { type: "integer", minimum: 0 },
+                    quote: { type: "string" },
+                  },
+                  required: ["turn_index", "quote"],
+                },
+              },
             },
-            clarity_score: { type: "integer", minimum: 0, maximum: 10 },
-            strengths: { type: "array", items: { type: "string" } },
-            weaknesses: { type: "array", items: { type: "string" } },
+            required: ["item", "status", "quality_note", "evidence"],
           },
-          required: ["rating", "clarity_score", "strengths", "weaknesses"],
         },
 
-        empathy: {
+        understanding_and_questions: {
           type: "object",
           additionalProperties: false,
           properties: {
-            score: { type: "integer", minimum: 1, maximum: 5 },
-            examples: { type: "array", items: { type: "string" } },
-            missed_opportunities: { type: "array", items: { type: "string" } },
-          },
-          required: ["score", "examples", "missed_opportunities"],
-        },
-
-        patient_centered: {
-          type: "object",
-          additionalProperties: false,
-          properties: {
-            checked_understanding: { type: "boolean" },
-            invited_questions: { type: "boolean" },
-            explored_values: { type: "boolean" },
-            shared_decision_making: { type: "boolean" },
-            feedback: { type: "string" },
-          },
-          required: [
-            "checked_understanding",
-            "invited_questions",
-            "explored_values",
-            "shared_decision_making",
-            "feedback",
-          ],
-        },
-
-        professionalism: {
-          type: "object",
-          additionalProperties: false,
-          properties: {
-            rating: {
-              type: "string",
-              enum: ["Excellent", "Good", "Satisfactory", "Fair", "Poor", "Needs Improvement"],
+            invited_questions: {
+              type: "object",
+              additionalProperties: false,
+              properties: {
+                status: { type: "string", enum: ["covered", "partially", "not_covered"] },
+                improvement: { type: "string" },
+                evidence: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    additionalProperties: false,
+                    properties: {
+                      turn_index: { type: "integer", minimum: 0 },
+                      quote: { type: "string" },
+                    },
+                    required: ["turn_index", "quote"],
+                  },
+                },
+              },
+              required: ["status", "improvement", "evidence"],
             },
-            red_flags: { type: "array", items: { type: "string" } },
-            positive_notes: { type: "array", items: { type: "string" } },
+            checked_understanding: {
+              type: "object",
+              additionalProperties: false,
+              properties: {
+                status: { type: "string", enum: ["covered", "partially", "not_covered"] },
+                improvement: { type: "string" },
+                evidence: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    additionalProperties: false,
+                    properties: {
+                      turn_index: { type: "integer", minimum: 0 },
+                      quote: { type: "string" },
+                    },
+                    required: ["turn_index", "quote"],
+                  },
+                },
+              },
+              required: ["status", "improvement", "evidence"],
+            },
           },
-          required: ["rating", "red_flags", "positive_notes"],
+          required: ["invited_questions", "checked_understanding"],
+        },
+
+        jargon_analysis: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            medical_terms_found: {
+              type: "array",
+              items: {
+                type: "object",
+                additionalProperties: false,
+                properties: {
+                  term: { type: "string" },
+                  turn_index: { type: "integer", minimum: 0 },
+                  explained_plainly: { type: "boolean" },
+                  plain_explanation_quote: { type: "string" },
+                },
+                required: ["term", "turn_index", "explained_plainly", "plain_explanation_quote"],
+              },
+            },
+            overall_assessment: { type: "string" },
+            suggestions: { type: "array", items: { type: "string" } },
+          },
+          required: ["medical_terms_found", "overall_assessment", "suggestions"],
         },
 
         strengths: { type: "array", items: { type: "string" } },
-        improvements: { type: "array", items: { type: "string" } },
+
+        improvements: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+              area: { type: "string" },
+              why_it_matters: { type: "string" },
+              actionable_tip: { type: "string" },
+              example_phrase: { type: "string" },
+            },
+            required: ["area", "why_it_matters", "actionable_tip", "example_phrase"],
+          },
+        },
+
+        overall_score_0_100: { type: "number", minimum: 0, maximum: 100 },
+
+        safety_flags: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+              flag: { type: "string" },
+              severity: { type: "string", enum: ["low", "medium", "high"] },
+              evidence: {
+                type: "array",
+                items: {
+                  type: "object",
+                  additionalProperties: false,
+                  properties: {
+                    turn_index: { type: "integer", minimum: 0 },
+                    quote: { type: "string" },
+                  },
+                  required: ["turn_index", "quote"],
+                },
+              },
+              safer_alternative: { type: "string" },
+            },
+            required: ["flag", "severity", "evidence", "safer_alternative"],
+          },
+        },
+
+        next_session_focus: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            goal: { type: "string" },
+            practice_drills: { type: "array", items: { type: "string" } },
+          },
+          required: ["goal", "practice_drills"],
+        },
       },
       required: [
-        "overall_score",
-        "overall_rating",
-        "summary",
-        "completeness",
-        "communication",
-        "empathy",
-        "patient_centered",
-        "professionalism",
+        "coverage_checklist",
+        "understanding_and_questions",
+        "jargon_analysis",
         "strengths",
         "improvements",
+        "overall_score_0_100",
+        "safety_flags",
+        "next_session_focus",
       ],
     };
 
@@ -188,15 +249,15 @@ export default async function handler(req, res) {
 PATIENT VIGNETTE (context):
 ${vignetteContext}
 
-CONVERSATION TRANSCRIPT:
+CONVERSATION TRANSCRIPT (turn-indexed):
 ${transcript}
 
-Return JSON that matches the schema exactly.
-
-Notes:
-- completeness.covered and completeness.missed must use the checklist labels from the system prompt.
-- Use concrete examples when possible, but keep it short.
-- If overall_rating/communication.rating/professionalism.rating are not obvious, derive from scores.
+Return JSON matching the schema exactly.
+Rules:
+- Use evidence quotes from SURGEON turns only (TURN X | SURGEON: ...).
+- turn_index must match the TURN number you quoted.
+- Keep strengths 3-6 items and improvements 4-8 items.
+- If safety_flags are none, return [].
 `.trim();
 
     const response = await client.responses.create({
@@ -204,11 +265,11 @@ Notes:
       instructions,
       input: [{ role: "user", content: userInput }],
       temperature: 0.2,
-      max_output_tokens: 1200,
+      max_output_tokens: 1400,
       text: {
         format: {
           type: "json_schema",
-          name: "surgibot_feedback",
+          name: "surgibot_feedback_v1",
           strict: true,
           schema: FEEDBACK_SCHEMA,
         },
@@ -232,27 +293,6 @@ Notes:
         error: "Feedback output was not valid JSON.",
         model_output: outputText.slice(0, 2000),
       });
-    }
-
-    // Safety: if model ever returns missing ratings, fill them deterministically
-    if (!feedback.overall_rating && typeof feedback.overall_score === "number") {
-      feedback.overall_rating = ratingFromScore(feedback.overall_score);
-    }
-    if (
-      feedback.communication &&
-      !feedback.communication.rating &&
-      typeof feedback.communication.clarity_score === "number"
-    ) {
-      // map clarity_score to a rough rating
-      const approx = Math.round((feedback.communication.clarity_score / 10) * 100);
-      feedback.communication.rating = ratingFromScore(approx);
-    }
-    if (
-      feedback.professionalism &&
-      !feedback.professionalism.rating &&
-      typeof feedback.overall_score === "number"
-    ) {
-      feedback.professionalism.rating = ratingFromScore(feedback.overall_score);
     }
 
     return res.status(200).json({ success: true, feedback });
