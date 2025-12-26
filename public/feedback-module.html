@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
 
-  <body>
+  <body class="bg-slate-50">
     <!-- Header -->
     <header class="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-sm shadow-md z-30">
       <div class="max-w-6xl mx-auto flex items-center gap-6 px-4 py-3">
@@ -65,54 +65,9 @@
         </p>
       </section>
 
-      <!-- Content container -->
+      <!-- Feedback output (JS renders everything here) -->
       <section class="max-w-5xl mx-auto px-4">
-        <!-- Loading -->
-        <div
-          id="feedbackLoading"
-          class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 md:p-8"
-        >
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-blue-100 border border-blue-200 flex items-center justify-center">
-              <span class="text-blue-700 font-bold">…</span>
-            </div>
-            <div>
-              <p class="text-slate-900 font-semibold">Generating your feedback</p>
-              <p class="text-sm text-gray-600">This may take a moment.</p>
-            </div>
-          </div>
-
-          <div class="mt-6 space-y-3">
-            <div class="h-3 rounded-full bg-gray-100"></div>
-            <div class="h-3 rounded-full bg-gray-100 w-11/12"></div>
-            <div class="h-3 rounded-full bg-gray-100 w-10/12"></div>
-          </div>
-        </div>
-
-        <!-- Error -->
-        <div
-          id="feedbackError"
-          class="hidden mt-6 bg-white border border-red-200 rounded-2xl shadow-sm p-6 md:p-8"
-        >
-          <div class="flex items-start gap-3">
-            <div class="w-10 h-10 rounded-xl bg-red-100 border border-red-200 flex items-center justify-center">
-              <span class="text-red-700 font-bold">!</span>
-            </div>
-            <div class="flex-1">
-              <p class="text-slate-900 font-semibold">Could not generate feedback</p>
-              <p id="feedbackErrorText" class="text-sm text-gray-700 mt-1"></p>
-              <button
-                id="retryFeedbackBtn"
-                class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition"
-              >
-                Try again
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Rendered feedback -->
-        <div id="feedbackContent" class="hidden mt-6 space-y-6"></div>
+        <div id="feedback-container"></div>
       </section>
     </main>
 
@@ -124,10 +79,7 @@
       </div>
     </footer>
 
-    <!-- Your app entry (keep) -->
-    <script type="module" src="/src/main.js"></script>
-
-    <!-- Add this: feedback page controller -->
-    <script type="module" src="/src/feedback-page.js"></script>
+    <!-- IMPORTANT: load the correct script -->
+    <script type="module" src="./feedback-module.js"></script>
   </body>
 </html>
