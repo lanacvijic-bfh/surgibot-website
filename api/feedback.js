@@ -3,7 +3,7 @@ import { buildFeedbackSystemPrompt } from "./lib/feedback-prompt.js";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-function sanitizeTranscript(raw) {
+function sanitizeMessages(raw) {
   if (!Array.isArray(raw)) return [];
   return raw
     .filter(
@@ -12,10 +12,7 @@ function sanitizeTranscript(raw) {
         (m.role === "user" || m.role === "assistant") &&
         typeof m.content === "string"
     )
-    .map((m) => ({
-      role: m.role,
-      content: m.content.slice(0, 6000),
-    }));
+    .map((m) => ({ role: m.role, content: m.content.slice(0, 4000) }));
 }
 
 function isLikelyVignette(v) {
@@ -29,18 +26,12 @@ function isLikelyVignette(v) {
   );
 }
 
-// Robustly extract first JSON object from model output
-function extractJsonObject(text) {
-  if (typeof text !== "string") return null;
-  const start = text.indexOf("{");
-  const end = text.lastIndexOf("}");
-  if (start === -1 || end === -1 || end <= start) return null;
-  const candidate = text.slice(start, end + 1);
-  try {
-    return JSON.parse(candidate);
-  } catch {
-    return null;
-  }
+function toTurnIndexedTranscript(messages) {
+  // role:user = surgeon; role:assistant = patient (based on your practice module)
+  return messages.map((m, idx) => {
+    const speaker = m.role === "user" ? "SURGEON" : "PATIENT";
+    return `TURN ${idx} | ${speaker}: ${m.content.trim()}`;
+  }).join("\n\n");
 }
 
 export default async function handler(req, res) {
@@ -53,6 +44,7 @@ export default async function handler(req, res) {
 
   if (!process.env.OPENAI_API_KEY) {
     return res.status(500).json({
+      success: false,
       error:
         "Missing OPENAI_API_KEY. Add it in Vercel → Project Settings → Environment Variables, then redeploy.",
     });
@@ -60,64 +52,230 @@ export default async function handler(req, res) {
 
   try {
     const body = req.body ?? {};
+    const conversationHistory = sanitizeMessages(body.conversationHistory);
+    const patientVignette = body.patientVignette;
 
-    // Accept both possible client payloads (so you can’t mismatch keys)
-    const transcriptRaw =
-      body.transcript ?? body.conversationHistory ?? body.conversation ?? [];
-    const vignette =
-      body.vignette ?? body.patientVignette ?? body.currentVignette ?? null;
-
-    const transcript = sanitizeTranscript(transcriptRaw);
-    if (transcript.length === 0) {
-      return res.status(400).json({ error: "Empty transcript." });
+    if (!conversationHistory.length) {
+      return res.status(400).json({ success: false, error: "conversationHistory is empty." });
     }
 
-    const instructions = buildFeedbackSystemPrompt({
-      vignette: isLikelyVignette(vignette) ? vignette : null,
-    });
+    const transcript = toTurnIndexedTranscript(conversationHistory);
+
+    const instructions = buildFeedbackSystemPrompt();
+
+    const vignetteContext = isLikelyVignette(patientVignette)
+      ? JSON.stringify(patientVignette, null, 2)
+      : "No valid vignette provided.";
+
+    // Schema that matches your frontend renderer
+    const FEEDBACK_SCHEMA = {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        overall_score_0_100: { type: "number", minimum: 0, maximum: 100 },
+
+        coverage_checklist: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+              item: { type: "string" },
+              status: { type: "string", enum: ["covered", "partially", "not_covered"] },
+              quality_note: { type: "string" },
+              evidence: {
+                type: "array",
+                items: {
+                  type: "object",
+                  additionalProperties: false,
+                  properties: {
+                    turn_index: { type: "integer", minimum: 0 },
+                    quote: { type: "string" },
+                  },
+                  required: ["turn_index", "quote"],
+                },
+              },
+            },
+            required: ["item", "status", "quality_note", "evidence"],
+          },
+        },
+
+        understanding_and_questions: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            invited_questions: {
+              type: "object",
+              additionalProperties: false,
+              properties: {
+                status: { type: "string", enum: ["covered", "partially", "not_covered"] },
+                improvement: { type: "string" },
+                evidence: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    additionalProperties: false,
+                    properties: {
+                      turn_index: { type: "integer", minimum: 0 },
+                      quote: { type: "string" },
+                    },
+                    required: ["turn_index", "quote"],
+                  },
+                },
+              },
+              required: ["status", "improvement", "evidence"],
+            },
+            checked_understanding: {
+              type: "object",
+              additionalProperties: false,
+              properties: {
+                status: { type: "string", enum: ["covered", "partially", "not_covered"] },
+                improvement: { type: "string" },
+                evidence: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    additionalProperties: false,
+                    properties: {
+                      turn_index: { type: "integer", minimum: 0 },
+                      quote: { type: "string" },
+                    },
+                    required: ["turn_index", "quote"],
+                  },
+                },
+              },
+              required: ["status", "improvement", "evidence"],
+            },
+          },
+          required: ["invited_questions", "checked_understanding"],
+        },
+
+        jargon_analysis: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            medical_terms_found: {
+              type: "array",
+              items: {
+                type: "object",
+                additionalProperties: false,
+                properties: {
+                  term: { type: "string" },
+                  turn_index: { type: "integer", minimum: 0 },
+                  explained_plainly: { type: "boolean" },
+                  plain_explanation_quote: { type: "string" },
+                },
+                required: ["term", "turn_index", "explained_plainly", "plain_explanation_quote"],
+              },
+            },
+            overall_assessment: { type: "string" },
+            suggestions: { type: "array", items: { type: "string" } },
+          },
+          required: ["medical_terms_found", "overall_assessment", "suggestions"],
+        },
+
+        strengths: { type: "array", items: { type: "string" } },
+
+        improvements: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+              area: { type: "string" },
+              why_it_matters: { type: "string" },
+              actionable_tip: { type: "string" },
+              example_phrase: { type: "string" },
+            },
+            required: ["area", "why_it_matters", "actionable_tip", "example_phrase"],
+          },
+        },
+
+        safety_flags: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+              flag: { type: "string" },
+              severity: { type: "string", enum: ["low", "medium", "high"] },
+              evidence: {
+                type: "array",
+                items: {
+                  type: "object",
+                  additionalProperties: false,
+                  properties: {
+                    turn_index: { type: "integer", minimum: 0 },
+                    quote: { type: "string" },
+                  },
+                  required: ["turn_index", "quote"],
+                },
+              },
+              safer_alternative: { type: "string" },
+            },
+            required: ["flag", "severity", "evidence", "safer_alternative"],
+          },
+        },
+
+        next_session_focus: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            goal: { type: "string" },
+            practice_drills: { type: "array", items: { type: "string" } },
+          },
+          required: ["goal", "practice_drills"],
+        },
+      },
+      required: [
+        "overall_score_0_100",
+        "coverage_checklist",
+        "understanding_and_questions",
+        "jargon_analysis",
+        "strengths",
+        "improvements",
+        "safety_flags",
+        "next_session_focus",
+      ],
+    };
+
+    const userInput = `
+PATIENT VIGNETTE (context):
+${vignetteContext}
+
+CONVERSATION TRANSCRIPT (turn-indexed):
+${transcript}
+
+Return JSON only, matching the schema exactly.
+Use evidence quotes from SURGEON turns only.
+turn_index must match the TURN number you quoted.
+`.trim();
 
     const response = await client.responses.create({
       model: "gpt-4.1-mini",
       instructions,
-      input: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "input_text",
-              text:
-                "Analyze this informed-consent conversation transcript and return JSON only.\n\n" +
-                JSON.stringify(
-                  {
-                    vignette: isLikelyVignette(vignette) ? vignette : null,
-                    transcript,
-                  },
-                  null,
-                  2
-                ),
-            },
-          ],
-        },
-      ],
+      input: [{ role: "user", content: userInput }],
       temperature: 0.2,
-      max_output_tokens: 1400,
+      max_output_tokens: 1500,
+      text: {
+        format: {
+          type: "json_schema",
+          name: "surgibot_feedback_v1",
+          strict: true,
+          schema: FEEDBACK_SCHEMA,
+        },
+      },
     });
 
-    const text = response.output_text ?? "";
-    const feedback = extractJsonObject(text);
-
-    if (!feedback) {
-      return res.status(502).json({
-        error: "Model did not return valid JSON.",
-        details: text.slice(0, 500),
-      });
-    }
+    const out = response.output_text ?? "";
+    const feedback = JSON.parse(out);
 
     return res.status(200).json({ success: true, feedback });
   } catch (err) {
     console.error("[/api/feedback] Error:", err);
     return res.status(err?.status ?? 500).json({
-      error: err?.message ?? "Feedback generation failed.",
+      success: false,
+      error: err?.message ?? "Feedback function failed.",
     });
   }
 }
