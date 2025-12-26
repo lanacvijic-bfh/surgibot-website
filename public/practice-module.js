@@ -3,6 +3,32 @@ import { vignettes } from "./lib/vignettes.js";
 console.log("[practice-module] script loaded");
 
 // -----------------------------
+// Session storage (NEW)
+// -----------------------------
+const SESSION_ID_KEY = "practiceSessionId";
+
+function createNewSessionId() {
+  return `sess_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+}
+
+function startNewSession() {
+  const id = createNewSessionId();
+  localStorage.setItem(SESSION_ID_KEY, id);
+  return id;
+}
+
+function getSessionId() {
+  return localStorage.getItem(SESSION_ID_KEY);
+}
+
+function getSessionKeys(sessionId) {
+  return {
+    conversationKey: `practiceConversation:${sessionId}`,
+    vignetteKey: `practiceVignette:${sessionId}`,
+  };
+}
+
+// -----------------------------
 // Helpers (vignette selection)
 // -----------------------------
 function getVignetteIdFromUrl() {
@@ -97,9 +123,10 @@ function renderVignetteSummary(v) {
 // -----------------------------
 let selectedVignette = null;
 let messages = [];
-
-// Feedback button ref
 let reviewFeedbackBtn = null;
+
+// NEW: session id for this practice run
+let sessionId = null;
 
 function escapeHtml(str) {
   return String(str)
@@ -109,16 +136,31 @@ function escapeHtml(str) {
 }
 
 /**
- * Persist state so feedback-module can read it.
- * Keys must match feedback-module.js:
- * - practiceConversation
- * - currentVignette
+ * Persist state for THIS sessionId (no overwriting!)
  */
 function persistPracticeState() {
   try {
-    localStorage.setItem("practiceConversation", JSON.stringify(messages));
+    if (!sessionId) return;
+
+    const { conversationKey, vignetteKey } = getSessionKeys(sessionId);
+
+    localStorage.setItem(conversationKey, JSON.stringify(messages));
     if (selectedVignette) {
-      localStorage.setItem("currentVignette", JSON.stringify(selectedVignette));
+      localStorage.setItem(vignetteKey, JSON.stringify(selectedVignette));
+    }
+
+    // Optional: keep a small index of sessions (for future "history")
+    const indexKey = "practiceSessionsIndex";
+    const idx = JSON.parse(localStorage.getItem(indexKey) || "[]");
+    const already = idx.some((s) => s.sessionId === sessionId);
+    if (!already && selectedVignette) {
+      idx.unshift({
+        sessionId,
+        createdAt: new Date().toISOString(),
+        vignetteId: selectedVignette.id,
+        patientName: selectedVignette.demographics?.name || "Unknown",
+      });
+      localStorage.setItem(indexKey, JSON.stringify(idx.slice(0, 25)));
     }
   } catch (e) {
     console.warn("[practice-module] failed to persist practice state:", e);
@@ -130,8 +172,10 @@ function persistPracticeState() {
  */
 function updateFeedbackButtonState() {
   if (!reviewFeedbackBtn) return;
+  const hasUserMessage =
+    Array.isArray(messages) &&
+    messages.some((m) => m.role === "user" && (m.content || "").trim().length > 0);
 
-  const hasUserMessage = Array.isArray(messages) && messages.some((m) => m.role === "user" && (m.content || "").trim().length > 0);
   reviewFeedbackBtn.disabled = !hasUserMessage;
 }
 
@@ -160,7 +204,6 @@ function renderChat() {
 
   chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
 
-  // keep state synced for feedback
   persistPracticeState();
   updateFeedbackButtonState();
 }
@@ -271,19 +314,16 @@ function startTimer() {
       renderTimer();
       stopTimer();
 
-      // disable chat when time is up
       const input = document.getElementById("chatInput");
       const send = document.getElementById("sendBtn");
       if (input) input.disabled = true;
       if (send) send.disabled = true;
 
-      // add a system message in chat
       messages.push({
         role: "assistant",
         content: "Time is up. Now you can review your feedback.",
       });
       renderChat();
-
       return;
     }
 
@@ -296,7 +336,6 @@ function resetTimerAndEnableChat() {
   remainingSeconds = SESSION_SECONDS;
   renderTimer();
 
-  // re-enable chat
   const input = document.getElementById("chatInput");
   const send = document.getElementById("sendBtn");
   if (input) input.disabled = false;
@@ -310,27 +349,26 @@ function setupFeedbackButton() {
   reviewFeedbackBtn = document.getElementById("reviewFeedbackBtn");
   if (!reviewFeedbackBtn) return;
 
-  // Start disabled until user writes at least one message
   updateFeedbackButtonState();
 
   reviewFeedbackBtn.addEventListener("click", () => {
-    // Safety checks
     if (!selectedVignette) {
       alert("No vignette selected.");
       return;
     }
 
-    const hasUserMessage = messages.some((m) => m.role === "user" && (m.content || "").trim().length > 0);
+    const hasUserMessage = messages.some(
+      (m) => m.role === "user" && (m.content || "").trim().length > 0
+    );
     if (!hasUserMessage) {
       alert("Please practice first (send at least one message) before viewing feedback.");
       return;
     }
 
-    // Persist latest state and redirect
     persistPracticeState();
-    localStorage.setItem("feedbackRequestedAt", new Date().toISOString());
+    localStorage.setItem(`feedbackRequestedAt:${sessionId}`, new Date().toISOString());
 
-    window.location.href = "./feedback-module.html";
+    window.location.href = `./feedback-module.html?session=${encodeURIComponent(sessionId)}`;
   });
 }
 
@@ -338,22 +376,23 @@ function setupFeedbackButton() {
 // Boot
 // -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
+  // NEW: always start a fresh session when opening practice module
+  sessionId = startNewSession();
+  console.log("[practice-module] sessionId:", sessionId);
+
   // init timer display + button
   renderTimer();
 
   const startBtn = document.getElementById("startTimerBtn");
   if (startBtn) {
     startBtn.addEventListener("click", () => {
-      // start from 15:00 each time
       resetTimerAndEnableChat();
       startTimer();
     });
   }
 
-  // setup feedback button (even before vignette; it will stay disabled)
   setupFeedbackButton();
 
-  // vignette selection
   const id = getVignetteIdFromUrl();
   if (!id) {
     console.warn("[practice-module] no vignette id in URL");
@@ -372,7 +411,6 @@ document.addEventListener("DOMContentLoaded", () => {
   selectedVignette = vignette;
   renderVignetteSummary(vignette);
 
-  // initial patient greeting
   messages = [
     {
       role: "assistant",
@@ -380,18 +418,15 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   ];
 
-  // persist vignette immediately so feedback has it even before the user types
   persistPracticeState();
-  renderChat(); // also updates button state
+  renderChat();
 
-  // chat submit handler
   const chatForm = document.getElementById("chatForm");
   const chatInput = document.getElementById("chatInput");
 
   if (chatForm) {
     chatForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-
       const text = chatInput?.value?.trim();
       if (!text) return;
 
