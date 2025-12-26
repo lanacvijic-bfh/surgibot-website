@@ -1,7 +1,3 @@
-// api/lib/patient-prompt.js
-// Server-side helper used by Vercel functions (e.g., api/chat.js).
-// Keep this separate from public/lib/patient-prompt.js (frontend) to avoid /api namespace issues.
-
 export function buildPatientSystemPrompt(v) {
   const tags = Array.isArray(v?.tags) ? v.tags.join(", ") : "";
   const symptoms = Array.isArray(v?.clinical_profile?.current_symptoms)
@@ -29,11 +25,11 @@ PATIENT VIGNETTE METADATA:
 [Clinical profile]
 - Current diagnosis: ${v?.clinical_profile?.current_diagnosis ?? ""}
 - Current symptoms: ${symptoms}
-- Other conditions: ${v?.clinical_profile?.other_conditions || "none mentioned"}
-- Medications: ${v?.clinical_profile?.medications || "none mentioned"}
-- Allergies: ${v?.clinical_profile?.allergies || "none mentioned"}
-- Disabilities: ${v?.clinical_profile?.disabilities || "none mentioned"}
-- Cognitive state: ${v?.clinical_profile?.cognitive_state || "normal"}
+- Other conditions: ${v?.clinical_profile?.other_conditions || "None mentioned"}
+- Medications: ${v?.clinical_profile?.medications || "None mentioned"}
+- Allergies: ${v?.clinical_profile?.allergies || "None mentioned"}
+- Disabilities: ${v?.clinical_profile?.disabilities || "None mentioned"}
+- Cognitive state: ${v?.clinical_profile?.cognitive_state || "Normal"}
 - Planned surgery: ${v?.clinical_profile?.planned_surgery ?? ""}
 
 [Communication & personality]
