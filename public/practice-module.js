@@ -42,6 +42,10 @@ function renderNoVignette() {
   // disable timer button too
   const startTimerBtn = document.getElementById("startTimerBtn");
   if (startTimerBtn) startTimerBtn.disabled = true;
+
+  // disable feedback button too
+  const reviewFeedbackBtn = document.getElementById("reviewFeedbackBtn");
+  if (reviewFeedbackBtn) reviewFeedbackBtn.disabled = true;
 }
 
 function renderVignetteSummary(v) {
@@ -94,11 +98,41 @@ function renderVignetteSummary(v) {
 let selectedVignette = null;
 let messages = [];
 
+// Feedback button ref
+let reviewFeedbackBtn = null;
+
 function escapeHtml(str) {
   return String(str)
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;");
+}
+
+/**
+ * Persist state so feedback-module can read it.
+ * Keys must match feedback-module.js:
+ * - practiceConversation
+ * - currentVignette
+ */
+function persistPracticeState() {
+  try {
+    localStorage.setItem("practiceConversation", JSON.stringify(messages));
+    if (selectedVignette) {
+      localStorage.setItem("currentVignette", JSON.stringify(selectedVignette));
+    }
+  } catch (e) {
+    console.warn("[practice-module] failed to persist practice state:", e);
+  }
+}
+
+/**
+ * Enable feedback button only after user has participated (at least 1 user message)
+ */
+function updateFeedbackButtonState() {
+  if (!reviewFeedbackBtn) return;
+
+  const hasUserMessage = Array.isArray(messages) && messages.some((m) => m.role === "user" && (m.content || "").trim().length > 0);
+  reviewFeedbackBtn.disabled = !hasUserMessage;
 }
 
 function renderChat() {
@@ -125,6 +159,10 @@ function renderChat() {
   }
 
   chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+
+  // keep state synced for feedback
+  persistPracticeState();
+  updateFeedbackButtonState();
 }
 
 function setSending(isSending) {
@@ -159,7 +197,6 @@ async function sendMessage(userText) {
       }),
     });
 
-    // safer parsing (so you see real errors, not just "network error")
     const ct = res.headers.get("content-type") || "";
     let data;
 
@@ -267,6 +304,37 @@ function resetTimerAndEnableChat() {
 }
 
 // -----------------------------
+// Feedback button behavior
+// -----------------------------
+function setupFeedbackButton() {
+  reviewFeedbackBtn = document.getElementById("reviewFeedbackBtn");
+  if (!reviewFeedbackBtn) return;
+
+  // Start disabled until user writes at least one message
+  updateFeedbackButtonState();
+
+  reviewFeedbackBtn.addEventListener("click", () => {
+    // Safety checks
+    if (!selectedVignette) {
+      alert("No vignette selected.");
+      return;
+    }
+
+    const hasUserMessage = messages.some((m) => m.role === "user" && (m.content || "").trim().length > 0);
+    if (!hasUserMessage) {
+      alert("Please practice first (send at least one message) before viewing feedback.");
+      return;
+    }
+
+    // Persist latest state and redirect
+    persistPracticeState();
+    localStorage.setItem("feedbackRequestedAt", new Date().toISOString());
+
+    window.location.href = "./feedback-module.html";
+  });
+}
+
+// -----------------------------
 // Boot
 // -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
@@ -281,6 +349,9 @@ document.addEventListener("DOMContentLoaded", () => {
       startTimer();
     });
   }
+
+  // setup feedback button (even before vignette; it will stay disabled)
+  setupFeedbackButton();
 
   // vignette selection
   const id = getVignetteIdFromUrl();
@@ -308,7 +379,10 @@ document.addEventListener("DOMContentLoaded", () => {
       content: `Good day doctor. I'm ${vignette.demographics.name}. I'm here about the surgery. Can you explain what's going to happen?`,
     },
   ];
-  renderChat();
+
+  // persist vignette immediately so feedback has it even before the user types
+  persistPracticeState();
+  renderChat(); // also updates button state
 
   // chat submit handler
   const chatForm = document.getElementById("chatForm");

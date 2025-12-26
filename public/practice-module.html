@@ -1,165 +1,189 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Practice module</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="./style.css" />
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Practice module</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
 
-<body class="bg-slate-50">
-  <!-- Header -->
-  <header class="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-sm shadow-md z-30">
-    <div class="max-w-6xl mx-auto flex items-center gap-6 px-4 py-3">
-      <a href="index.html" class="flex items-center gap-2 shrink-0">
-        <img src="./icons/surgibot-website-logo.png" alt="SurgiBot icon" class="w-11 h-11" />
-        <span class="text-2xl font-semibold text-slate-900">SurgiBot</span>
-      </a>
+  <body class="bg-slate-50">
+    <!-- Header -->
+    <header class="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-sm shadow-md z-30">
+      <div class="max-w-6xl mx-auto flex items-center gap-6 px-4 py-3">
+        <a href="index.html" class="flex items-center gap-2 shrink-0">
+          <img src="./icons/surgibot-website-logo.png" alt="SurgiBot icon" class="w-11 h-11" />
+          <span class="text-2xl font-semibold text-slate-900">SurgiBot</span>
+        </a>
 
-      <div class="flex-1 flex justify-center">
-        <div class="flex items-center gap-3">
-          <a href="./learning-module.html" class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl">
-            <img src="./icons/learn-button.png" alt="Learn icon" class="w-8 h-8" />
-            <span class="text-xs font-semibold text-slate-900">Learning module</span>
-          </a>
-          <a href="./vignette-library.html" class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl">
-            <img src="./icons/vignette-library-button.png" alt="Library icon" class="w-8 h-8" />
-            <span class="text-xs font-semibold text-slate-900">Vignette library</span>
-          </a>
-          <a href="./practice-module.html"
-             class="flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200">
-            <img src="./icons/practice-button.png" alt="Practice icon" class="w-8 h-8" />
-            <span class="text-xs font-semibold text-slate-900">Practice module</span>
-          </a>
-          <a href="./feedback-module.html" class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl">
-            <img src="./icons/feedback-button.png" alt="Feedback icon" class="w-8 h-8" />
-            <span class="text-xs font-semibold text-slate-900">Feedback module</span>
-          </a>
+        <div class="flex-1 flex justify-center">
+          <div class="flex items-center gap-3">
+            <a href="./learning-module.html" class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl">
+              <img src="./icons/learn-button.png" alt="Learn icon" class="w-8 h-8" />
+              <span class="text-xs font-semibold text-slate-900">Learning module</span>
+            </a>
+
+            <a href="./vignette-library.html" class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl">
+              <img src="./icons/vignette-library-button.png" alt="Library icon" class="w-8 h-8" />
+              <span class="text-xs font-semibold text-slate-900">Vignette library</span>
+            </a>
+
+            <a href="./practice-module.html" class="flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200">
+              <img src="./icons/practice-button.png" alt="Practice icon" class="w-8 h-8" />
+              <span class="text-xs font-semibold text-slate-900">Practice module</span>
+            </a>
+
+            <a href="./feedback-module.html" class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl">
+              <img src="./icons/feedback-button.png" alt="Feedback icon" class="w-8 h-8" />
+              <span class="text-xs font-semibold text-slate-900">Feedback module</span>
+            </a>
+          </div>
         </div>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <!-- Main -->
-  <main class="pt-24 pb-10">
-    <!-- Intro -->
-    <section class="max-w-3xl mx-auto text-center px-4">
-      <div class="inline-block px-5 py-1 mb-4 rounded-full bg-blue-100 text-blue-600 text-xs font-semibold border border-blue-200">
-        Step 3: Practice with a virtual patient
-      </div>
-      <h1 class="text-l md:text-4xl font-extrabold text-slate-900 mb-3">
-        Practice surgical informed consent
-      </h1>
-      <p class="text-sm md:text-base text-gray-700 mb-5 leading-relaxed">
-        Use the selected patient vignette to practice an informed consent discussion.
-      </p>
-    </section>
-
-    <!-- 3-column layout -->
-    <section class="mt-10">
-      <div class="max-w-screen-2xl mx-auto px-4">
-        <div class="grid gap-6 lg:grid-cols-[360px,minmax(760px,1fr),360px] items-stretch">
-
-          <!-- LEFT -->
-          <aside id="practice-vignette-summary"
-                 class="bg-white rounded-3xl shadow-sm border border-gray-200/70 p-6 text-xs text-slate-700">
-            <!-- JS injects selected vignette info here -->
-          </aside>
-
-          <!-- MIDDLE -->
-          <section class="bg-white rounded-3xl shadow-sm border border-gray-200/70 p-4 md:p-6 flex flex-col">
-            <div class="mb-4 text-center">
-              <h2 class="text-sm md:text-base font-semibold text-slate-900">
-                Informed consent discussion
-              </h2>
-              <p class="text-xs text-gray-600 mt-1">
-                Conduct the informed consent discussion with the virtual patient.
-              </p>
-            </div>
-
-            <div id="chatHistory"
-                 class="flex-1 min-h-[580px] rounded-2xl border border-gray-200 bg-slate-50 overflow-y-auto px-4 py-4 space-y-3">
-            </div>
-
-            <form id="chatForm" class="flex gap-2 mt-4">
-              <input id="chatInput" type="text" placeholder="Type your question to the patient..."
-                     class="flex-1 text-xs rounded-xl border border-slate-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500" />
-
-              <button id="sendBtn" type="submit"
-                      class="px-4 py-2 text-xs rounded-xl bg-blue-100 border border-blue-200 font-semibold text-slate-900 hover:bg-blue-200 transition-colors">
-                Send
-              </button>
-            </form>
-          </section>
-
-          <!-- RIGHT -->
-          <aside class="bg-white rounded-3xl shadow-sm border border-gray-200/70 p-6">
-
-            <!-- CONSENT WORKFLOW (top) -->
-            <div class="text-center mb-2">
-              <p class="text-sm md:text-base font-semibold text-slate-900">
-                Consent workflow
-              </p>
-            </div>
-
-            <p class="text-xs text-gray-600 mb-3 text-center">
-              Keep this flow in mind during the discussion.
-            </p>
-
-            <div class="rounded-2xl border border-gray-200 overflow-hidden bg-white">
-              <img
-                src="./icons/consent-workflow-framework.jpg"
-                alt="Informed consent workflow"
-                class="w-full h-auto block"
-              />
-            </div>
-
-            <!-- TIMER (moved below consent workflow) -->
-          <div class="border-t border-gray-200 mt-4 pt-4">
-  <div class="text-center mb-3">
-    <p class="text-sm md:text-base font-semibold text-slate-900">
-      Timer
-    </p>
-  </div>
-
-  <!-- Helper sentence (same style as the consent workflow sentence) -->
-  <p class="text-xs text-gray-600 leading-snug mb-3 text-center">
-    You have 15 minutes to complete the discussion. 
-  </p>
-
-  <button id="startTimerBtn" type="button"
-          class="flex items-center justify-center w-full gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200
-               text-xs md:text-sm font-semibold text-black hover:bg-blue-200 transition-colors">
-    Start the timer
-  </button>
-
-  <!-- Timer display: icon + blue numbers on background -->
-  <div class="mt-3 flex justify-center">
-    <div class="inline-flex items-center justify-center gap-2 mx-auto">
-      <img src="./icons/timer.png" alt="Timer icon" class="w-12 h-12" />
-      <span id="timerLabel" class="font-semibold text-base text-blue-600 tabular-nums">15:00</span>
-    </div>
-  </div>
-</div>
-
-          </aside>
-
+    <!-- Main -->
+    <main class="pt-24 pb-10">
+      <!-- Intro -->
+      <section class="max-w-3xl mx-auto text-center px-4">
+        <div class="inline-block px-5 py-1 mb-4 rounded-full bg-blue-100 text-blue-600 text-xs font-semibold border border-blue-200">
+          Step 3: Practice with a virtual patient
         </div>
+        <h1 class="text-l md:text-4xl font-extrabold text-slate-900 mb-3">
+          Practice surgical informed consent
+        </h1>
+        <p class="text-sm md:text-base text-gray-700 mb-4 leading-relaxed">
+          Use the selected patient vignette to practice an informed consent discussion.
+        </p>
+      </section>
+
+      <!-- 3-column layout -->
+      <section class="mt-8">
+        <div class="max-w-screen-2xl mx-auto px-4">
+          <div class="grid gap-6 lg:grid-cols-[360px,minmax(760px,1fr),360px] items-stretch">
+            <!-- LEFT -->
+            <aside
+              id="practice-vignette-summary"
+              class="bg-white rounded-3xl shadow-sm border border-gray-200/70 p-6 text-xs text-slate-700"
+            >
+              <!-- JS injects selected vignette info here -->
+            </aside>
+
+            <!-- MIDDLE -->
+            <section class="bg-white rounded-3xl shadow-sm border border-gray-200/70 p-4 md:p-6 flex flex-col">
+              <div class="mb-3 text-center">
+                <h2 class="text-sm md:text-base font-semibold text-slate-900">
+                  Informed consent discussion
+                </h2>
+                <p class="text-xs text-gray-600 mt-1">
+                  Conduct the informed consent discussion with the virtual patient.
+                </p>
+              </div>
+
+              <div
+                id="chatHistory"
+                class="flex-1 min-h-[500px] rounded-2xl border border-gray-200 bg-slate-50 overflow-y-auto px-4 py-4 space-y-3"
+              ></div>
+
+              <form id="chatForm" class="flex gap-2 mt-4">
+                <input
+                  id="chatInput"
+                  type="text"
+                  placeholder="Type your question to the patient..."
+                  class="flex-1 text-xs rounded-xl border border-slate-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+
+                <button
+                  id="sendBtn"
+                  type="submit"
+                  class="px-4 py-2 text-xs rounded-xl bg-blue-100 border border-blue-200 font-semibold text-slate-900 hover:bg-blue-200 transition-colors"
+                >
+                  Send
+                </button>
+              </form>
+            </section>
+
+            <!-- RIGHT -->
+            <aside class="bg-white rounded-3xl shadow-sm border border-gray-200/70 p-6 pb-6">
+              <!-- CONSENT WORKFLOW (top) -->
+              <div class="text-center mb-2">
+                <p class="text-sm md:text-base font-semibold text-slate-900">
+                  Consent workflow
+                </p>
+              </div>
+
+              <p class="text-xs text-gray-600 mb-3 text-center">
+                Keep this flow in mind during the discussion.
+              </p>
+
+              <div class="rounded-2xl border border-gray-200 overflow-hidden bg-white">
+                <img
+                  src="./icons/consent-workflow-framework.jpg"
+                  alt="Informed consent workflow"
+                  class="w-full h-auto block"
+                />
+              </div>
+
+              <!-- TIMER -->
+              <div class="border-t border-gray-200 mt-4 pt-4 min-h-[270px]">
+                <div class="text-center mb-3">
+                  <p class="text-sm md:text-base font-semibold text-slate-900">
+                    Timer
+                  </p>
+                </div>
+
+                <p class="text-xs text-gray-600 leading-snug mb-3 text-center">
+                  You have 15 minutes to complete the discussion.
+                </p>
+
+                <button
+                  id="startTimerBtn"
+                  type="button"
+                  class="flex items-center justify-center w-full gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200 text-xs md:text-sm font-semibold text-black hover:bg-blue-200 transition-colors"
+                >
+                  Start the timer
+                </button>
+
+                <div class="mt-3 flex justify-center">
+                  <div class="inline-flex items-center justify-center gap-2 mx-auto">
+                    <img src="./icons/timer.png" alt="Timer icon" class="w-12 h-12" />
+                    <span id="timerLabel" class="font-semibold text-base text-blue-600 tabular-nums">15:00</span>
+                  </div>
+                </div>
+
+                <!-- Divider + Feedback section -->
+                <div class="border-t border-gray-200 mt-4 pt-4">
+                  <div class="text-center mb-3">
+                    <p class="text-sm md:text-base font-semibold text-slate-900">
+                      Feedback
+                    </p>
+                  </div>
+
+                  <button
+                    id="reviewFeedbackBtn"
+                    type="button"
+                    class="flex items-center justify-center w-full gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200 text-xs md:text-sm font-semibold text-black hover:bg-blue-200 transition-colors"
+                  >
+                    Show personalized feedback
+                  </button>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Website footer -->
+    <footer class="mt-12 bg-blue-400 text-white">
+      <div class="max-w-4xl mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-2 text-xs md:text-sm">
+        <p>© 2025 SurgiBot: Master surgical informed consent with AI.</p>
+        <p class="opacity-80">Designed & developed by Lana Cvijic.</p>
       </div>
-    </section>
-  </main>
+    </footer>
 
-  <!-- JS -->
-  <script type="module" src="./practice-module.js"></script>
-</body>
-
-<!-- Website footer -->
-<footer class="mt-12 bg-blue-400 text-white">
-  <div
-    class="max-w-4xl mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-2 text-xs md:text-sm">
-    <p>© 2025 SurgiBot: Master surgical informed consent with AI.</p>
-    <p class="opacity-80">Designed & developed by Lana Cvijic.</p>
-  </div>
-</footer>
+    <!-- JS -->
+    <script type="module" src="./practice-module.js"></script>
+  </body>
 </html>
