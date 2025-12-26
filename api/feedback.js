@@ -28,10 +28,12 @@ function isLikelyVignette(v) {
 
 function toTurnIndexedTranscript(messages) {
   // role:user = surgeon; role:assistant = patient (based on your practice module)
-  return messages.map((m, idx) => {
-    const speaker = m.role === "user" ? "SURGEON" : "PATIENT";
-    return `TURN ${idx} | ${speaker}: ${m.content.trim()}`;
-  }).join("\n\n");
+  return messages
+    .map((m, idx) => {
+      const speaker = m.role === "user" ? "SURGEON" : "PATIENT";
+      return `TURN ${idx} | ${speaker}: ${String(m.content || "").trim()}`;
+    })
+    .join("\n\n");
 }
 
 export default async function handler(req, res) {
@@ -52,28 +54,29 @@ export default async function handler(req, res) {
 
   try {
     const body = req.body ?? {};
-    const conversationHistory = sanitizeMessages(body.conversationHistory);
-    const patientVignette = body.patientVignette;
+    const conversationHistory = sanitizeMessages(body.conversationHistory ?? []);
+    const patientVignette = body.patientVignette ?? null;
 
     if (!conversationHistory.length) {
-      return res.status(400).json({ success: false, error: "conversationHistory is empty." });
+      return res
+        .status(400)
+        .json({ success: false, error: "conversationHistory is empty." });
     }
 
     const transcript = toTurnIndexedTranscript(conversationHistory);
 
-    const instructions = buildFeedbackSystemPrompt();
+    // ✅ PASS VIGNETTE HERE
+    const instructions = buildFeedbackSystemPrompt({ vignette: patientVignette });
 
     const vignetteContext = isLikelyVignette(patientVignette)
       ? JSON.stringify(patientVignette, null, 2)
       : "No valid vignette provided.";
 
-    // Schema that matches your frontend renderer
     const FEEDBACK_SCHEMA = {
       type: "object",
       additionalProperties: false,
       properties: {
         overall_score_0_100: { type: "number", minimum: 0, maximum: 100 },
-
         coverage_checklist: {
           type: "array",
           items: {
@@ -81,7 +84,10 @@ export default async function handler(req, res) {
             additionalProperties: false,
             properties: {
               item: { type: "string" },
-              status: { type: "string", enum: ["covered", "partially", "not_covered"] },
+              status: {
+                type: "string",
+                enum: ["covered", "partially", "not_covered"],
+              },
               quality_note: { type: "string" },
               evidence: {
                 type: "array",
@@ -99,7 +105,6 @@ export default async function handler(req, res) {
             required: ["item", "status", "quality_note", "evidence"],
           },
         },
-
         understanding_and_questions: {
           type: "object",
           additionalProperties: false,
@@ -108,7 +113,10 @@ export default async function handler(req, res) {
               type: "object",
               additionalProperties: false,
               properties: {
-                status: { type: "string", enum: ["covered", "partially", "not_covered"] },
+                status: {
+                  type: "string",
+                  enum: ["covered", "partially", "not_covered"],
+                },
                 improvement: { type: "string" },
                 evidence: {
                   type: "array",
@@ -129,7 +137,10 @@ export default async function handler(req, res) {
               type: "object",
               additionalProperties: false,
               properties: {
-                status: { type: "string", enum: ["covered", "partially", "not_covered"] },
+                status: {
+                  type: "string",
+                  enum: ["covered", "partially", "not_covered"],
+                },
                 improvement: { type: "string" },
                 evidence: {
                   type: "array",
@@ -149,7 +160,6 @@ export default async function handler(req, res) {
           },
           required: ["invited_questions", "checked_understanding"],
         },
-
         jargon_analysis: {
           type: "object",
           additionalProperties: false,
@@ -165,7 +175,12 @@ export default async function handler(req, res) {
                   explained_plainly: { type: "boolean" },
                   plain_explanation_quote: { type: "string" },
                 },
-                required: ["term", "turn_index", "explained_plainly", "plain_explanation_quote"],
+                required: [
+                  "term",
+                  "turn_index",
+                  "explained_plainly",
+                  "plain_explanation_quote",
+                ],
               },
             },
             overall_assessment: { type: "string" },
@@ -173,9 +188,7 @@ export default async function handler(req, res) {
           },
           required: ["medical_terms_found", "overall_assessment", "suggestions"],
         },
-
         strengths: { type: "array", items: { type: "string" } },
-
         improvements: {
           type: "array",
           items: {
@@ -190,7 +203,6 @@ export default async function handler(req, res) {
             required: ["area", "why_it_matters", "actionable_tip", "example_phrase"],
           },
         },
-
         safety_flags: {
           type: "array",
           items: {
@@ -216,7 +228,6 @@ export default async function handler(req, res) {
             required: ["flag", "severity", "evidence", "safer_alternative"],
           },
         },
-
         next_session_focus: {
           type: "object",
           additionalProperties: false,

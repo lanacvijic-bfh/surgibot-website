@@ -1,5 +1,13 @@
-export function buildFeedbackSystemPrompt({ vignette }) {
-  const vignetteHint = vignette
+// api/lib/feedback-prompt.js
+
+export function buildFeedbackSystemPrompt({ vignette } = {}) {
+  const hasVignette =
+    vignette &&
+    typeof vignette === "object" &&
+    vignette.demographics &&
+    vignette.clinical_profile;
+
+  const vignetteHint = hasVignette
     ? `Context (patient vignette):
 - Name: ${vignette.demographics?.name ?? "Unknown"}
 - Age: ${vignette.demographics?.age ?? "Unknown"}
@@ -11,8 +19,8 @@ export function buildFeedbackSystemPrompt({ vignette }) {
 You are an expert clinical communication assessor for surgical informed consent.
 
 You will receive a transcript with turns like:
-- role: "assistant" = surgeon/resident
-- role: "user" = patient
+- role: "user" = surgeon/resident
+- role: "assistant" = patient
 
 TASK:
 Evaluate the surgeon’s informed consent discussion and return STRICT JSON only (no markdown, no prose).
