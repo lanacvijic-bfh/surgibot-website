@@ -1,25 +1,16 @@
 // public/feedback-module.js
 // Renders feedback from POST /api/feedback using your existing Tailwind style.
 //
-// Expects localStorage keys:
+// Reads localStorage keys:
 // - practiceConversation: Array of chat turns (your practice session)
 // - currentVignette: vignette object
 //
-// Expects the backend (/api/feedback) to return EITHER:
-//  A) the feedback JSON directly (recommended), OR
-//  B) { success: true, feedback: <feedback JSON> } (older format)
+// Calls POST /api/feedback with:
+// { conversationHistory, patientVignette }
 //
-// Feedback JSON shape should match what we designed in feedback-prompt.js:
-// {
-//   coverage_checklist: [{ item, status, quality_note, evidence:[{turn_index, quote}] }],
-//   understanding_and_questions: { invited_questions:{...}, checked_understanding:{...} },
-//   jargon_analysis: { medical_terms_found:[...], overall_assessment, suggestions:[] },
-//   strengths: [],
-//   improvements: [{ area, why_it_matters, actionable_tip, example_phrase }],
-//   overall_score_0_100: number,
-//   safety_flags: [{ flag, severity, evidence:[...], safer_alternative }],
-//   next_session_focus: { goal, practice_drills:[] }
-// }
+// Accepts backend response formats:
+// A) { success: true, feedback: <feedback JSON> }
+// B) <feedback JSON> directly
 
 const STORAGE_KEYS = {
   conversation: "practiceConversation",
@@ -59,6 +50,25 @@ function showLoadingState() {
   `;
 }
 
+function escapeHtml(str) {
+  return String(str ?? "").replace(/[&<>"']/g, (m) => {
+    switch (m) {
+      case "&":
+        return "&amp;";
+      case "<":
+        return "&lt;";
+      case ">":
+        return "&gt;";
+      case '"':
+        return "&quot;";
+      case "'":
+        return "&#39;";
+      default:
+        return m;
+    }
+  });
+}
+
 function showError(message) {
   const container = document.getElementById("feedback-container");
   container.innerHTML = `
@@ -93,25 +103,6 @@ function showNoConversation() {
       </a>
     </div>
   `;
-}
-
-function escapeHtml(str) {
-  return String(str ?? "").replace(/[&<>"']/g, (m) => {
-    switch (m) {
-      case "&":
-        return "&amp;";
-      case "<":
-        return "&lt;";
-      case ">":
-        return "&gt;";
-      case '"':
-        return "&quot;";
-      case "'":
-        return "&#39;";
-      default:
-        return m;
-    }
-  });
 }
 
 function scoreToRating(score0to100) {
@@ -192,7 +183,9 @@ function renderEvidence(evidence) {
     <div class="mt-3 space-y-2">
       ${ev.slice(0, 2).map((e) => `
         <div class="text-xs text-gray-600 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2">
-          <span class="font-semibold text-gray-700">${Number.isFinite(e.turn_index) ? `Turn ${e.turn_index}` : "Turn"}</span>:
+          <span class="font-semibold text-gray-700">${
+            Number.isFinite(e.turn_index) ? `Turn ${e.turn_index}` : "Turn"
+          }</span>:
           “${escapeHtml(e.quote || "")}”
         </div>
       `).join("")}
@@ -200,16 +193,13 @@ function renderEvidence(evidence) {
   `;
 }
 
-function displayFeedback(rawFeedback) {
+function displayFeedback(raw) {
   const container = document.getElementById("feedback-container");
 
-  // Support both response styles:
-  const feedback =
-    rawFeedback && rawFeedback.feedback && rawFeedback.success !== undefined
-      ? rawFeedback.feedback
-      : rawFeedback;
+  // Accept both: direct JSON or { success, feedback }
+  const feedback = raw?.feedback && typeof raw?.success !== "undefined" ? raw.feedback : raw;
 
-  // Basic guards
+  // Guards
   const score = Number(feedback?.overall_score_0_100 ?? 0);
   const rating = scoreToRating(score);
 
@@ -234,12 +224,14 @@ function displayFeedback(rawFeedback) {
     <div class="max-w-4xl mx-auto mb-8">
       <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-8 text-white text-center shadow-xl">
         <h2 class="text-3xl font-bold mb-2">Overall Performance</h2>
-        <div class="text-7xl font-extrabold mb-3">${isFinite(score) ? score : 0}/100</div>
+        <div class="text-7xl font-extrabold mb-3">${Number.isFinite(score) ? score : 0}/100</div>
         <div class="inline-block px-6 py-2 bg-white/20 backdrop-blur rounded-full text-lg font-semibold border border-white/30">
           ${rating}
         </div>
         <p class="mt-4 text-blue-50 max-w-2xl mx-auto">
-          ${escapeHtml(strengths.length ? strengths.slice(0, 2).join(" • ") : "See the detailed checklist below to improve.")}
+          ${escapeHtml(
+            strengths.length ? strengths.slice(0, 2).join(" • ") : "See the detailed checklist below to improve."
+          )}
         </p>
       </div>
     </div>
@@ -299,13 +291,13 @@ function displayFeedback(rawFeedback) {
         <div class="space-y-3">
           <div class="flex items-center justify-between">
             <span class="text-sm text-gray-700">Invited questions</span>
-            <span class="px-3 py-1 rounded-full text-xs font-semibold border ${statusBadge(invited?.status)}">
+            <span class="${statusBadge(invited?.status)}">
               ${statusLabel(invited?.status)}
             </span>
           </div>
           <div class="flex items-center justify-between">
             <span class="text-sm text-gray-700">Checked understanding</span>
-            <span class="px-3 py-1 rounded-full text-xs font-semibold border ${statusBadge(checked?.status)}">
+            <span class="${statusBadge(checked?.status)}">
               ${statusLabel(checked?.status)}
             </span>
           </div>
@@ -420,7 +412,7 @@ function displayFeedback(rawFeedback) {
       </div>
     </div>
 
-    <!-- Improvements (with example phrases) -->
+    <!-- Improvements -->
     <div class="max-w-4xl mx-auto mb-8">
       <div class="bg-orange-50 rounded-xl shadow-md p-6 border border-orange-200">
         <h3 class="text-xl font-bold text-orange-900 mb-4">📈 Areas for Improvement</h3>
@@ -445,7 +437,7 @@ function displayFeedback(rawFeedback) {
       </div>
     </div>
 
-    <!-- Safety flags (only if any) -->
+    <!-- Safety flags -->
     ${
       safetyFlags.length
         ? `
@@ -515,6 +507,14 @@ function displayFeedback(rawFeedback) {
   container.innerHTML = html;
 }
 
+async function parseErrorResponse(response) {
+  const ct = response.headers.get("content-type") || "";
+  if (ct.includes("application/json")) {
+    return await response.json().catch(() => ({}));
+  }
+  return { error: await response.text().catch(() => "") };
+}
+
 async function analyzePracticeSession() {
   const conversationHistory = getConversationHistory();
   const patientVignette = getCurrentVignette();
@@ -530,32 +530,25 @@ async function analyzePracticeSession() {
     const response = await fetch("/api/feedback", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      // IMPORTANT: your backend expects `transcript` and `vignette`
       body: JSON.stringify({
-        transcript: conversationHistory,
-        vignette: patientVignette,
+        conversationHistory,
+        patientVignette,
       }),
     });
 
     if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
+      const err = await parseErrorResponse(response);
       throw new Error(err.details || err.error || `Server error: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = await response.json().catch(() => ({}));
 
-    // Accept both formats:
-    // - direct feedback JSON
-    // - { success:true, feedback: {...} }
-    const feedbackObj = data?.feedback ? data : data;
-
-    // Quick sanity check
     const fb = data?.feedback ? data.feedback : data;
     if (!fb || typeof fb !== "object" || typeof fb.overall_score_0_100 !== "number") {
       throw new Error("Invalid feedback format received from server.");
     }
 
-    displayFeedback(feedbackObj);
+    displayFeedback(data);
   } catch (error) {
     console.error("Failed to get feedback:", error);
     showError(error.message || "Unable to analyze your conversation. Please try again.");
@@ -563,7 +556,5 @@ async function analyzePracticeSession() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Make sure your feedback-module.html contains:
-  // <div id="feedback-container"></div>
   analyzePracticeSession();
 });

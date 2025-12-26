@@ -2,151 +2,265 @@
 import OpenAI from "openai";
 import { buildFeedbackSystemPrompt } from "./lib/feedback-prompt.js";
 
-/**
- * Vercel Serverless Function
- * POST /api/feedback
- *
- * Expects JSON body:
- * {
- *   transcript: string | Array<{ role?: string, speaker?: string, content?: string, message?: string }>,
- *   vignette?: any,
- *   requiredItems?: string[]   // optional override of MUST-CHECK items
- * }
- *
- * Returns structured JSON feedback (see feedback-prompt.js schema).
- */
-
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-function setNoCache(res) {
-  res.setHeader("Cache-Control", "no-store, max-age=0");
+function sanitizeMessages(raw) {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter(
+      (m) =>
+        m &&
+        (m.role === "user" || m.role === "assistant") &&
+        typeof m.content === "string"
+    )
+    .map((m) => ({
+      role: m.role,
+      content: m.content.slice(0, 4000),
+    }));
 }
 
-function safeJsonParse(maybeJsonText) {
-  if (typeof maybeJsonText !== "string") throw new Error("Model response was not text.");
-  try {
-    return JSON.parse(maybeJsonText);
-  } catch {
-    // Best-effort extraction if the model wrapped JSON with extra text
-    const start = maybeJsonText.indexOf("{");
-    const end = maybeJsonText.lastIndexOf("}");
-    if (start >= 0 && end > start) {
-      const sliced = maybeJsonText.slice(start, end + 1);
-      return JSON.parse(sliced);
-    }
-    throw new Error("Model did not return valid JSON.");
-  }
+function isLikelyVignette(v) {
+  return (
+    v &&
+    typeof v === "object" &&
+    v.demographics &&
+    v.clinical_profile &&
+    typeof v.demographics?.name === "string" &&
+    typeof v.clinical_profile?.planned_surgery === "string"
+  );
 }
 
-/**
- * Normalize transcript to an indexed array so the model can cite turn indices.
- * We also build a compact text representation to reduce ambiguity.
- */
-function normalizeTranscript(transcript) {
-  if (!transcript) return { turns: [], text: "" };
-
-  // If transcript is already a string, we keep it as a blob.
-  if (typeof transcript === "string") {
-    return { turns: null, text: transcript.trim() };
-  }
-
-  if (!Array.isArray(transcript)) {
-    // fallback
-    return { turns: null, text: String(transcript) };
-  }
-
-  const turns = transcript
-    .map((t, idx) => {
-      const speaker = (t?.speaker || t?.role || "unknown").toLowerCase();
-      const content = (t?.content || t?.message || "").toString().trim();
-      return { turn_index: idx, speaker, content };
+function toTranscript(messages) {
+  return messages
+    .map((m) => {
+      const speaker = m.role === "user" ? "SURGEON" : "PATIENT";
+      return `${speaker}: ${m.content.trim()}`;
     })
-    .filter((t) => t.content.length > 0);
-
-  const text = turns
-    .map((t) => `[${t.turn_index}] ${t.speaker}: ${t.content}`)
-    .join("\n");
-
-  return { turns, text };
+    .join("\n\n");
 }
 
-function validateResponseShape(obj) {
-  // Lightweight sanity checks (don’t overdo it; model should be constrained by prompt)
-  if (!obj || typeof obj !== "object") throw new Error("Feedback JSON was not an object.");
-  if (!Array.isArray(obj.coverage_checklist)) throw new Error("Missing coverage_checklist.");
-  if (typeof obj.overall_score_0_100 !== "number") throw new Error("Missing overall_score_0_100.");
-  return obj;
+function ratingFromScore(score) {
+  if (score >= 85) return "Excellent";
+  if (score >= 70) return "Good";
+  if (score >= 55) return "Satisfactory";
+  if (score >= 40) return "Fair";
+  if (score >= 25) return "Poor";
+  return "Needs Improvement";
 }
 
 export default async function handler(req, res) {
-  setNoCache(res);
-
-  // Optional: allow preflight if you ever call cross-origin
-  if (req.method === "OPTIONS") {
-    res.status(204).end();
-    return;
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "POST");
+    return res.status(405).send("Method Not Allowed");
   }
 
-  if (req.method !== "POST") {
-    res.status(405).json({ error: "Method not allowed. Use POST." });
-    return;
+  res.setHeader("Cache-Control", "no-store");
+
+  if (!process.env.OPENAI_API_KEY) {
+    return res.status(500).json({
+      success: false,
+      error:
+        "Missing OPENAI_API_KEY. Add it in Vercel → Project Settings → Environment Variables, then redeploy.",
+    });
   }
 
   try {
-    if (!process.env.OPENAI_API_KEY) {
-      res.status(500).json({ error: "OPENAI_API_KEY is not set on the server." });
-      return;
+    const body = req.body ?? {};
+    const conversationHistory = sanitizeMessages(body.conversationHistory);
+    const patientVignette = body.patientVignette;
+
+    if (!conversationHistory.length) {
+      return res.status(400).json({
+        success: false,
+        error: "conversationHistory is missing or empty.",
+      });
     }
 
-    const { transcript, vignette = null, requiredItems } = req.body || {};
-    if (!transcript) {
-      res.status(400).json({ error: "Missing required field: transcript" });
-      return;
-    }
+    const transcript = toTranscript(conversationHistory);
 
-    const { turns, text: transcriptText } = normalizeTranscript(transcript);
+    const vignetteContext = isLikelyVignette(patientVignette)
+      ? JSON.stringify(patientVignette, null, 2)
+      : "No valid vignette provided.";
 
-    const systemPrompt = buildFeedbackSystemPrompt({ requiredItems });
+    // JSON Schema expected by your public/feedback-module.js UI
+    const FEEDBACK_SCHEMA = {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        overall_score: { type: "integer", minimum: 0, maximum: 100 },
+        overall_rating: {
+          type: "string",
+          enum: ["Excellent", "Good", "Satisfactory", "Fair", "Poor", "Needs Improvement"],
+        },
+        summary: { type: "string" },
 
-    // Provide the model both (a) indexed text, and (b) the raw structured turns if available.
-    const userPayload = {
-      vignette,
-      transcript_indexed_text: transcriptText,
-      transcript_turns: turns, // null if transcript was a blob
-      notes: [
-        "Use turn_index from transcript_turns if available.",
-        "If transcript_turns is null, set turn_index to -1 and include only quotes.",
+        completeness: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            score: { type: "integer", minimum: 0, maximum: 100 },
+            details: { type: "string" },
+            covered: { type: "array", items: { type: "string" } },
+            missed: { type: "array", items: { type: "string" } },
+          },
+          required: ["score", "details", "covered", "missed"],
+        },
+
+        communication: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            rating: {
+              type: "string",
+              enum: ["Excellent", "Good", "Satisfactory", "Fair", "Poor", "Needs Improvement"],
+            },
+            clarity_score: { type: "integer", minimum: 0, maximum: 10 },
+            strengths: { type: "array", items: { type: "string" } },
+            weaknesses: { type: "array", items: { type: "string" } },
+          },
+          required: ["rating", "clarity_score", "strengths", "weaknesses"],
+        },
+
+        empathy: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            score: { type: "integer", minimum: 1, maximum: 5 },
+            examples: { type: "array", items: { type: "string" } },
+            missed_opportunities: { type: "array", items: { type: "string" } },
+          },
+          required: ["score", "examples", "missed_opportunities"],
+        },
+
+        patient_centered: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            checked_understanding: { type: "boolean" },
+            invited_questions: { type: "boolean" },
+            explored_values: { type: "boolean" },
+            shared_decision_making: { type: "boolean" },
+            feedback: { type: "string" },
+          },
+          required: [
+            "checked_understanding",
+            "invited_questions",
+            "explored_values",
+            "shared_decision_making",
+            "feedback",
+          ],
+        },
+
+        professionalism: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            rating: {
+              type: "string",
+              enum: ["Excellent", "Good", "Satisfactory", "Fair", "Poor", "Needs Improvement"],
+            },
+            red_flags: { type: "array", items: { type: "string" } },
+            positive_notes: { type: "array", items: { type: "string" } },
+          },
+          required: ["rating", "red_flags", "positive_notes"],
+        },
+
+        strengths: { type: "array", items: { type: "string" } },
+        improvements: { type: "array", items: { type: "string" } },
+      },
+      required: [
+        "overall_score",
+        "overall_rating",
+        "summary",
+        "completeness",
+        "communication",
+        "empathy",
+        "patient_centered",
+        "professionalism",
+        "strengths",
+        "improvements",
       ],
     };
 
-    const completion = await client.chat.completions.create({
-      // Use the same key; model choice is independent.
-      // Pick a model you already use; "gpt-4.1-mini" is a good cost/quality default for eval feedback.
+    const instructions = buildFeedbackSystemPrompt();
+
+    const userInput = `
+PATIENT VIGNETTE (context):
+${vignetteContext}
+
+CONVERSATION TRANSCRIPT:
+${transcript}
+
+Return JSON that matches the schema exactly.
+
+Notes:
+- completeness.covered and completeness.missed must use the checklist labels from the system prompt.
+- Use concrete examples when possible, but keep it short.
+- If overall_rating/communication.rating/professionalism.rating are not obvious, derive from scores.
+`.trim();
+
+    const response = await client.responses.create({
       model: "gpt-4.1-mini",
+      instructions,
+      input: [{ role: "user", content: userInput }],
       temperature: 0.2,
-      // This nudges the model to output a JSON object.
-      response_format: { type: "json_object" },
-      messages: [
-        { role: "system", content: systemPrompt },
-        {
-          role: "user",
-          content:
-            "Generate feedback for this informed consent discussion. Return ONLY the JSON object.\n\n" +
-            JSON.stringify(userPayload),
+      max_output_tokens: 1200,
+      text: {
+        format: {
+          type: "json_schema",
+          name: "surgibot_feedback",
+          strict: true,
+          schema: FEEDBACK_SCHEMA,
         },
-      ],
+      },
     });
 
-    const text = completion?.choices?.[0]?.message?.content ?? "";
-    const parsed = safeJsonParse(text);
-    const validated = validateResponseShape(parsed);
+    const outputText = response.output_text ?? "";
+    if (!outputText) {
+      return res.status(500).json({
+        success: false,
+        error: "Feedback model returned empty output.",
+      });
+    }
 
-    res.status(200).json(validated);
+    let feedback;
+    try {
+      feedback = JSON.parse(outputText);
+    } catch (e) {
+      return res.status(500).json({
+        success: false,
+        error: "Feedback output was not valid JSON.",
+        model_output: outputText.slice(0, 2000),
+      });
+    }
+
+    // Safety: if model ever returns missing ratings, fill them deterministically
+    if (!feedback.overall_rating && typeof feedback.overall_score === "number") {
+      feedback.overall_rating = ratingFromScore(feedback.overall_score);
+    }
+    if (
+      feedback.communication &&
+      !feedback.communication.rating &&
+      typeof feedback.communication.clarity_score === "number"
+    ) {
+      // map clarity_score to a rough rating
+      const approx = Math.round((feedback.communication.clarity_score / 10) * 100);
+      feedback.communication.rating = ratingFromScore(approx);
+    }
+    if (
+      feedback.professionalism &&
+      !feedback.professionalism.rating &&
+      typeof feedback.overall_score === "number"
+    ) {
+      feedback.professionalism.rating = ratingFromScore(feedback.overall_score);
+    }
+
+    return res.status(200).json({ success: true, feedback });
   } catch (err) {
-    console.error("api/feedback error:", err);
-    res.status(500).json({
-      error: "Feedback generation failed",
-      details: err?.message || String(err),
+    console.error("[/api/feedback] Error:", err);
+    return res.status(err?.status ?? 500).json({
+      success: false,
+      error: err?.message ?? "Feedback function failed.",
     });
   }
 }
