@@ -148,7 +148,7 @@ function showInfoHowToGetFeedback() {
 
       <a href="./vignette-library.html" class="${UI.btnNav}">
         <img src="./icons/vignette-library-button.png" alt="Library icon" class="${UI.btnNavIcon}" />
-        <span class="${UI.btnNavText}">Go to Vignette Library</span>
+        <span class="${UI.btnNavText}">Go to vignette library</span>
       </a>
     </article>
   `;
@@ -162,8 +162,8 @@ function showLoadingState() {
   container.innerHTML = `
     <article class="${UI.cardNoHover} flex flex-col items-center text-center gap-3 py-10">
       <div class="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-blue-300"></div>
-      <p class="text-base md:text-lg font-semibold text-slate-900">We are analyzing your discussion.</p>
-      <p class="${UI.headerSub}">This may take a moment</p>
+      <p class="text-base md:text-lg font-semibold text-slate-900">We are analyzing your discussion</p>
+      <p class="${UI.headerSub}">This may take a moment.</p>
     </article>
   `;
 }
@@ -293,7 +293,7 @@ function displayFeedback(raw) {
       <div class="mb-4 flex justify-center">
         <div class="${UI.iconBg}">
           <!-- ICON_PLACEHOLDER: overall icon -->
-          <img src="./icons/feedback-button.png" alt="Overall" class="w-9 h-9 object-contain" />
+          <img src="./icons/surgeon.png" alt="Overall" class="w-16 h-16 object-contain" />
         </div>
       </div>
 
