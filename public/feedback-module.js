@@ -46,7 +46,6 @@ function escapeHtml(str) {
 
 /** ---- Design system (match the rest of the website) ---- */
 const UI = {
-  // Your HTML already controls max-width, so keep empty
   shell: "",
 
   card:
@@ -57,13 +56,11 @@ const UI = {
   headerTitle: "text-base md:text-lg font-semibold text-slate-900",
   headerSub: "text-xs md:text-[13px] text-slate-600",
 
-  // Buttons: blue variant
   btnNav:
     "inline-flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200 text-xs md:text-sm font-semibold text-black hover:bg-blue-200 transition-colors",
   btnNavText: "text-xs md:text-sm font-semibold text-slate-900",
   btnNavIcon: "w-8 h-8 object-contain",
 
-  // Icon background requested (used in many cards)
   iconBg: "flex items-center justify-center w-14 h-14 rounded-3xl bg-blue-100",
 
   badgeBase: "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border",
@@ -213,13 +210,13 @@ function statusBadge(status) {
   const base = UI.badgeBase;
   if (status === "covered") return `${base} bg-green-50 text-green-700 border-green-200`;
   if (status === "partially") return `${base} bg-yellow-50 text-yellow-700 border-yellow-200`;
-  return `${base} bg-slate-50 text-slate-700 border-slate-200`;
+  return `${base} bg-red-50 text-red-700 border-red-200`;
 }
 
 function statusLabel(status) {
   if (status === "covered") return "Covered";
   if (status === "partially") return "Partially";
-  return "Not covered";
+  return "Missed";
 }
 
 function computeCompleteness(coverageChecklist) {
@@ -276,7 +273,7 @@ function renderJargonAnalysis(jargon) {
       <div class="flex items-center gap-3 mb-4">
         <div class="${UI.iconBg}">
           <!-- ICON_PLACEHOLDER: jargon icon -->
-          <img src="./icons/need.png" alt="Jargon analysis" class="w-8 h-8 object-contain" />
+          <img src="./icons/language.png" alt="Jargon analysis" class="w-8 h-8 object-contain" />
         </div>
         <h3 class="${UI.headerTitle}">Medical jargon and clarity</h3>
       </div>
@@ -342,28 +339,92 @@ function renderNextSessionFocus(nextFocus) {
       <div class="flex items-center gap-3 mb-4">
         <div class="${UI.iconBg}">
           <!-- ICON_PLACEHOLDER: focus icon -->
-          <img src="./icons/practice-button.png" alt="Next session focus" class="w-8 h-8 object-contain" />
+          <img src="./icons/focus.png" alt="Tips for the next session" class="w-8 h-8 object-contain" />
         </div>
-        <h3 class="${UI.headerTitle}">Next session focus</h3>
+        <h3 class="${UI.headerTitle}">Tips for the next session</h3>
       </div>
 
       <div class="bg-white/90 rounded-2xl border border-slate-200 p-5">
         <p class="text-sm font-semibold text-slate-900 mb-2">Goal</p>
         <p class="${UI.headerSub}">${escapeHtml(nf.goal || "")}</p>
 
-        ${
-          drills.length
-            ? `<div class="mt-4 ${UI.divider} pt-4">
-                <p class="text-sm font-semibold text-slate-900 mb-2">Practice drills</p>
-                <ul class="list-disc pl-5 space-y-1 ${UI.headerSub}">
-                  ${drills.slice(0, 10).map((d) => `<li>${escapeHtml(d)}</li>`).join("")}
-                </ul>
-              </div>`
-            : ""
+        ${drills.length
+          ? `<div class="mt-4 ${UI.divider} pt-4">
+              <p class="text-sm font-semibold text-slate-900 mb-2">Practice drills to achieve the goal</p>
+              <ul class="list-disc pl-5 space-y-1 ${UI.headerSub}">
+                ${drills.slice(0, 10).map((d) => `<li>${escapeHtml(d)}</li>`).join("")}
+              </ul>
+            </div>`
+          : ""
         }
       </div>
     </article>
   `;
+}
+
+/** NEW: patient-centered "covered / partially / missed" grouping + actionable tips */
+function normalizeStatus(st) {
+  if (st === "covered") return "covered";
+  if (st === "partially") return "partially";
+  return "missed"; // includes not_covered / undefined
+}
+
+function patientCenteredItem(label, obj) {
+  const status = normalizeStatus(obj?.status);
+  const improvement = (obj?.improvement || "").trim();
+  const evidence = obj?.evidence;
+
+  const statusText =
+    status === "covered" ? "Covered" : status === "partially" ? "Partially" : "Missed";
+
+  const pillClass =
+    status === "covered"
+      ? "bg-green-50 text-green-700 border-green-200"
+      : status === "partially"
+      ? "bg-yellow-50 text-yellow-700 border-yellow-200"
+      : "bg-red-50 text-red-700 border-red-200";
+
+  return `
+    <div class="bg-white/90 rounded-2xl border border-slate-200 p-5 shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <p class="font-semibold text-slate-900">${escapeHtml(label)}</p>
+        <span class="${UI.pillBase} ${pillClass}">${statusText}</span>
+      </div>
+
+      ${
+        improvement
+          ? `<p class="${UI.headerSub} mt-2"><span class="font-semibold text-slate-900">Tip:</span> ${escapeHtml(
+              improvement
+            )}</p>`
+          : ""
+      }
+
+      ${evidence ? renderEvidence(evidence) : ""}
+    </div>
+  `;
+}
+
+/** NEW: fixed fallback tips (only used if the model didn't provide improvement text) */
+function defaultPatientCenteredTips(invited, checked) {
+  const tips = [];
+
+  const invStatus = normalizeStatus(invited?.status);
+  const chkStatus = normalizeStatus(checked?.status);
+
+  if ((invited?.improvement || "").trim()) {
+    tips.push(invited.improvement.trim());
+  } else if (invStatus !== "covered") {
+    tips.push("Explicitly invite patient questions to encourage engagement and clarify concerns.");
+  }
+
+  if ((checked?.improvement || "").trim()) {
+    tips.push(checked.improvement.trim());
+  } else if (chkStatus !== "covered") {
+    tips.push("Check understanding using a teach-back question (e.g., “Can you summarize what you understood so far?”).");
+  }
+
+  // remove duplicates
+  return [...new Set(tips.filter(Boolean))];
 }
 
 function displayFeedback(raw) {
@@ -387,6 +448,8 @@ function displayFeedback(raw) {
 
   const jargon = feedback?.jargon_analysis;
   const nextFocus = feedback?.next_session_focus;
+
+  const pcTips = defaultPatientCenteredTips(invited, checked);
 
   container.innerHTML = `
     <!-- Overall -->
@@ -485,7 +548,7 @@ function displayFeedback(raw) {
       ` : ""}
     </article>
 
-    <!-- Patient-centered checks -->
+    <!-- Patient-centered checks (NOW same color logic + actionable tips) -->
     <article class="${UI.card}">
       <div class="flex items-center gap-3 mb-4">
         <div class="${UI.iconBg}">
@@ -495,29 +558,21 @@ function displayFeedback(raw) {
         <h3 class="${UI.headerTitle}">Patient-centered checks</h3>
       </div>
 
-      <div class="space-y-3">
-        <div class="flex items-center justify-between gap-3">
-          <span class="${UI.headerSub}">Invited questions</span>
-          <span class="${statusBadge(invited?.status)}">${statusLabel(invited?.status)}</span>
-        </div>
-
-        <div class="flex items-center justify-between gap-3">
-          <span class="${UI.headerSub}">Checked understanding</span>
-          <span class="${statusBadge(checked?.status)}">${statusLabel(checked?.status)}</span>
-        </div>
+      <div class="space-y-4">
+        ${patientCenteredItem("Invited patient questions", invited)}
+        ${patientCenteredItem("Checked patient understanding", checked)}
       </div>
 
-      ${(invited?.improvement || checked?.improvement) ? `
-        <div class="mt-4 ${UI.subtleBox}">
-          ${invited?.improvement ? `<div class="mb-2"><span class="font-semibold text-slate-900">Invited patient's questions:</span> ${escapeHtml(invited.improvement)}</div>` : ""}
-          ${checked?.improvement ? `<div><span class="font-semibold text-slate-900">Checked patient's understanding:</span> ${escapeHtml(checked.improvement)}</div>` : ""}
-        </div>
-      ` : ""}
-
-      <div class="mt-4">
-        ${invited?.evidence ? renderEvidence(invited.evidence) : ""}
-        ${checked?.evidence ? renderEvidence(checked.evidence) : ""}
-      </div>
+      ${
+        pcTips.length
+          ? `<div class="mt-5 ${UI.divider} pt-4">
+              <p class="text-sm font-semibold text-slate-900 mb-2">Actionable tips for your next session</p>
+              <ul class="list-disc pl-5 space-y-1 ${UI.headerSub}">
+                ${pcTips.slice(0, 6).map((t) => `<li>${escapeHtml(t)}</li>`).join("")}
+              </ul>
+            </div>`
+          : ""
+      }
     </article>
 
     <!-- Jargon analysis -->
@@ -531,7 +586,7 @@ function displayFeedback(raw) {
           <img src="./icons/improve.png" alt="Improvements" class="w-8 h-8 object-contain" />
         </div>
         <div class="flex-1">
-          <h3 class="${UI.headerTitle}">What can be improved in your next informed consent discussion?</h3>
+          <h3 class="${UI.headerTitle}">Areas for improvement</h3>
           <p class="${UI.headerSub}">${improvements.length ? `${improvements.length} improvement suggestions` : ""}</p>
         </div>
       </div>
