@@ -263,7 +263,7 @@ function renderEvidence(evidence) {
     <div class="mt-3 space-y-2">
       ${ev.slice(0, 2).map((e) => `
         <div class="text-xs md:text-[13px] text-slate-600 bg-slate-50/70 border border-slate-200 rounded-xl px-3 py-2">
-          <span class="font-semibold text-slate-900">${Number.isFinite(e.turn_index) ? `Turn ${e.turn_index}` : "Covered in message number"}</span>:
+          <span class="font-semibold text-slate-900">${Number.isFinite(e.turn_index) ? `Message ${e.turn_index}` : "Covered in message number"}</span>:
           “${escapeHtml(e.quote || "")}”
         </div>
       `).join("")}
@@ -470,10 +470,11 @@ function displayFeedback(raw) {
         <img src="./icons/surgeon.png" alt="Surgeon" class="w-16 h-16 object-contain" />
       </div>
 
-      <p class="${UI.headerSub} mb-1">Overall performance</p>
-      <h2 class="text-2xl md:text-3xl font-semibold text-slate-900 mb-3">
-        ${Number.isFinite(score) ? score : 0}/100
+      <p class="text-lg md:text-xl font-bold text-slate-900 mb-2">Overall performance</p>
+      <h2 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">
+      ${Number.isFinite(score) ? score : 0}/100
       </h2>
+
 
       <!-- UPDATED: rating pill uses color scheme based on score -->
       <div class="inline-flex items-center px-4 py-2 rounded-full text-xs md:text-sm font-semibold border ${ratingBadgeClass}">
