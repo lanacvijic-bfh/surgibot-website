@@ -46,55 +46,64 @@ function escapeHtml(str) {
 
 /** ---- Design system (matches vignette-library.js styling) ---- */
 const UI = {
+  // NOTE: Keep this aligned with your page layout.
+  // If your feedback-module.html already wraps #feedback-container in a max-width section,
+  // you can set shell to "" and everything will span the wrapper width.
   shell: "max-w-4xl mx-auto",
+
   card:
     "bg-white/90 rounded-2xl shadow-sm border border-slate-200 p-5 hover:shadow-md transition-shadow",
   cardNoHover:
     "bg-white/90 rounded-2xl shadow-sm border border-slate-200 p-5",
+
   headerTitle: "text-base md:text-lg font-semibold text-slate-900",
   headerSub: "text-xs md:text-[13px] text-slate-600",
-  btn:
-    "flex items-center justify-center gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200 text-xs md:text-sm font-semibold text-black hover:bg-blue-200 transition-colors",
+
   btnWide:
     "inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-100 rounded-xl border border-blue-200 text-xs md:text-sm font-semibold text-black hover:bg-blue-200 transition-colors",
+
   badgeBase:
     "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border",
+
   pillBase: "text-xs px-2 py-1 rounded border",
   divider: "border-t border-slate-200/70",
   subtleBox:
     "bg-slate-50/70 rounded-xl border border-slate-200 px-3 py-2 text-xs md:text-[13px] text-slate-600",
+
+  // Simple spacing wrapper without introducing nested “container inside container” feel
+  stack: "space-y-6",
 };
 
 function showInfoHowToGetFeedback() {
   const container = document.getElementById("feedback-container");
   if (!container) return;
 
+  container.className = UI.shell; // single wrapper, not nested
   container.innerHTML = `
-    <div class="${UI.shell}">
-      <article class="${UI.cardNoHover} text-center">
-        <div class="mb-3 flex justify-center">
-          <img src="./icons/feedback-button.png" alt="Feedback" class="w-12 h-12 object-contain" />
-        </div>
+    <article class="${UI.cardNoHover} text-center">
+      <!-- ICON_PLACEHOLDER: Replace src with your icon -->
+      <div class="mb-3 flex justify-center">
+        <img src="./icons/feedback-button.png" alt="Feedback" class="w-12 h-12 object-contain" />
+      </div>
 
-        <h3 class="text-base md:text-lg font-semibold text-slate-900 mb-2">
-          No feedback session selected
-        </h3>
+      <h3 class="text-base md:text-lg font-semibold text-slate-900 mb-2">
+        No feedback session selected
+      </h3>
 
-        <p class="${UI.headerSub} leading-relaxed mb-5">
-          To receive personalized feedback:
-          <br/>
-          1) Choose a patient vignette in the vignette library
-          <br/>
-          2) Practice the informed consent discussion
-          <br/>
-          3) Click <span class="font-semibold text-slate-900">Show personalized feedback</span> in the practice module
-        </p>
+      <p class="${UI.headerSub} leading-relaxed mb-5">
+        To receive personalized feedback:
+        <br/>
+        1) Choose a patient vignette in the vignette library
+        <br/>
+        2) Practice the informed consent discussion
+        <br/>
+        3) Click <span class="font-semibold text-slate-900">Show personalized feedback</span> in the practice module
+      </p>
 
-        <a href="./vignette-library.html" class="${UI.btnWide}">
-          Go to Vignette Library
-        </a>
-      </article>
-    </div>
+      <a href="./vignette-library.html" class="${UI.btnWide}">
+        Go to Vignette Library
+      </a>
+    </article>
   `;
 }
 
@@ -102,14 +111,15 @@ function showLoadingState() {
   const container = document.getElementById("feedback-container");
   if (!container) return;
 
+  container.className = UI.shell; // single wrapper
   container.innerHTML = `
-    <div class="${UI.shell}">
-      <article class="${UI.cardNoHover} flex flex-col items-center text-center gap-3 py-10">
-        <div class="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-blue-300"></div>
-        <p class="text-base md:text-lg font-semibold text-slate-900">Analyzing your conversation…</p>
-        <p class="${UI.headerSub}">This may take a moment</p>
-      </article>
-    </div>
+    <article class="${UI.cardNoHover} flex flex-col items-center text-center gap-3 py-10">
+      <!-- ICON_PLACEHOLDER: Replace spinner with your loading icon if desired -->
+      <div class="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-blue-300"></div>
+
+      <p class="text-base md:text-lg font-semibold text-slate-900">Analyzing your conversation…</p>
+      <p class="${UI.headerSub}">This may take a moment</p>
+    </article>
   `;
 }
 
@@ -117,17 +127,21 @@ function showError(message) {
   const container = document.getElementById("feedback-container");
   if (!container) return;
 
+  container.className = UI.shell; // single wrapper
   container.innerHTML = `
-    <div class="${UI.shell}">
-      <article class="${UI.cardNoHover} text-center">
-        <div class="mb-3 text-3xl">⚠️</div>
-        <h3 class="text-base md:text-lg font-semibold text-slate-900 mb-2">Unable to generate feedback</h3>
-        <p class="${UI.headerSub} mb-5">${escapeHtml(message)}</p>
-        <button onclick="window.location.reload()" class="${UI.btnWide}">
-          Try again
-        </button>
-      </article>
-    </div>
+    <article class="${UI.cardNoHover} text-center">
+      <!-- ICON_PLACEHOLDER: Replace with your error icon -->
+      <div class="mb-3 flex justify-center">
+        <img src="./icons/feedback-button.png" alt="Error" class="w-12 h-12 object-contain" />
+      </div>
+
+      <h3 class="text-base md:text-lg font-semibold text-slate-900 mb-2">Unable to generate feedback</h3>
+      <p class="${UI.headerSub} mb-5">${escapeHtml(message)}</p>
+
+      <button onclick="window.location.reload()" class="${UI.btnWide}">
+        Try again
+      </button>
+    </article>
   `;
 }
 
@@ -189,24 +203,18 @@ function computeCompleteness(coverageChecklist) {
 
 function renderEvidence(evidence) {
   const ev = Array.isArray(evidence) ? evidence : [];
-  if (ev.length === 0)
+  if (ev.length === 0) {
     return `<p class="${UI.headerSub} mt-2 italic">No evidence quoted.</p>`;
+  }
 
   return `
     <div class="mt-3 space-y-2">
-      ${ev
-        .slice(0, 2)
-        .map(
-          (e) => `
+      ${ev.slice(0, 2).map((e) => `
         <div class="text-xs md:text-[13px] text-slate-600 bg-slate-50/70 border border-slate-200 rounded-xl px-3 py-2">
-          <span class="font-semibold text-slate-900">${
-            Number.isFinite(e.turn_index) ? `Turn ${e.turn_index}` : "Turn"
-          }</span>:
+          <span class="font-semibold text-slate-900">${Number.isFinite(e.turn_index) ? `Turn ${e.turn_index}` : "Turn"}</span>:
           “${escapeHtml(e.quote || "")}”
         </div>
-      `
-        )
-        .join("")}
+      `).join("")}
     </div>
   `;
 }
@@ -214,6 +222,9 @@ function renderEvidence(evidence) {
 function displayFeedback(raw) {
   const container = document.getElementById("feedback-container");
   if (!container) return;
+
+  // IMPORTANT: single wrapper (no nested max-w containers)
+  container.className = `${UI.shell} ${UI.stack}`;
 
   const feedback = raw?.feedback && typeof raw?.success !== "undefined" ? raw.feedback : raw;
 
@@ -228,163 +239,171 @@ function displayFeedback(raw) {
   const invited = feedback?.understanding_and_questions?.invited_questions;
   const checked = feedback?.understanding_and_questions?.checked_understanding;
 
-  const html = `
-    <div class="${UI.shell} space-y-6">
-
-      <!-- Overall -->
-      <article class="${UI.cardNoHover} text-center">
-        <div class="mb-3 flex justify-center">
-          <img src="./icons/feedback-button.png" alt="Feedback" class="w-12 h-12 object-contain" />
-        </div>
-
-        <p class="${UI.headerSub} mb-1">Overall performance</p>
-        <h2 class="text-2xl md:text-3xl font-semibold text-slate-900 mb-3">
-          ${Number.isFinite(score) ? score : 0}/100
-        </h2>
-
-        <div class="inline-flex items-center px-4 py-2 rounded-full text-xs md:text-sm font-semibold border border-blue-200 bg-blue-100 text-slate-900">
-          ${rating}
-        </div>
-
-        <p class="${UI.headerSub} mt-4 max-w-2xl mx-auto">
-          ${escapeHtml(
-            strengths.length ? strengths.slice(0, 2).join(" • ") : "See the checklist below to improve."
-          )}
-        </p>
-      </article>
-
-      <!-- Two cards grid -->
-      <div class="grid md:grid-cols-2 gap-6">
-
-        <!-- Completeness -->
-        <article class="${UI.card}">
-          <div class="flex items-center justify-between gap-3 mb-4">
-            <h3 class="${UI.headerTitle}">📋 Completeness</h3>
-            <div class="px-4 py-2 rounded-xl text-sm md:text-base font-semibold ${getScoreColor(completeness.score)}">
-              ${completeness.score}%
-            </div>
-          </div>
-
-          <p class="${UI.headerSub} mb-4">
-            ${completeness.missed.length ? "Focus first on the missed elements below." : "Great coverage of required elements."}
-          </p>
-
-          ${completeness.covered.length ? `
-            <div class="mb-4">
-              <p class="text-xs font-semibold text-green-700 mb-2">✓ Covered</p>
-              <div class="flex flex-wrap gap-2">
-                ${completeness.covered.map(item =>
-                  `<span class="${UI.pillBase} bg-green-50 text-green-700 border-green-200">${escapeHtml(item)}</span>`
-                ).join("")}
-              </div>
-            </div>
-          ` : ""}
-
-          ${completeness.partial.length ? `
-            <div class="mb-4">
-              <p class="text-xs font-semibold text-yellow-700 mb-2">~ Partially</p>
-              <div class="flex flex-wrap gap-2">
-                ${completeness.partial.map(item =>
-                  `<span class="${UI.pillBase} bg-yellow-50 text-yellow-700 border-yellow-200">${escapeHtml(item)}</span>`
-                ).join("")}
-              </div>
-            </div>
-          ` : ""}
-
-          ${completeness.missed.length ? `
-            <div>
-              <p class="text-xs font-semibold text-red-700 mb-2">✗ Missed</p>
-              <div class="flex flex-wrap gap-2">
-                ${completeness.missed.map(item =>
-                  `<span class="${UI.pillBase} bg-red-50 text-red-700 border-red-200">${escapeHtml(item)}</span>`
-                ).join("")}
-              </div>
-            </div>
-          ` : ""}
-        </article>
-
-        <!-- Patient-centered checks -->
-        <article class="${UI.card}">
-          <h3 class="${UI.headerTitle} mb-4">🎯 Patient-Centered Checks</h3>
-
-          <div class="space-y-3">
-            <div class="flex items-center justify-between gap-3">
-              <span class="${UI.headerSub}">Invited questions</span>
-              <span class="${statusBadge(invited?.status)}">${statusLabel(invited?.status)}</span>
-            </div>
-            <div class="flex items-center justify-between gap-3">
-              <span class="${UI.headerSub}">Checked understanding</span>
-              <span class="${statusBadge(checked?.status)}">${statusLabel(checked?.status)}</span>
-            </div>
-          </div>
-
-          ${(invited?.improvement || checked?.improvement) ? `
-            <div class="mt-4 ${UI.subtleBox}">
-              ${invited?.improvement ? `<div class="mb-2"><span class="font-semibold text-slate-900">Invited questions:</span> ${escapeHtml(invited.improvement)}</div>` : ""}
-              ${checked?.improvement ? `<div><span class="font-semibold text-slate-900">Checked understanding:</span> ${escapeHtml(checked.improvement)}</div>` : ""}
-            </div>
-          ` : ""}
-
-          <div class="mt-4">
-            ${invited?.evidence ? renderEvidence(invited.evidence) : ""}
-            ${checked?.evidence ? renderEvidence(checked.evidence) : ""}
-          </div>
-        </article>
-
+  container.innerHTML = `
+    <!-- Overall -->
+    <article class="${UI.cardNoHover} text-center">
+      <!-- ICON_PLACEHOLDER: Replace with your "overall" icon -->
+      <div class="mb-3 flex justify-center">
+        <img src="./icons/feedback-button.png" alt="Overall" class="w-12 h-12 object-contain" />
       </div>
 
-      <!-- Improvements -->
-      <article class="${UI.cardNoHover}">
-        <div class="flex items-center justify-between gap-3 mb-4">
-          <h3 class="${UI.headerTitle}">📈 Areas for improvement</h3>
-          <span class="${UI.headerSub}">${improvements.length ? `${improvements.length} item(s)` : ""}</span>
+      <p class="${UI.headerSub} mb-1">Overall performance</p>
+      <h2 class="text-2xl md:text-3xl font-semibold text-slate-900 mb-3">
+        ${Number.isFinite(score) ? score : 0}/100
+      </h2>
+
+      <div class="inline-flex items-center px-4 py-2 rounded-full text-xs md:text-sm font-semibold border border-blue-200 bg-blue-100 text-slate-900">
+        ${rating}
+      </div>
+
+      <p class="${UI.headerSub} mt-4 max-w-2xl mx-auto">
+        ${escapeHtml(strengths.length ? strengths.slice(0, 2).join(" • ") : "See the checklist below to improve.")}
+      </p>
+    </article>
+
+    <!-- Completeness (FULL WIDTH) -->
+    <article class="${UI.card}">
+      <div class="flex items-center justify-between gap-3 mb-4">
+        <div class="flex items-center gap-2">
+          <!-- ICON_PLACEHOLDER: Replace with your "completeness" icon -->
+          <img src="./icons/completeness.png" alt="Completeness" class="w-6 h-6 object-contain" />
+          <h3 class="${UI.headerTitle}">Completeness</h3>
         </div>
 
-        ${
-          improvements.length
-            ? `<div class="space-y-4">
-                ${improvements.slice(0, 8).map((i) => `
-                  <div class="bg-white/90 rounded-2xl border border-slate-200 p-5 shadow-sm">
-                    <p class="font-semibold text-slate-900">${escapeHtml(i.area)}</p>
-                    <p class="${UI.headerSub} mt-2">${escapeHtml(i.why_it_matters)}</p>
+        <div class="px-4 py-2 rounded-xl text-sm md:text-base font-semibold ${getScoreColor(completeness.score)}">
+          ${completeness.score}%
+        </div>
+      </div>
 
-                    <div class="mt-3 ${UI.divider} pt-3">
-                      <p class="${UI.headerSub}">
-                        <span class="font-semibold text-slate-900">Tip:</span> ${escapeHtml(i.actionable_tip)}
-                      </p>
-                    </div>
+      <p class="${UI.headerSub} mb-4">
+        ${completeness.missed.length ? "Focus first on the missed elements below." : "Great coverage of required elements."}
+      </p>
 
-                    <div class="mt-4 bg-blue-50/70 border border-blue-200 rounded-2xl p-4">
-                      <p class="text-xs md:text-[13px] text-slate-700">
-                        <span class="font-semibold text-slate-900">Example phrase:</span> ${escapeHtml(i.example_phrase)}
-                      </p>
-                    </div>
+      ${completeness.covered.length ? `
+        <div class="mb-4">
+          <p class="text-xs font-semibold text-green-700 mb-2">Covered</p>
+          <div class="flex flex-wrap gap-2">
+            ${completeness.covered.map(item =>
+              `<span class="${UI.pillBase} bg-green-50 text-green-700 border-green-200">${escapeHtml(item)}</span>`
+            ).join("")}
+          </div>
+        </div>
+      ` : ""}
+
+      ${completeness.partial.length ? `
+        <div class="mb-4">
+          <p class="text-xs font-semibold text-yellow-700 mb-2">Partially</p>
+          <div class="flex flex-wrap gap-2">
+            ${completeness.partial.map(item =>
+              `<span class="${UI.pillBase} bg-yellow-50 text-yellow-700 border-yellow-200">${escapeHtml(item)}</span>`
+            ).join("")}
+          </div>
+        </div>
+      ` : ""}
+
+      ${completeness.missed.length ? `
+        <div>
+          <p class="text-xs font-semibold text-red-700 mb-2">Missed</p>
+          <div class="flex flex-wrap gap-2">
+            ${completeness.missed.map(item =>
+              `<span class="${UI.pillBase} bg-red-50 text-red-700 border-red-200">${escapeHtml(item)}</span>`
+            ).join("")}
+          </div>
+        </div>
+      ` : ""}
+    </article>
+
+    <!-- Patient-centered checks (FULL WIDTH, UNDER COMPLETENESS) -->
+    <article class="${UI.card}">
+      <div class="flex items-center gap-2 mb-4">
+        <!-- ICON_PLACEHOLDER: Replace with your "patient-centered checks" icon -->
+        <img src="./icons/need.png" alt="Patient-centered checks" class="w-6 h-6 object-contain" />
+        <h3 class="${UI.headerTitle}">Patient-centered checks</h3>
+      </div>
+
+      <div class="space-y-3">
+        <div class="flex items-center justify-between gap-3">
+          <span class="${UI.headerSub}">Invited questions</span>
+          <span class="${statusBadge(invited?.status)}">${statusLabel(invited?.status)}</span>
+        </div>
+
+        <div class="flex items-center justify-between gap-3">
+          <span class="${UI.headerSub}">Checked understanding</span>
+          <span class="${statusBadge(checked?.status)}">${statusLabel(checked?.status)}</span>
+        </div>
+      </div>
+
+      ${(invited?.improvement || checked?.improvement) ? `
+        <div class="mt-4 ${UI.subtleBox}">
+          ${invited?.improvement ? `<div class="mb-2"><span class="font-semibold text-slate-900">Invited questions:</span> ${escapeHtml(invited.improvement)}</div>` : ""}
+          ${checked?.improvement ? `<div><span class="font-semibold text-slate-900">Checked understanding:</span> ${escapeHtml(checked.improvement)}</div>` : ""}
+        </div>
+      ` : ""}
+
+      <div class="mt-4">
+        ${invited?.evidence ? renderEvidence(invited.evidence) : ""}
+        ${checked?.evidence ? renderEvidence(checked.evidence) : ""}
+      </div>
+    </article>
+
+    <!-- Improvements (FULL WIDTH) -->
+    <article class="${UI.cardNoHover}">
+      <div class="flex items-center justify-between gap-3 mb-4">
+        <div class="flex items-center gap-2">
+          <!-- ICON_PLACEHOLDER: Replace with your "improvement" icon -->
+          <img src="./icons/improvement.png" alt="Areas for improvement" class="w-6 h-6 object-contain" />
+          <h3 class="${UI.headerTitle}">Areas for improvement</h3>
+        </div>
+        <span class="${UI.headerSub}">${improvements.length ? `${improvements.length} item(s)` : ""}</span>
+      </div>
+
+      ${
+        improvements.length
+          ? `<div class="space-y-4">
+              ${improvements.slice(0, 8).map((i) => `
+                <div class="bg-white/90 rounded-2xl border border-slate-200 p-5 shadow-sm">
+                  <p class="font-semibold text-slate-900">${escapeHtml(i.area)}</p>
+                  <p class="${UI.headerSub} mt-2">${escapeHtml(i.why_it_matters)}</p>
+
+                  <div class="mt-3 ${UI.divider} pt-3">
+                    <p class="${UI.headerSub}">
+                      <span class="font-semibold text-slate-900">Tip:</span> ${escapeHtml(i.actionable_tip)}
+                    </p>
                   </div>
-                `).join("")}
-              </div>`
-            : `<p class="${UI.headerSub}">No improvements returned.</p>`
-        }
-      </article>
 
-      <!-- Actions -->
-      <div class="flex flex-wrap gap-3 justify-center">
-        <button onclick="window.print()" class="${UI.btnWide}">
-          📄 Print feedback
-        </button>
+                  <div class="mt-4 bg-blue-50/70 border border-blue-200 rounded-2xl p-4">
+                    <p class="text-xs md:text-[13px] text-slate-700">
+                      <span class="font-semibold text-slate-900">Example phrase:</span> ${escapeHtml(i.example_phrase)}
+                    </p>
+                  </div>
+                </div>
+              `).join("")}
+            </div>`
+          : `<p class="${UI.headerSub}">No improvements returned.</p>`
+      }
+    </article>
 
-        <a href="./vignette-library.html" class="${UI.btnWide}">
-          📚 Back to library
-        </a>
+    <!-- Actions -->
+    <div class="flex flex-wrap gap-3 justify-center">
+      <button onclick="window.print()" class="${UI.btnWide}">
+        <!-- ICON_PLACEHOLDER: Replace with your print icon -->
+        <img src="./icons/completeness.png" alt="Print" class="w-5 h-5 object-contain" />
+        Print feedback
+      </button>
 
-        <a href="./practice-module.html" class="${UI.btnWide}">
-          🔄 Practice again
-        </a>
-      </div>
+      <a href="./vignette-library.html" class="${UI.btnWide}">
+        <!-- ICON_PLACEHOLDER: Replace with your library icon -->
+        <img src="./icons/vignette-library-button.png" alt="Library" class="w-5 h-5 object-contain" />
+        Back to library
+      </a>
 
+      <a href="./practice-module.html" class="${UI.btnWide}">
+        <!-- ICON_PLACEHOLDER: Replace with your practice icon -->
+        <img src="./icons/practice-button.png" alt="Practice" class="w-5 h-5 object-contain" />
+        Practice again
+      </a>
     </div>
   `;
-
-  container.innerHTML = html;
 }
 
 async function parseErrorResponse(response) {
@@ -434,7 +453,7 @@ async function analyzePracticeSession() {
 
     // Optional: if you want the feedback to NOT be reproducible after refresh,
     // uncomment these two lines to delete the session data after rendering:
-    //
+
     localStorage.removeItem(`practiceConversation:${sessionId}`);
     localStorage.removeItem(`practiceVignette:${sessionId}`);
 
