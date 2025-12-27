@@ -57,13 +57,13 @@ const UI = {
   headerTitle: "text-base md:text-lg font-semibold text-slate-900",
   headerSub: "text-xs md:text-[13px] text-slate-600",
 
-  // Buttons: same style, just blue variant
+  // Buttons: blue variant
   btnNav:
     "inline-flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200 text-xs md:text-sm font-semibold text-black hover:bg-blue-200 transition-colors",
   btnNavText: "text-xs md:text-sm font-semibold text-slate-900",
   btnNavIcon: "w-8 h-8 object-contain",
 
-  // Icon background requested
+  // Icon background requested (used in many cards)
   iconBg: "flex items-center justify-center w-14 h-14 rounded-3xl bg-blue-100",
 
   badgeBase: "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border",
@@ -84,10 +84,8 @@ function showInfoHowToGetFeedback() {
   container.innerHTML = `
     <article class="${UI.cardNoHover} text-center p-8 md:p-10">
       <div class="mb-4 flex justify-center">
-        <div class="${UI.iconBg}">
-          <!-- ICON_PLACEHOLDER: Top info icon -->
-          <img src="./icons/surgeon.png" alt="Surgeon" class="w-9 h-9 object-contain" />
-        </div>
+        <!-- ICON_PLACEHOLDER: Top info icon -->
+        <img src="./icons/surgeon.png" alt="Surgeon" class="w-16 h-16 object-contain" />
       </div>
 
       <h3 class="text-lg md:text-2xl font-semibold text-slate-900 mb-5">
@@ -224,13 +222,6 @@ function statusLabel(status) {
   return "Not covered";
 }
 
-function severityBadge(sev) {
-  const base = UI.badgeBase;
-  if (sev === "high") return `${base} bg-red-50 text-red-700 border-red-200`;
-  if (sev === "medium") return `${base} bg-yellow-50 text-yellow-700 border-yellow-200`;
-  return `${base} bg-blue-50 text-blue-700 border-blue-200`;
-}
-
 function computeCompleteness(coverageChecklist) {
   const list = Array.isArray(coverageChecklist) ? coverageChecklist : [];
   if (list.length === 0) return { score: 0, covered: [], missed: [], partial: [] };
@@ -340,46 +331,6 @@ function renderJargonAnalysis(jargon) {
   `;
 }
 
-function renderSafetyFlags(flags) {
-  const list = Array.isArray(flags) ? flags : [];
-  return `
-    <article class="${UI.card}">
-      <div class="flex items-center gap-3 mb-4">
-        <div class="${UI.iconBg}">
-          <!-- ICON_PLACEHOLDER: safety icon -->
-          <img src="./icons/improve.png" alt="Safety flags" class="w-8 h-8 object-contain" />
-        </div>
-        <h3 class="${UI.headerTitle}">Safety flags</h3>
-      </div>
-
-      ${
-        list.length
-          ? `<div class="space-y-4">
-              ${list.slice(0, 8).map((f) => `
-                <div class="bg-white/90 rounded-2xl border border-slate-200 p-5 shadow-sm">
-                  <div class="flex flex-wrap items-center justify-between gap-2">
-                    <p class="font-semibold text-slate-900">${escapeHtml(f.flag)}</p>
-                    <span class="${severityBadge(f.severity)}">${escapeHtml(f.severity)}</span>
-                  </div>
-
-                  ${Array.isArray(f.evidence) && f.evidence.length ? renderEvidence(f.evidence) : ""}
-
-                  ${f.safer_alternative ? `
-                    <div class="mt-4 bg-blue-50/70 border border-blue-200 rounded-2xl p-4">
-                      <p class="text-xs md:text-[13px] text-slate-700">
-                        <span class="font-semibold text-slate-900">Safer alternative:</span> ${escapeHtml(f.safer_alternative)}
-                      </p>
-                    </div>
-                  ` : ""}
-                </div>
-              `).join("")}
-            </div>`
-          : `<p class="${UI.headerSub}">No safety flags were returned.</p>`
-      }
-    </article>
-  `;
-}
-
 function renderNextSessionFocus(nextFocus) {
   const nf = nextFocus && typeof nextFocus === "object" ? nextFocus : null;
   if (!nf) return "";
@@ -435,17 +386,14 @@ function displayFeedback(raw) {
   const checked = feedback?.understanding_and_questions?.checked_understanding;
 
   const jargon = feedback?.jargon_analysis;
-  const safetyFlags = feedback?.safety_flags;
   const nextFocus = feedback?.next_session_focus;
 
   container.innerHTML = `
     <!-- Overall -->
     <article class="${UI.cardNoHover} text-center">
       <div class="mb-4 flex justify-center">
-        <div class="${UI.iconBg}">
-          <!-- ICON_PLACEHOLDER: overall icon -->
-          <img src="./icons/feedback-button.png" alt="Overall" class="w-9 h-9 object-contain" />
-        </div>
+        <!-- ICON_PLACEHOLDER: overall icon (NO BLUE BACKGROUND) -->
+        <img src="./icons/surgeon.png" alt="Surgeon" class="w-16 h-16 object-contain" />
       </div>
 
       <p class="${UI.headerSub} mb-1">Overall performance</p>
@@ -462,12 +410,12 @@ function displayFeedback(raw) {
       </p>
     </article>
 
-    <!-- Strengths (FULL WIDTH) -->
+    <!-- Strengths -->
     <article class="${UI.card}">
       <div class="flex items-center gap-3 mb-4">
         <div class="${UI.iconBg}">
           <!-- ICON_PLACEHOLDER: strengths icon -->
-          <img src="./icons/completeness.png" alt="Strengths" class="w-8 h-8 object-contain" />
+          <img src="./icons/power.png" alt="Strengths" class="w-8 h-8 object-contain" />
         </div>
         <h3 class="${UI.headerTitle}">Strengths</h3>
       </div>
@@ -481,7 +429,7 @@ function displayFeedback(raw) {
       }
     </article>
 
-    <!-- Completeness (FULL WIDTH) -->
+    <!-- Completeness -->
     <article class="${UI.card}">
       <div class="flex items-center justify-between gap-3 mb-4">
         <div class="flex items-center gap-3">
@@ -537,7 +485,7 @@ function displayFeedback(raw) {
       ` : ""}
     </article>
 
-    <!-- Patient-centered checks (FULL WIDTH) -->
+    <!-- Patient-centered checks -->
     <article class="${UI.card}">
       <div class="flex items-center gap-3 mb-4">
         <div class="${UI.iconBg}">
@@ -584,7 +532,7 @@ function displayFeedback(raw) {
         </div>
         <div class="flex-1">
           <h3 class="${UI.headerTitle}">What can be improved in your next informed consent discussion?</h3>
-          <p class="${UI.headerSub}">${improvements.length ? `${improvements.length} improvement suggestion(s)` : ""}</p>
+          <p class="${UI.headerSub}">${improvements.length ? `${improvements.length} improvement suggestions` : ""}</p>
         </div>
       </div>
 
@@ -613,9 +561,6 @@ function displayFeedback(raw) {
           : `<p class="${UI.headerSub}">Great job! There are no further improvement suggestions.</p>`
       }
     </article>
-
-    <!-- Safety flags -->
-    ${renderSafetyFlags(safetyFlags)}
 
     <!-- Next session focus -->
     ${renderNextSessionFocus(nextFocus)}

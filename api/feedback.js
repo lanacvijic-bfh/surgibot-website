@@ -203,31 +203,6 @@ export default async function handler(req, res) {
             required: ["area", "why_it_matters", "actionable_tip", "example_phrase"],
           },
         },
-        safety_flags: {
-          type: "array",
-          items: {
-            type: "object",
-            additionalProperties: false,
-            properties: {
-              flag: { type: "string" },
-              severity: { type: "string", enum: ["low", "medium", "high"] },
-              evidence: {
-                type: "array",
-                items: {
-                  type: "object",
-                  additionalProperties: false,
-                  properties: {
-                    turn_index: { type: "integer", minimum: 0 },
-                    quote: { type: "string" },
-                  },
-                  required: ["turn_index", "quote"],
-                },
-              },
-              safer_alternative: { type: "string" },
-            },
-            required: ["flag", "severity", "evidence", "safer_alternative"],
-          },
-        },
         next_session_focus: {
           type: "object",
           additionalProperties: false,
@@ -245,7 +220,6 @@ export default async function handler(req, res) {
         "jargon_analysis",
         "strengths",
         "improvements",
-        "safety_flags",
         "next_session_focus",
       ],
     };
