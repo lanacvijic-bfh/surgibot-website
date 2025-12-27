@@ -202,7 +202,6 @@ function scoreToRating(score0to100) {
   return "Poor";
 }
 
-/** NEW: rating badge colors */
 function ratingPillClassFromScore(score0to100) {
   const s = Number(score0to100 ?? 0);
   if (s >= 90) return "bg-green-100 border border-green-200 text-green-800";
@@ -210,22 +209,6 @@ function ratingPillClassFromScore(score0to100) {
   if (s >= 60) return "bg-yellow-100 border border-yellow-200 text-yellow-800";
   if (s >= 45) return "bg-orange-100 border border-orange-200 text-orange-800";
   return "bg-red-100 border border-red-200 text-red-800";
-}
-
-/** NEW: stacked, centered strength lines under rating */
-function renderCenteredStrengthLines(strengths, maxLines = 2) {
-  const list = Array.isArray(strengths) ? strengths.filter(Boolean) : [];
-  const shown = list.slice(0, maxLines);
-
-  if (!shown.length) {
-    return `<p class="${UI.headerSub} text-center">See the checklist below to improve.</p>`;
-  }
-
-  return `
-    <div class="text-center space-y-1">
-      ${shown.map((s) => `<p class="${UI.headerSub}">${escapeHtml(s)}</p>`).join("")}
-    </div>
-  `;
 }
 
 function getScoreColor(score) {
@@ -252,7 +235,7 @@ function statusLabel(status) {
 function normalizeStatus(st) {
   if (st === "covered") return "covered";
   if (st === "partially") return "partially";
-  return "missed"; // includes not_covered / undefined
+  return "missed";
 }
 
 function computeCompleteness(coverageChecklist) {
@@ -297,7 +280,6 @@ function renderEvidence(evidence) {
   `;
 }
 
-/** NEW: Patient-centered check item styled like completeness */
 function patientCenteredItem(label, obj) {
   const status = normalizeStatus(obj?.status);
   const improvement = (obj?.improvement || "").trim();
@@ -333,7 +315,6 @@ function patientCenteredItem(label, obj) {
   `;
 }
 
-/** NEW: fallback actionable tips if model doesn't provide */
 function defaultPatientCenteredTips(invited, checked) {
   const tips = [];
 
@@ -342,9 +323,7 @@ function defaultPatientCenteredTips(invited, checked) {
 
   if ((invited?.improvement || "").trim()) tips.push(invited.improvement.trim());
   else if (invStatus !== "covered")
-    tips.push(
-      "Explicitly invite patient questions to encourage engagement and clarify concerns."
-    );
+    tips.push("Explicitly invite patient questions to encourage engagement and clarify concerns.");
 
   if ((checked?.improvement || "").trim()) tips.push(checked.improvement.trim());
   else if (chkStatus !== "covered")
@@ -391,11 +370,7 @@ function renderJargonAnalysis(jargon) {
                       </span>
                     </div>
                     <p class="${UI.headerSub} mt-1">
-                      Found in Turn <span class="font-semibold text-slate-900">${Number.isFinite(
-                        t.turn_index
-                      )
-                        ? t.turn_index
-                        : ""}</span>
+                      Found in Turn <span class="font-semibold text-slate-900">${Number.isFinite(t.turn_index) ? t.turn_index : ""}</span>
                     </p>
                     ${
                       t.plain_explanation_quote
@@ -494,7 +469,9 @@ function displayFeedback(raw) {
         <img src="./icons/surgeon.png" alt="Surgeon" class="w-16 h-16 object-contain" />
       </div>
 
-      <p class="${UI.headerSub} mb-1">Overall performance</p>
+      <!-- CHANGED: bigger + black -->
+      <p class="text-base md:text-lg font-semibold text-slate-900 mb-2">Overall performance</p>
+
       <h2 class="text-2xl md:text-3xl font-semibold text-slate-900 mb-3">
         ${Number.isFinite(score) ? score : 0}/100
       </h2>
@@ -503,9 +480,7 @@ function displayFeedback(raw) {
         ${rating}
       </div>
 
-      <div class="mt-4 max-w-2xl mx-auto">
-        ${renderCenteredStrengthLines(strengths, 2)}
-      </div>
+      <!-- CHANGED: removed sentences under rating -->
     </article>
 
     <!-- Strengths -->
@@ -612,7 +587,7 @@ function displayFeedback(raw) {
       }
     </article>
 
-    <!-- Patient-centered checks (same color scheme + actionable tips) -->
+    <!-- Patient-centered checks -->
     <article class="${UI.card}">
       <div class="flex items-center gap-3 mb-4">
         <div class="${UI.iconBg}">
