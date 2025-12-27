@@ -57,13 +57,13 @@ const UI = {
   headerTitle: "text-base md:text-lg font-semibold text-slate-900",
   headerSub: "text-xs md:text-[13px] text-slate-600",
 
-  // NEW: buttons like your top navigation items
+  // Buttons: same style, just blue variant
   btnNav:
-  "inline-flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200 text-xs md:text-sm font-semibold text-black hover:bg-blue-200 transition-colors",
-  btnNavText: "text-xs font-semibold text-slate-900",
+    "inline-flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200 text-xs md:text-sm font-semibold text-black hover:bg-blue-200 transition-colors",
+  btnNavText: "text-xs md:text-sm font-semibold text-slate-900",
   btnNavIcon: "w-8 h-8 object-contain",
 
-  // NEW: icon background style requested
+  // Icon background requested
   iconBg: "flex items-center justify-center w-14 h-14 rounded-3xl bg-blue-100",
 
   badgeBase: "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border",
@@ -83,9 +83,9 @@ function showInfoHowToGetFeedback() {
   container.className = UI.shell;
   container.innerHTML = `
     <article class="${UI.cardNoHover} text-center p-8 md:p-10">
-      <!-- ICON_PLACEHOLDER: Top info icon -->
       <div class="mb-4 flex justify-center">
         <div class="${UI.iconBg}">
+          <!-- ICON_PLACEHOLDER: Top info icon -->
           <img src="./icons/surgeon.png" alt="Surgeon" class="w-9 h-9 object-contain" />
         </div>
       </div>
@@ -94,7 +94,6 @@ function showInfoHowToGetFeedback() {
         How to get personalized feedback?
       </h3>
 
-      <!-- 3 step cards -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left mb-8">
         <div class="bg-white border border-blue-200 rounded-2xl p-5">
           <div class="flex items-center gap-3 mb-3">
@@ -148,7 +147,7 @@ function showInfoHowToGetFeedback() {
 
       <a href="./vignette-library.html" class="${UI.btnNav}">
         <img src="./icons/vignette-library-button.png" alt="Library icon" class="${UI.btnNavIcon}" />
-        <span class="${UI.btnNavText}">Go to vignette library</span>
+        <span class="${UI.btnNavText}">Go to Vignette Library</span>
       </a>
     </article>
   `;
@@ -162,8 +161,8 @@ function showLoadingState() {
   container.innerHTML = `
     <article class="${UI.cardNoHover} flex flex-col items-center text-center gap-3 py-10">
       <div class="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-blue-300"></div>
-      <p class="text-base md:text-lg font-semibold text-slate-900">We are analyzing your discussion</p>
-      <p class="${UI.headerSub}">This may take a moment.</p>
+      <p class="text-base md:text-lg font-semibold text-slate-900">Analyzing your conversation…</p>
+      <p class="${UI.headerSub}">This may take a moment</p>
     </article>
   `;
 }
@@ -225,6 +224,13 @@ function statusLabel(status) {
   return "Not covered";
 }
 
+function severityBadge(sev) {
+  const base = UI.badgeBase;
+  if (sev === "high") return `${base} bg-red-50 text-red-700 border-red-200`;
+  if (sev === "medium") return `${base} bg-yellow-50 text-yellow-700 border-yellow-200`;
+  return `${base} bg-blue-50 text-blue-700 border-blue-200`;
+}
+
 function computeCompleteness(coverageChecklist) {
   const list = Array.isArray(coverageChecklist) ? coverageChecklist : [];
   if (list.length === 0) return { score: 0, covered: [], missed: [], partial: [] };
@@ -253,9 +259,7 @@ function computeCompleteness(coverageChecklist) {
 
 function renderEvidence(evidence) {
   const ev = Array.isArray(evidence) ? evidence : [];
-  if (ev.length === 0) {
-    return `<p class="${UI.headerSub} mt-2 italic">No evidence quoted.</p>`;
-  }
+  if (ev.length === 0) return "";
 
   return `
     <div class="mt-3 space-y-2">
@@ -266,6 +270,148 @@ function renderEvidence(evidence) {
         </div>
       `).join("")}
     </div>
+  `;
+}
+
+function renderJargonAnalysis(jargon) {
+  const ja = jargon && typeof jargon === "object" ? jargon : null;
+  if (!ja) return "";
+
+  const terms = Array.isArray(ja.medical_terms_found) ? ja.medical_terms_found : [];
+  const suggestions = Array.isArray(ja.suggestions) ? ja.suggestions : [];
+
+  return `
+    <article class="${UI.card}">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="${UI.iconBg}">
+          <!-- ICON_PLACEHOLDER: jargon icon -->
+          <img src="./icons/need.png" alt="Jargon analysis" class="w-8 h-8 object-contain" />
+        </div>
+        <h3 class="${UI.headerTitle}">Medical jargon and clarity</h3>
+      </div>
+
+      <p class="${UI.headerSub} mb-4">${escapeHtml(ja.overall_assessment || "")}</p>
+
+      ${
+        terms.length
+          ? `<div class="space-y-3">
+              ${terms.slice(0, 10).map((t) => {
+                const ok = !!t.explained_plainly;
+                const badge = ok
+                  ? "bg-green-50 text-green-700 border border-green-200"
+                  : "bg-red-50 text-red-700 border border-red-200";
+                return `
+                  <div class="bg-white/90 rounded-2xl border border-slate-200 p-4">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                      <p class="font-semibold text-slate-900">${escapeHtml(t.term)}</p>
+                      <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${badge}">
+                        ${ok ? "Explained" : "Not explained"}
+                      </span>
+                    </div>
+                    <p class="${UI.headerSub} mt-1">
+                      Found in Turn <span class="font-semibold text-slate-900">${Number.isFinite(t.turn_index) ? t.turn_index : ""}</span>
+                    </p>
+                    ${
+                      t.plain_explanation_quote
+                        ? `<div class="mt-3 text-xs md:text-[13px] text-slate-600 bg-slate-50/70 border border-slate-200 rounded-xl px-3 py-2">
+                            <span class="font-semibold text-slate-900">Plain explanation quote:</span>
+                            “${escapeHtml(t.plain_explanation_quote)}”
+                          </div>`
+                        : ""
+                    }
+                  </div>
+                `;
+              }).join("")}
+            </div>`
+          : `<p class="${UI.headerSub}">No medical terms detected (or none were returned).</p>`
+      }
+
+      ${
+        suggestions.length
+          ? `<div class="mt-5 ${UI.divider} pt-4">
+              <p class="text-sm font-semibold text-slate-900 mb-2">Suggestions</p>
+              <ul class="list-disc pl-5 space-y-1 ${UI.headerSub}">
+                ${suggestions.slice(0, 8).map((s) => `<li>${escapeHtml(s)}</li>`).join("")}
+              </ul>
+            </div>`
+          : ""
+      }
+    </article>
+  `;
+}
+
+function renderSafetyFlags(flags) {
+  const list = Array.isArray(flags) ? flags : [];
+  return `
+    <article class="${UI.card}">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="${UI.iconBg}">
+          <!-- ICON_PLACEHOLDER: safety icon -->
+          <img src="./icons/improve.png" alt="Safety flags" class="w-8 h-8 object-contain" />
+        </div>
+        <h3 class="${UI.headerTitle}">Safety flags</h3>
+      </div>
+
+      ${
+        list.length
+          ? `<div class="space-y-4">
+              ${list.slice(0, 8).map((f) => `
+                <div class="bg-white/90 rounded-2xl border border-slate-200 p-5 shadow-sm">
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <p class="font-semibold text-slate-900">${escapeHtml(f.flag)}</p>
+                    <span class="${severityBadge(f.severity)}">${escapeHtml(f.severity)}</span>
+                  </div>
+
+                  ${Array.isArray(f.evidence) && f.evidence.length ? renderEvidence(f.evidence) : ""}
+
+                  ${f.safer_alternative ? `
+                    <div class="mt-4 bg-blue-50/70 border border-blue-200 rounded-2xl p-4">
+                      <p class="text-xs md:text-[13px] text-slate-700">
+                        <span class="font-semibold text-slate-900">Safer alternative:</span> ${escapeHtml(f.safer_alternative)}
+                      </p>
+                    </div>
+                  ` : ""}
+                </div>
+              `).join("")}
+            </div>`
+          : `<p class="${UI.headerSub}">No safety flags were returned.</p>`
+      }
+    </article>
+  `;
+}
+
+function renderNextSessionFocus(nextFocus) {
+  const nf = nextFocus && typeof nextFocus === "object" ? nextFocus : null;
+  if (!nf) return "";
+
+  const drills = Array.isArray(nf.practice_drills) ? nf.practice_drills : [];
+
+  return `
+    <article class="${UI.cardNoHover}">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="${UI.iconBg}">
+          <!-- ICON_PLACEHOLDER: focus icon -->
+          <img src="./icons/practice-button.png" alt="Next session focus" class="w-8 h-8 object-contain" />
+        </div>
+        <h3 class="${UI.headerTitle}">Next session focus</h3>
+      </div>
+
+      <div class="bg-white/90 rounded-2xl border border-slate-200 p-5">
+        <p class="text-sm font-semibold text-slate-900 mb-2">Goal</p>
+        <p class="${UI.headerSub}">${escapeHtml(nf.goal || "")}</p>
+
+        ${
+          drills.length
+            ? `<div class="mt-4 ${UI.divider} pt-4">
+                <p class="text-sm font-semibold text-slate-900 mb-2">Practice drills</p>
+                <ul class="list-disc pl-5 space-y-1 ${UI.headerSub}">
+                  ${drills.slice(0, 10).map((d) => `<li>${escapeHtml(d)}</li>`).join("")}
+                </ul>
+              </div>`
+            : ""
+        }
+      </div>
+    </article>
   `;
 }
 
@@ -281,11 +427,16 @@ function displayFeedback(raw) {
   const rating = scoreToRating(score);
 
   const completeness = computeCompleteness(feedback?.coverage_checklist);
+
   const strengths = Array.isArray(feedback?.strengths) ? feedback.strengths : [];
   const improvements = Array.isArray(feedback?.improvements) ? feedback.improvements : [];
 
   const invited = feedback?.understanding_and_questions?.invited_questions;
   const checked = feedback?.understanding_and_questions?.checked_understanding;
+
+  const jargon = feedback?.jargon_analysis;
+  const safetyFlags = feedback?.safety_flags;
+  const nextFocus = feedback?.next_session_focus;
 
   container.innerHTML = `
     <!-- Overall -->
@@ -293,7 +444,7 @@ function displayFeedback(raw) {
       <div class="mb-4 flex justify-center">
         <div class="${UI.iconBg}">
           <!-- ICON_PLACEHOLDER: overall icon -->
-          <img src="./icons/surgeon.png" alt="Overall" class="w-16 h-16 object-contain" />
+          <img src="./icons/feedback-button.png" alt="Overall" class="w-9 h-9 object-contain" />
         </div>
       </div>
 
@@ -311,7 +462,26 @@ function displayFeedback(raw) {
       </p>
     </article>
 
-    <!-- Completeness -->
+    <!-- Strengths (FULL WIDTH) -->
+    <article class="${UI.card}">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="${UI.iconBg}">
+          <!-- ICON_PLACEHOLDER: strengths icon -->
+          <img src="./icons/completeness.png" alt="Strengths" class="w-8 h-8 object-contain" />
+        </div>
+        <h3 class="${UI.headerTitle}">Strengths</h3>
+      </div>
+
+      ${
+        strengths.length
+          ? `<ul class="list-disc pl-5 space-y-1 ${UI.headerSub}">
+              ${strengths.slice(0, 10).map((s) => `<li>${escapeHtml(s)}</li>`).join("")}
+            </ul>`
+          : `<p class="${UI.headerSub}">No strengths were returned.</p>`
+      }
+    </article>
+
+    <!-- Completeness (FULL WIDTH) -->
     <article class="${UI.card}">
       <div class="flex items-center justify-between gap-3 mb-4">
         <div class="flex items-center gap-3">
@@ -367,7 +537,7 @@ function displayFeedback(raw) {
       ` : ""}
     </article>
 
-    <!-- Patient-centered checks -->
+    <!-- Patient-centered checks (FULL WIDTH) -->
     <article class="${UI.card}">
       <div class="flex items-center gap-3 mb-4">
         <div class="${UI.iconBg}">
@@ -402,6 +572,9 @@ function displayFeedback(raw) {
       </div>
     </article>
 
+    <!-- Jargon analysis -->
+    ${renderJargonAnalysis(jargon)}
+
     <!-- Improvements -->
     <article class="${UI.cardNoHover}">
       <div class="flex items-center gap-3 mb-4">
@@ -410,12 +583,8 @@ function displayFeedback(raw) {
           <img src="./icons/improve.png" alt="Improvements" class="w-8 h-8 object-contain" />
         </div>
         <div class="flex-1">
-          <h3 class="${UI.headerTitle}">
-            What can be improved in your next informed consent discussion?
-          </h3>
-          <p class="${UI.headerSub}">
-            ${improvements.length ? `${improvements.length} improvement suggestion(s)` : ""}
-          </p>
+          <h3 class="${UI.headerTitle}">What can be improved in your next informed consent discussion?</h3>
+          <p class="${UI.headerSub}">${improvements.length ? `${improvements.length} improvement suggestion(s)` : ""}</p>
         </div>
       </div>
 
@@ -445,7 +614,13 @@ function displayFeedback(raw) {
       }
     </article>
 
-    <!-- Actions (nav-style buttons) -->
+    <!-- Safety flags -->
+    ${renderSafetyFlags(safetyFlags)}
+
+    <!-- Next session focus -->
+    ${renderNextSessionFocus(nextFocus)}
+
+    <!-- Actions -->
     <div class="flex flex-wrap gap-3 justify-center">
       <button onclick="window.print()" class="${UI.btnNav}">
         <img src="./icons/completeness.png" alt="Print" class="${UI.btnNavIcon}" />
@@ -510,6 +685,7 @@ async function analyzePracticeSession() {
 
     displayFeedback(data);
 
+    // If you want feedback NOT reproducible after refresh:
     localStorage.removeItem(`practiceConversation:${sessionId}`);
     localStorage.removeItem(`practiceVignette:${sessionId}`);
   } catch (error) {

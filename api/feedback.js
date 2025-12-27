@@ -1,699 +1,292 @@
-// public/feedback-module.js
-// Session-based feedback ONLY.
-// If user opens feedback-module.html without ?session=..., show instructions instead.
-//
-// Storage used (per session):
-// - practiceConversation:<sessionId>
-// - practiceVignette:<sessionId>
+import OpenAI from "openai";
+import { buildFeedbackSystemPrompt } from "./lib/feedback-prompt.js";
 
-function getSessionIdFromUrl() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get("session");
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+function sanitizeMessages(raw) {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter(
+      (m) =>
+        m &&
+        (m.role === "user" || m.role === "assistant") &&
+        typeof m.content === "string"
+    )
+    .map((m) => ({ role: m.role, content: m.content.slice(0, 4000) }));
 }
 
-function safeJsonParse(str) {
-  try {
-    return JSON.parse(str);
-  } catch {
-    return null;
-  }
+function isLikelyVignette(v) {
+  return (
+    v &&
+    typeof v === "object" &&
+    v.demographics &&
+    v.clinical_profile &&
+    typeof v.demographics?.name === "string" &&
+    typeof v.clinical_profile?.planned_surgery === "string"
+  );
 }
 
-function readFromStorage(key) {
-  const raw = localStorage.getItem(key);
-  if (!raw) return null;
-  return safeJsonParse(raw);
+function toTurnIndexedTranscript(messages) {
+  // role:user = surgeon; role:assistant = patient (based on your practice module)
+  return messages
+    .map((m, idx) => {
+      const speaker = m.role === "user" ? "SURGEON" : "PATIENT";
+      return `TURN ${idx} | ${speaker}: ${String(m.content || "").trim()}`;
+    })
+    .join("\n\n");
 }
 
-function escapeHtml(str) {
-  return String(str ?? "").replace(/[&<>"']/g, (m) => {
-    switch (m) {
-      case "&":
-        return "&amp;";
-      case "<":
-        return "&lt;";
-      case ">":
-        return "&gt;";
-      case '"':
-        return "&quot;";
-      case "'":
-        return "&#39;";
-      default:
-        return m;
-    }
-  });
-}
-
-/** ---- Design system (match the rest of the website) ---- */
-const UI = {
-  // Your HTML already controls max-width, so keep empty
-  shell: "",
-
-  card:
-    "bg-white/90 rounded-2xl shadow-sm border border-slate-200 p-5 hover:shadow-md transition-shadow",
-  cardNoHover:
-    "bg-white/90 rounded-2xl shadow-sm border border-slate-200 p-5",
-
-  headerTitle: "text-base md:text-lg font-semibold text-slate-900",
-  headerSub: "text-xs md:text-[13px] text-slate-600",
-
-  // Buttons: same style, just blue variant
-  btnNav:
-    "inline-flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200 text-xs md:text-sm font-semibold text-black hover:bg-blue-200 transition-colors",
-  btnNavText: "text-xs md:text-sm font-semibold text-slate-900",
-  btnNavIcon: "w-8 h-8 object-contain",
-
-  // Icon background requested
-  iconBg: "flex items-center justify-center w-14 h-14 rounded-3xl bg-blue-100",
-
-  badgeBase: "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border",
-
-  pillBase: "text-xs px-2 py-1 rounded border",
-  divider: "border-t border-slate-200/70",
-  subtleBox:
-    "bg-slate-50/70 rounded-xl border border-slate-200 px-3 py-2 text-xs md:text-[13px] text-slate-600",
-
-  stack: "space-y-6",
-};
-
-function showInfoHowToGetFeedback() {
-  const container = document.getElementById("feedback-container");
-  if (!container) return;
-
-  container.className = UI.shell;
-  container.innerHTML = `
-    <article class="${UI.cardNoHover} text-center p-8 md:p-10">
-      <div class="mb-4 flex justify-center">
-        <div class="${UI.iconBg}">
-          <!-- ICON_PLACEHOLDER: Top info icon -->
-          <img src="./icons/surgeon.png" alt="Surgeon" class="w-9 h-9 object-contain" />
-        </div>
-      </div>
-
-      <h3 class="text-lg md:text-2xl font-semibold text-slate-900 mb-5">
-        How to get personalized feedback?
-      </h3>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left mb-8">
-        <div class="bg-white border border-blue-200 rounded-2xl p-5">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="${UI.iconBg}">
-              <!-- ICON_PLACEHOLDER: Step 1 icon -->
-              <img src="./icons/vignette-library-button.png" alt="Step 1" class="w-9 h-9 object-contain" />
-            </div>
-            <div>
-              <p class="text-sm font-semibold text-slate-900">Step 1</p>
-              <p class="text-xs md:text-[13px] text-slate-700">Choose a vignette</p>
-            </div>
-          </div>
-          <p class="text-xs md:text-[13px] text-slate-700 leading-relaxed">
-            Choose and review a patient vignette in the vignette library.
-          </p>
-        </div>
-
-        <div class="bg-white border border-blue-200 rounded-2xl p-5">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="${UI.iconBg}">
-              <!-- ICON_PLACEHOLDER: Step 2 icon -->
-              <img src="./icons/practice-button.png" alt="Step 2" class="w-9 h-9 object-contain" />
-            </div>
-            <div>
-              <p class="text-sm font-semibold text-slate-900">Step 2</p>
-              <p class="text-xs md:text-[13px] text-slate-700">Practice discussion</p>
-            </div>
-          </div>
-          <p class="text-xs md:text-[13px] text-slate-700 leading-relaxed">
-            Practice the informed consent discussion with a simulated patient.
-          </p>
-        </div>
-
-        <div class="bg-white border border-blue-200 rounded-2xl p-5">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="${UI.iconBg}">
-              <!-- ICON_PLACEHOLDER: Step 3 icon -->
-              <img src="./icons/feedback-button.png" alt="Step 3" class="w-9 h-9 object-contain" />
-            </div>
-            <div>
-              <p class="text-sm font-semibold text-slate-900">Step 3</p>
-              <p class="text-xs md:text-[13px] text-slate-700">Show feedback</p>
-            </div>
-          </div>
-          <p class="text-xs md:text-[13px] text-slate-700 leading-relaxed">
-            After you complete the discussion, click on
-            <span class="font-semibold text-slate-900">Show personalized feedback</span>.
-          </p>
-        </div>
-      </div>
-
-      <a href="./vignette-library.html" class="${UI.btnNav}">
-        <img src="./icons/vignette-library-button.png" alt="Library icon" class="${UI.btnNavIcon}" />
-        <span class="${UI.btnNavText}">Go to Vignette Library</span>
-      </a>
-    </article>
-  `;
-}
-
-function showLoadingState() {
-  const container = document.getElementById("feedback-container");
-  if (!container) return;
-
-  container.className = UI.shell;
-  container.innerHTML = `
-    <article class="${UI.cardNoHover} flex flex-col items-center text-center gap-3 py-10">
-      <div class="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-blue-300"></div>
-      <p class="text-base md:text-lg font-semibold text-slate-900">Analyzing your conversation…</p>
-      <p class="${UI.headerSub}">This may take a moment</p>
-    </article>
-  `;
-}
-
-function showError(message) {
-  const container = document.getElementById("feedback-container");
-  if (!container) return;
-
-  container.className = UI.shell;
-  container.innerHTML = `
-    <article class="${UI.cardNoHover} text-center p-8">
-      <div class="mb-4 flex justify-center">
-        <div class="${UI.iconBg}">
-          <!-- ICON_PLACEHOLDER: error icon -->
-          <img src="./icons/feedback-button.png" alt="Error" class="w-9 h-9 object-contain" />
-        </div>
-      </div>
-
-      <h3 class="text-base md:text-lg font-semibold text-slate-900 mb-2">
-        Unable to generate feedback
-      </h3>
-      <p class="${UI.headerSub} mb-6">${escapeHtml(message)}</p>
-
-      <button onclick="window.location.reload()" class="${UI.btnNav}">
-        <img src="./icons/feedback-button.png" alt="Try again" class="${UI.btnNavIcon}" />
-        <span class="${UI.btnNavText}">Try again</span>
-      </button>
-    </article>
-  `;
-}
-
-function scoreToRating(score0to100) {
-  const s = Number(score0to100 ?? 0);
-  if (s >= 90) return "Excellent";
-  if (s >= 75) return "Good";
-  if (s >= 60) return "Satisfactory";
-  if (s >= 45) return "Needs Improvement";
-  return "Poor";
-}
-
-function getScoreColor(score) {
-  const s = Number(score ?? 0);
-  if (s >= 85) return "text-green-700 bg-green-50 border border-green-200";
-  if (s >= 70) return "text-blue-700 bg-blue-50 border border-blue-200";
-  if (s >= 50) return "text-yellow-700 bg-yellow-50 border border-yellow-200";
-  return "text-red-700 bg-red-50 border border-red-200";
-}
-
-function statusBadge(status) {
-  const base = UI.badgeBase;
-  if (status === "covered") return `${base} bg-green-50 text-green-700 border-green-200`;
-  if (status === "partially") return `${base} bg-yellow-50 text-yellow-700 border-yellow-200`;
-  return `${base} bg-slate-50 text-slate-700 border-slate-200`;
-}
-
-function statusLabel(status) {
-  if (status === "covered") return "Covered";
-  if (status === "partially") return "Partially";
-  return "Not covered";
-}
-
-function severityBadge(sev) {
-  const base = UI.badgeBase;
-  if (sev === "high") return `${base} bg-red-50 text-red-700 border-red-200`;
-  if (sev === "medium") return `${base} bg-yellow-50 text-yellow-700 border-yellow-200`;
-  return `${base} bg-blue-50 text-blue-700 border-blue-200`;
-}
-
-function computeCompleteness(coverageChecklist) {
-  const list = Array.isArray(coverageChecklist) ? coverageChecklist : [];
-  if (list.length === 0) return { score: 0, covered: [], missed: [], partial: [] };
-
-  let total = 0;
-  const covered = [];
-  const missed = [];
-  const partial = [];
-
-  for (const item of list) {
-    const st = item?.status;
-    if (st === "covered") {
-      total += 1;
-      covered.push(item.item);
-    } else if (st === "partially") {
-      total += 0.5;
-      partial.push(item.item);
-    } else {
-      missed.push(item.item);
-    }
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "POST");
+    return res.status(405).send("Method Not Allowed");
   }
 
-  const score = Math.round((total / list.length) * 100);
-  return { score, covered, missed, partial };
-}
+  res.setHeader("Cache-Control", "no-store");
 
-function renderEvidence(evidence) {
-  const ev = Array.isArray(evidence) ? evidence : [];
-  if (ev.length === 0) return "";
-
-  return `
-    <div class="mt-3 space-y-2">
-      ${ev.slice(0, 2).map((e) => `
-        <div class="text-xs md:text-[13px] text-slate-600 bg-slate-50/70 border border-slate-200 rounded-xl px-3 py-2">
-          <span class="font-semibold text-slate-900">${Number.isFinite(e.turn_index) ? `Turn ${e.turn_index}` : "Turn"}</span>:
-          “${escapeHtml(e.quote || "")}”
-        </div>
-      `).join("")}
-    </div>
-  `;
-}
-
-function renderJargonAnalysis(jargon) {
-  const ja = jargon && typeof jargon === "object" ? jargon : null;
-  if (!ja) return "";
-
-  const terms = Array.isArray(ja.medical_terms_found) ? ja.medical_terms_found : [];
-  const suggestions = Array.isArray(ja.suggestions) ? ja.suggestions : [];
-
-  return `
-    <article class="${UI.card}">
-      <div class="flex items-center gap-3 mb-4">
-        <div class="${UI.iconBg}">
-          <!-- ICON_PLACEHOLDER: jargon icon -->
-          <img src="./icons/need.png" alt="Jargon analysis" class="w-8 h-8 object-contain" />
-        </div>
-        <h3 class="${UI.headerTitle}">Medical jargon and clarity</h3>
-      </div>
-
-      <p class="${UI.headerSub} mb-4">${escapeHtml(ja.overall_assessment || "")}</p>
-
-      ${
-        terms.length
-          ? `<div class="space-y-3">
-              ${terms.slice(0, 10).map((t) => {
-                const ok = !!t.explained_plainly;
-                const badge = ok
-                  ? "bg-green-50 text-green-700 border border-green-200"
-                  : "bg-red-50 text-red-700 border border-red-200";
-                return `
-                  <div class="bg-white/90 rounded-2xl border border-slate-200 p-4">
-                    <div class="flex flex-wrap items-center justify-between gap-2">
-                      <p class="font-semibold text-slate-900">${escapeHtml(t.term)}</p>
-                      <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${badge}">
-                        ${ok ? "Explained" : "Not explained"}
-                      </span>
-                    </div>
-                    <p class="${UI.headerSub} mt-1">
-                      Found in Turn <span class="font-semibold text-slate-900">${Number.isFinite(t.turn_index) ? t.turn_index : ""}</span>
-                    </p>
-                    ${
-                      t.plain_explanation_quote
-                        ? `<div class="mt-3 text-xs md:text-[13px] text-slate-600 bg-slate-50/70 border border-slate-200 rounded-xl px-3 py-2">
-                            <span class="font-semibold text-slate-900">Plain explanation quote:</span>
-                            “${escapeHtml(t.plain_explanation_quote)}”
-                          </div>`
-                        : ""
-                    }
-                  </div>
-                `;
-              }).join("")}
-            </div>`
-          : `<p class="${UI.headerSub}">No medical terms detected (or none were returned).</p>`
-      }
-
-      ${
-        suggestions.length
-          ? `<div class="mt-5 ${UI.divider} pt-4">
-              <p class="text-sm font-semibold text-slate-900 mb-2">Suggestions</p>
-              <ul class="list-disc pl-5 space-y-1 ${UI.headerSub}">
-                ${suggestions.slice(0, 8).map((s) => `<li>${escapeHtml(s)}</li>`).join("")}
-              </ul>
-            </div>`
-          : ""
-      }
-    </article>
-  `;
-}
-
-function renderSafetyFlags(flags) {
-  const list = Array.isArray(flags) ? flags : [];
-  return `
-    <article class="${UI.card}">
-      <div class="flex items-center gap-3 mb-4">
-        <div class="${UI.iconBg}">
-          <!-- ICON_PLACEHOLDER: safety icon -->
-          <img src="./icons/improve.png" alt="Safety flags" class="w-8 h-8 object-contain" />
-        </div>
-        <h3 class="${UI.headerTitle}">Safety flags</h3>
-      </div>
-
-      ${
-        list.length
-          ? `<div class="space-y-4">
-              ${list.slice(0, 8).map((f) => `
-                <div class="bg-white/90 rounded-2xl border border-slate-200 p-5 shadow-sm">
-                  <div class="flex flex-wrap items-center justify-between gap-2">
-                    <p class="font-semibold text-slate-900">${escapeHtml(f.flag)}</p>
-                    <span class="${severityBadge(f.severity)}">${escapeHtml(f.severity)}</span>
-                  </div>
-
-                  ${Array.isArray(f.evidence) && f.evidence.length ? renderEvidence(f.evidence) : ""}
-
-                  ${f.safer_alternative ? `
-                    <div class="mt-4 bg-blue-50/70 border border-blue-200 rounded-2xl p-4">
-                      <p class="text-xs md:text-[13px] text-slate-700">
-                        <span class="font-semibold text-slate-900">Safer alternative:</span> ${escapeHtml(f.safer_alternative)}
-                      </p>
-                    </div>
-                  ` : ""}
-                </div>
-              `).join("")}
-            </div>`
-          : `<p class="${UI.headerSub}">No safety flags were returned.</p>`
-      }
-    </article>
-  `;
-}
-
-function renderNextSessionFocus(nextFocus) {
-  const nf = nextFocus && typeof nextFocus === "object" ? nextFocus : null;
-  if (!nf) return "";
-
-  const drills = Array.isArray(nf.practice_drills) ? nf.practice_drills : [];
-
-  return `
-    <article class="${UI.cardNoHover}">
-      <div class="flex items-center gap-3 mb-4">
-        <div class="${UI.iconBg}">
-          <!-- ICON_PLACEHOLDER: focus icon -->
-          <img src="./icons/practice-button.png" alt="Next session focus" class="w-8 h-8 object-contain" />
-        </div>
-        <h3 class="${UI.headerTitle}">Next session focus</h3>
-      </div>
-
-      <div class="bg-white/90 rounded-2xl border border-slate-200 p-5">
-        <p class="text-sm font-semibold text-slate-900 mb-2">Goal</p>
-        <p class="${UI.headerSub}">${escapeHtml(nf.goal || "")}</p>
-
-        ${
-          drills.length
-            ? `<div class="mt-4 ${UI.divider} pt-4">
-                <p class="text-sm font-semibold text-slate-900 mb-2">Practice drills</p>
-                <ul class="list-disc pl-5 space-y-1 ${UI.headerSub}">
-                  ${drills.slice(0, 10).map((d) => `<li>${escapeHtml(d)}</li>`).join("")}
-                </ul>
-              </div>`
-            : ""
-        }
-      </div>
-    </article>
-  `;
-}
-
-function displayFeedback(raw) {
-  const container = document.getElementById("feedback-container");
-  if (!container) return;
-
-  container.className = `${UI.shell} ${UI.stack}`;
-
-  const feedback = raw?.feedback && typeof raw?.success !== "undefined" ? raw.feedback : raw;
-
-  const score = Number(feedback?.overall_score_0_100 ?? 0);
-  const rating = scoreToRating(score);
-
-  const completeness = computeCompleteness(feedback?.coverage_checklist);
-
-  const strengths = Array.isArray(feedback?.strengths) ? feedback.strengths : [];
-  const improvements = Array.isArray(feedback?.improvements) ? feedback.improvements : [];
-
-  const invited = feedback?.understanding_and_questions?.invited_questions;
-  const checked = feedback?.understanding_and_questions?.checked_understanding;
-
-  const jargon = feedback?.jargon_analysis;
-  const safetyFlags = feedback?.safety_flags;
-  const nextFocus = feedback?.next_session_focus;
-
-  container.innerHTML = `
-    <!-- Overall -->
-    <article class="${UI.cardNoHover} text-center">
-      <div class="mb-4 flex justify-center">
-        <div class="${UI.iconBg}">
-          <!-- ICON_PLACEHOLDER: overall icon -->
-          <img src="./icons/feedback-button.png" alt="Overall" class="w-9 h-9 object-contain" />
-        </div>
-      </div>
-
-      <p class="${UI.headerSub} mb-1">Overall performance</p>
-      <h2 class="text-2xl md:text-3xl font-semibold text-slate-900 mb-3">
-        ${Number.isFinite(score) ? score : 0}/100
-      </h2>
-
-      <div class="inline-flex items-center px-4 py-2 rounded-full text-xs md:text-sm font-semibold border border-blue-200 bg-blue-100 text-slate-900">
-        ${rating}
-      </div>
-
-      <p class="${UI.headerSub} mt-4 max-w-2xl mx-auto">
-        ${escapeHtml(strengths.length ? strengths.slice(0, 2).join(" • ") : "See the checklist below to improve.")}
-      </p>
-    </article>
-
-    <!-- Strengths (FULL WIDTH) -->
-    <article class="${UI.card}">
-      <div class="flex items-center gap-3 mb-4">
-        <div class="${UI.iconBg}">
-          <!-- ICON_PLACEHOLDER: strengths icon -->
-          <img src="./icons/completeness.png" alt="Strengths" class="w-8 h-8 object-contain" />
-        </div>
-        <h3 class="${UI.headerTitle}">Strengths</h3>
-      </div>
-
-      ${
-        strengths.length
-          ? `<ul class="list-disc pl-5 space-y-1 ${UI.headerSub}">
-              ${strengths.slice(0, 10).map((s) => `<li>${escapeHtml(s)}</li>`).join("")}
-            </ul>`
-          : `<p class="${UI.headerSub}">No strengths were returned.</p>`
-      }
-    </article>
-
-    <!-- Completeness (FULL WIDTH) -->
-    <article class="${UI.card}">
-      <div class="flex items-center justify-between gap-3 mb-4">
-        <div class="flex items-center gap-3">
-          <div class="${UI.iconBg}">
-            <!-- ICON_PLACEHOLDER: completeness icon -->
-            <img src="./icons/completeness.png" alt="Completeness" class="w-8 h-8 object-contain" />
-          </div>
-          <h3 class="${UI.headerTitle}">Completeness</h3>
-        </div>
-
-        <div class="px-4 py-2 rounded-xl text-sm md:text-base font-semibold ${getScoreColor(completeness.score)}">
-          ${completeness.score}%
-        </div>
-      </div>
-
-      <p class="${UI.headerSub} mb-4">
-        ${completeness.missed.length
-          ? "In the next informed consent discussion, focus on the missed topics below."
-          : "Great coverage of required topics for informed consent discussion."}
-      </p>
-
-      ${completeness.covered.length ? `
-        <div class="mb-4">
-          <p class="text-xs font-semibold text-green-700 mb-2">Covered</p>
-          <div class="flex flex-wrap gap-2">
-            ${completeness.covered.map(item =>
-              `<span class="${UI.pillBase} bg-green-50 text-green-700 border-green-200">${escapeHtml(item)}</span>`
-            ).join("")}
-          </div>
-        </div>
-      ` : ""}
-
-      ${completeness.partial.length ? `
-        <div class="mb-4">
-          <p class="text-xs font-semibold text-yellow-700 mb-2">Partially</p>
-          <div class="flex flex-wrap gap-2">
-            ${completeness.partial.map(item =>
-              `<span class="${UI.pillBase} bg-yellow-50 text-yellow-700 border-yellow-200">${escapeHtml(item)}</span>`
-            ).join("")}
-          </div>
-        </div>
-      ` : ""}
-
-      ${completeness.missed.length ? `
-        <div>
-          <p class="text-xs font-semibold text-red-700 mb-2">Missed</p>
-          <div class="flex flex-wrap gap-2">
-            ${completeness.missed.map(item =>
-              `<span class="${UI.pillBase} bg-red-50 text-red-700 border-red-200">${escapeHtml(item)}</span>`
-            ).join("")}
-          </div>
-        </div>
-      ` : ""}
-    </article>
-
-    <!-- Patient-centered checks (FULL WIDTH) -->
-    <article class="${UI.card}">
-      <div class="flex items-center gap-3 mb-4">
-        <div class="${UI.iconBg}">
-          <!-- ICON_PLACEHOLDER: patient-centered icon -->
-          <img src="./icons/need.png" alt="Patient-centered checks" class="w-8 h-8 object-contain" />
-        </div>
-        <h3 class="${UI.headerTitle}">Patient-centered checks</h3>
-      </div>
-
-      <div class="space-y-3">
-        <div class="flex items-center justify-between gap-3">
-          <span class="${UI.headerSub}">Invited questions</span>
-          <span class="${statusBadge(invited?.status)}">${statusLabel(invited?.status)}</span>
-        </div>
-
-        <div class="flex items-center justify-between gap-3">
-          <span class="${UI.headerSub}">Checked understanding</span>
-          <span class="${statusBadge(checked?.status)}">${statusLabel(checked?.status)}</span>
-        </div>
-      </div>
-
-      ${(invited?.improvement || checked?.improvement) ? `
-        <div class="mt-4 ${UI.subtleBox}">
-          ${invited?.improvement ? `<div class="mb-2"><span class="font-semibold text-slate-900">Invited patient's questions:</span> ${escapeHtml(invited.improvement)}</div>` : ""}
-          ${checked?.improvement ? `<div><span class="font-semibold text-slate-900">Checked patient's understanding:</span> ${escapeHtml(checked.improvement)}</div>` : ""}
-        </div>
-      ` : ""}
-
-      <div class="mt-4">
-        ${invited?.evidence ? renderEvidence(invited.evidence) : ""}
-        ${checked?.evidence ? renderEvidence(checked.evidence) : ""}
-      </div>
-    </article>
-
-    <!-- Jargon analysis -->
-    ${renderJargonAnalysis(jargon)}
-
-    <!-- Improvements -->
-    <article class="${UI.cardNoHover}">
-      <div class="flex items-center gap-3 mb-4">
-        <div class="${UI.iconBg}">
-          <!-- ICON_PLACEHOLDER: improvement icon -->
-          <img src="./icons/improve.png" alt="Improvements" class="w-8 h-8 object-contain" />
-        </div>
-        <div class="flex-1">
-          <h3 class="${UI.headerTitle}">What can be improved in your next informed consent discussion?</h3>
-          <p class="${UI.headerSub}">${improvements.length ? `${improvements.length} improvement suggestion(s)` : ""}</p>
-        </div>
-      </div>
-
-      ${
-        improvements.length
-          ? `<div class="space-y-4">
-              ${improvements.slice(0, 8).map((i) => `
-                <div class="bg-white/90 rounded-2xl border border-slate-200 p-5 shadow-sm">
-                  <p class="font-semibold text-slate-900">${escapeHtml(i.area)}</p>
-                  <p class="${UI.headerSub} mt-2">${escapeHtml(i.why_it_matters)}</p>
-
-                  <div class="mt-3 ${UI.divider} pt-3">
-                    <p class="${UI.headerSub}">
-                      <span class="font-semibold text-slate-900">Tip:</span> ${escapeHtml(i.actionable_tip)}
-                    </p>
-                  </div>
-
-                  <div class="mt-4 bg-blue-50/70 border border-blue-200 rounded-2xl p-4">
-                    <p class="text-xs md:text-[13px] text-slate-700">
-                      <span class="font-semibold text-slate-900">Example phrase you can use:</span> ${escapeHtml(i.example_phrase)}
-                    </p>
-                  </div>
-                </div>
-              `).join("")}
-            </div>`
-          : `<p class="${UI.headerSub}">Great job! There are no further improvement suggestions.</p>`
-      }
-    </article>
-
-    <!-- Safety flags -->
-    ${renderSafetyFlags(safetyFlags)}
-
-    <!-- Next session focus -->
-    ${renderNextSessionFocus(nextFocus)}
-
-    <!-- Actions -->
-    <div class="flex flex-wrap gap-3 justify-center">
-      <button onclick="window.print()" class="${UI.btnNav}">
-        <img src="./icons/completeness.png" alt="Print" class="${UI.btnNavIcon}" />
-        <span class="${UI.btnNavText}">Print feedback</span>
-      </button>
-
-      <a href="./vignette-library.html" class="${UI.btnNav}">
-        <img src="./icons/vignette-library-button.png" alt="Library" class="${UI.btnNavIcon}" />
-        <span class="${UI.btnNavText}">Back to library</span>
-      </a>
-
-      <a href="./practice-module.html" class="${UI.btnNav}">
-        <img src="./icons/practice-button.png" alt="Practice" class="${UI.btnNavIcon}" />
-        <span class="${UI.btnNavText}">Practice again</span>
-      </a>
-    </div>
-  `;
-}
-
-async function parseErrorResponse(response) {
-  const ct = response.headers.get("content-type") || "";
-  if (ct.includes("application/json")) return await response.json().catch(() => ({}));
-  const text = await response.text().catch(() => "");
-  return { error: text };
-}
-
-async function analyzePracticeSession() {
-  const sessionId = getSessionIdFromUrl();
-  if (!sessionId) {
-    showInfoHowToGetFeedback();
-    return;
+  if (!process.env.OPENAI_API_KEY) {
+    return res.status(500).json({
+      success: false,
+      error:
+        "Missing OPENAI_API_KEY. Add it in Vercel → Project Settings → Environment Variables, then redeploy.",
+    });
   }
-
-  const conversationHistory = readFromStorage(`practiceConversation:${sessionId}`);
-  const patientVignette = readFromStorage(`practiceVignette:${sessionId}`);
-
-  if (!Array.isArray(conversationHistory) || conversationHistory.length === 0) {
-    showInfoHowToGetFeedback();
-    return;
-  }
-
-  showLoadingState();
 
   try {
-    const response = await fetch("/api/feedback", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ conversationHistory, patientVignette }),
+    const body = req.body ?? {};
+    const conversationHistory = sanitizeMessages(body.conversationHistory ?? []);
+    const patientVignette = body.patientVignette ?? null;
+
+    if (!conversationHistory.length) {
+      return res
+        .status(400)
+        .json({ success: false, error: "conversationHistory is empty." });
+    }
+
+    const transcript = toTurnIndexedTranscript(conversationHistory);
+
+    // ✅ PASS VIGNETTE HERE
+    const instructions = buildFeedbackSystemPrompt({ vignette: patientVignette });
+
+    const vignetteContext = isLikelyVignette(patientVignette)
+      ? JSON.stringify(patientVignette, null, 2)
+      : "No valid vignette provided.";
+
+    const FEEDBACK_SCHEMA = {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        overall_score_0_100: { type: "number", minimum: 0, maximum: 100 },
+        coverage_checklist: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+              item: { type: "string" },
+              status: {
+                type: "string",
+                enum: ["covered", "partially", "not_covered"],
+              },
+              quality_note: { type: "string" },
+              evidence: {
+                type: "array",
+                items: {
+                  type: "object",
+                  additionalProperties: false,
+                  properties: {
+                    turn_index: { type: "integer", minimum: 0 },
+                    quote: { type: "string" },
+                  },
+                  required: ["turn_index", "quote"],
+                },
+              },
+            },
+            required: ["item", "status", "quality_note", "evidence"],
+          },
+        },
+        understanding_and_questions: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            invited_questions: {
+              type: "object",
+              additionalProperties: false,
+              properties: {
+                status: {
+                  type: "string",
+                  enum: ["covered", "partially", "not_covered"],
+                },
+                improvement: { type: "string" },
+                evidence: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    additionalProperties: false,
+                    properties: {
+                      turn_index: { type: "integer", minimum: 0 },
+                      quote: { type: "string" },
+                    },
+                    required: ["turn_index", "quote"],
+                  },
+                },
+              },
+              required: ["status", "improvement", "evidence"],
+            },
+            checked_understanding: {
+              type: "object",
+              additionalProperties: false,
+              properties: {
+                status: {
+                  type: "string",
+                  enum: ["covered", "partially", "not_covered"],
+                },
+                improvement: { type: "string" },
+                evidence: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    additionalProperties: false,
+                    properties: {
+                      turn_index: { type: "integer", minimum: 0 },
+                      quote: { type: "string" },
+                    },
+                    required: ["turn_index", "quote"],
+                  },
+                },
+              },
+              required: ["status", "improvement", "evidence"],
+            },
+          },
+          required: ["invited_questions", "checked_understanding"],
+        },
+        jargon_analysis: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            medical_terms_found: {
+              type: "array",
+              items: {
+                type: "object",
+                additionalProperties: false,
+                properties: {
+                  term: { type: "string" },
+                  turn_index: { type: "integer", minimum: 0 },
+                  explained_plainly: { type: "boolean" },
+                  plain_explanation_quote: { type: "string" },
+                },
+                required: [
+                  "term",
+                  "turn_index",
+                  "explained_plainly",
+                  "plain_explanation_quote",
+                ],
+              },
+            },
+            overall_assessment: { type: "string" },
+            suggestions: { type: "array", items: { type: "string" } },
+          },
+          required: ["medical_terms_found", "overall_assessment", "suggestions"],
+        },
+        strengths: { type: "array", items: { type: "string" } },
+        improvements: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+              area: { type: "string" },
+              why_it_matters: { type: "string" },
+              actionable_tip: { type: "string" },
+              example_phrase: { type: "string" },
+            },
+            required: ["area", "why_it_matters", "actionable_tip", "example_phrase"],
+          },
+        },
+        safety_flags: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+              flag: { type: "string" },
+              severity: { type: "string", enum: ["low", "medium", "high"] },
+              evidence: {
+                type: "array",
+                items: {
+                  type: "object",
+                  additionalProperties: false,
+                  properties: {
+                    turn_index: { type: "integer", minimum: 0 },
+                    quote: { type: "string" },
+                  },
+                  required: ["turn_index", "quote"],
+                },
+              },
+              safer_alternative: { type: "string" },
+            },
+            required: ["flag", "severity", "evidence", "safer_alternative"],
+          },
+        },
+        next_session_focus: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            goal: { type: "string" },
+            practice_drills: { type: "array", items: { type: "string" } },
+          },
+          required: ["goal", "practice_drills"],
+        },
+      },
+      required: [
+        "overall_score_0_100",
+        "coverage_checklist",
+        "understanding_and_questions",
+        "jargon_analysis",
+        "strengths",
+        "improvements",
+        "safety_flags",
+        "next_session_focus",
+      ],
+    };
+
+    const userInput = `
+PATIENT VIGNETTE (context):
+${vignetteContext}
+
+CONVERSATION TRANSCRIPT (turn-indexed):
+${transcript}
+
+Return JSON only, matching the schema exactly.
+Use evidence quotes from SURGEON turns only.
+turn_index must match the TURN number you quoted.
+`.trim();
+
+    const response = await client.responses.create({
+      model: "gpt-4.1-mini",
+      instructions,
+      input: [{ role: "user", content: userInput }],
+      temperature: 0.2,
+      max_output_tokens: 1500,
+      text: {
+        format: {
+          type: "json_schema",
+          name: "surgibot_feedback_v1",
+          strict: true,
+          schema: FEEDBACK_SCHEMA,
+        },
+      },
     });
 
-    if (!response.ok) {
-      const err = await parseErrorResponse(response);
-      throw new Error(err.details || err.error || `Server error: ${response.status}`);
-    }
+    const out = response.output_text ?? "";
+    const feedback = JSON.parse(out);
 
-    const data = await response.json().catch(() => ({}));
-    const fb = data?.feedback ? data.feedback : data;
-
-    if (!fb || typeof fb !== "object" || typeof fb.overall_score_0_100 !== "number") {
-      throw new Error("Invalid feedback format received from the server.");
-    }
-
-    displayFeedback(data);
-
-    // If you want feedback NOT reproducible after refresh:
-    localStorage.removeItem(`practiceConversation:${sessionId}`);
-    localStorage.removeItem(`practiceVignette:${sessionId}`);
-  } catch (error) {
-    console.error("[feedback-module] Failed:", error);
-    showError(error.message || "We are unable to analyze your conversation. Please try again.");
+    return res.status(200).json({ success: true, feedback });
+  } catch (err) {
+    console.error("[/api/feedback] Error:", err);
+    return res.status(err?.status ?? 500).json({
+      success: false,
+      error: err?.message ?? "Feedback function failed.",
+    });
   }
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  analyzePracticeSession();
-});
