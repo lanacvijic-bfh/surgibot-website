@@ -156,7 +156,7 @@ function showLoadingState() {
   container.innerHTML = `
     <article class="${UI.cardNoHover} flex flex-col items-center text-center gap-3 py-10">
       <div class="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-blue-300"></div>
-      <p class="text-base md:text-lg font-semibold text-slate-900">Analyzing your conversation…</p>
+      <p class="text-base md:text-lg font-semibold text-slate-900">Analyzing your discussion</p>
       <p class="${UI.headerSub}">This may take a moment</p>
     </article>
   `;
@@ -302,7 +302,7 @@ function renderJargonAnalysis(jargon) {
                   <div class="bg-white/90 rounded-2xl border border-slate-200 p-4">
                     <div class="flex flex-wrap items-center justify-between gap-2">
                       <p class="font-semibold text-slate-900">${escapeHtml(t.term)}</p>
-                      <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${badge}">
+                      <span class="inline-flex items-center px-3 py-1 rounded-full text-xs ${badge}">
                         ${ok ? "Explained" : "Not explained"}
                       </span>
                     </div>
