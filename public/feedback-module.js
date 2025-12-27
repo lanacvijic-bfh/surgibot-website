@@ -44,12 +44,10 @@ function escapeHtml(str) {
   });
 }
 
-/** ---- Design system (matches vignette-library.js styling) ---- */
+/** ---- Design system (match the rest of the website) ---- */
 const UI = {
-  // NOTE: Keep this aligned with your page layout.
-  // If your feedback-module.html already wraps #feedback-container in a max-width section,
-  // you can set shell to "" and everything will span the wrapper width.
-  shell: "max-w-4xl mx-auto",
+  // Your HTML already controls max-width, so keep empty
+  shell: "",
 
   card:
     "bg-white/90 rounded-2xl shadow-sm border border-slate-200 p-5 hover:shadow-md transition-shadow",
@@ -59,18 +57,22 @@ const UI = {
   headerTitle: "text-base md:text-lg font-semibold text-slate-900",
   headerSub: "text-xs md:text-[13px] text-slate-600",
 
-  btnWide:
-    "inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-100 rounded-xl border border-blue-200 text-xs md:text-sm font-semibold text-black hover:bg-blue-200 transition-colors",
+  // NEW: buttons like your top navigation items
+  btnNav:
+    "inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors",
+  btnNavText: "text-xs font-semibold text-slate-900",
+  btnNavIcon: "w-8 h-8 object-contain",
 
-  badgeBase:
-    "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border",
+  // NEW: icon background style requested
+  iconBg: "flex items-center justify-center w-14 h-14 rounded-3xl bg-blue-100",
+
+  badgeBase: "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border",
 
   pillBase: "text-xs px-2 py-1 rounded border",
   divider: "border-t border-slate-200/70",
   subtleBox:
     "bg-slate-50/70 rounded-xl border border-slate-200 px-3 py-2 text-xs md:text-[13px] text-slate-600",
 
-  // Simple spacing wrapper without introducing nested “container inside container” feel
   stack: "space-y-6",
 };
 
@@ -78,30 +80,75 @@ function showInfoHowToGetFeedback() {
   const container = document.getElementById("feedback-container");
   if (!container) return;
 
-  container.className = UI.shell; // single wrapper, not nested
+  container.className = UI.shell;
   container.innerHTML = `
-    <article class="${UI.cardNoHover} text-center">
-      <!-- ICON_PLACEHOLDER: Replace src with your icon -->
-      <div class="mb-3 flex justify-center">
-        <img src="./icons/feedback-button.png" alt="Feedback" class="w-12 h-12 object-contain" />
+    <article class="${UI.cardNoHover} text-center p-8 md:p-10">
+      <!-- ICON_PLACEHOLDER: Top info icon -->
+      <div class="mb-4 flex justify-center">
+        <div class="${UI.iconBg}">
+          <img src="./icons/surgeon.png" alt="Surgeon" class="w-9 h-9 object-contain" />
+        </div>
       </div>
 
-      <h3 class="text-base md:text-lg font-semibold text-slate-900 mb-2">
-        No feedback session selected
+      <h3 class="text-lg md:text-2xl font-semibold text-slate-900 mb-5">
+        How to get personalized feedback?
       </h3>
 
-      <p class="${UI.headerSub} leading-relaxed mb-5">
-        To receive personalized feedback:
-        <br/>
-        1) Choose a patient vignette in the vignette library
-        <br/>
-        2) Practice the informed consent discussion
-        <br/>
-        3) Click <span class="font-semibold text-slate-900">Show personalized feedback</span> in the practice module
-      </p>
+      <!-- 3 step cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left mb-8">
+        <div class="bg-white border border-blue-200 rounded-2xl p-5">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="${UI.iconBg}">
+              <!-- ICON_PLACEHOLDER: Step 1 icon -->
+              <img src="./icons/vignette-library-button.png" alt="Step 1" class="w-9 h-9 object-contain" />
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-slate-900">Step 1</p>
+              <p class="text-xs md:text-[13px] text-slate-700">Choose a vignette</p>
+            </div>
+          </div>
+          <p class="text-xs md:text-[13px] text-slate-700 leading-relaxed">
+            Choose and review a patient vignette in the vignette library.
+          </p>
+        </div>
 
-      <a href="./vignette-library.html" class="${UI.btnWide}">
-        Go to Vignette Library
+        <div class="bg-white border border-blue-200 rounded-2xl p-5">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="${UI.iconBg}">
+              <!-- ICON_PLACEHOLDER: Step 2 icon -->
+              <img src="./icons/practice-button.png" alt="Step 2" class="w-9 h-9 object-contain" />
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-slate-900">Step 2</p>
+              <p class="text-xs md:text-[13px] text-slate-700">Practice discussion</p>
+            </div>
+          </div>
+          <p class="text-xs md:text-[13px] text-slate-700 leading-relaxed">
+            Practice the informed consent discussion with a simulated patient.
+          </p>
+        </div>
+
+        <div class="bg-white border border-blue-200 rounded-2xl p-5">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="${UI.iconBg}">
+              <!-- ICON_PLACEHOLDER: Step 3 icon -->
+              <img src="./icons/feedback-button.png" alt="Step 3" class="w-9 h-9 object-contain" />
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-slate-900">Step 3</p>
+              <p class="text-xs md:text-[13px] text-slate-700">Show feedback</p>
+            </div>
+          </div>
+          <p class="text-xs md:text-[13px] text-slate-700 leading-relaxed">
+            After you complete the discussion, click on
+            <span class="font-semibold text-slate-900">Show personalized feedback</span>.
+          </p>
+        </div>
+      </div>
+
+      <a href="./vignette-library.html" class="${UI.btnNav}">
+        <img src="./icons/vignette-library-button.png" alt="Library icon" class="${UI.btnNavIcon}" />
+        <span class="${UI.btnNavText}">Go to Vignette Library</span>
       </a>
     </article>
   `;
@@ -111,12 +158,10 @@ function showLoadingState() {
   const container = document.getElementById("feedback-container");
   if (!container) return;
 
-  container.className = UI.shell; // single wrapper
+  container.className = UI.shell;
   container.innerHTML = `
     <article class="${UI.cardNoHover} flex flex-col items-center text-center gap-3 py-10">
-      <!-- ICON_PLACEHOLDER: Replace spinner with your loading icon if desired -->
       <div class="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-blue-300"></div>
-
       <p class="text-base md:text-lg font-semibold text-slate-900">Analyzing your conversation…</p>
       <p class="${UI.headerSub}">This may take a moment</p>
     </article>
@@ -127,19 +172,24 @@ function showError(message) {
   const container = document.getElementById("feedback-container");
   if (!container) return;
 
-  container.className = UI.shell; // single wrapper
+  container.className = UI.shell;
   container.innerHTML = `
-    <article class="${UI.cardNoHover} text-center">
-      <!-- ICON_PLACEHOLDER: Replace with your error icon -->
-      <div class="mb-3 flex justify-center">
-        <img src="./icons/feedback-button.png" alt="Error" class="w-12 h-12 object-contain" />
+    <article class="${UI.cardNoHover} text-center p-8">
+      <div class="mb-4 flex justify-center">
+        <div class="${UI.iconBg}">
+          <!-- ICON_PLACEHOLDER: error icon -->
+          <img src="./icons/feedback-button.png" alt="Error" class="w-9 h-9 object-contain" />
+        </div>
       </div>
 
-      <h3 class="text-base md:text-lg font-semibold text-slate-900 mb-2">Unable to generate feedback</h3>
-      <p class="${UI.headerSub} mb-5">${escapeHtml(message)}</p>
+      <h3 class="text-base md:text-lg font-semibold text-slate-900 mb-2">
+        Unable to generate feedback
+      </h3>
+      <p class="${UI.headerSub} mb-6">${escapeHtml(message)}</p>
 
-      <button onclick="window.location.reload()" class="${UI.btnWide}">
-        Try again
+      <button onclick="window.location.reload()" class="${UI.btnNav}">
+        <img src="./icons/feedback-button.png" alt="Try again" class="${UI.btnNavIcon}" />
+        <span class="${UI.btnNavText}">Try again</span>
       </button>
     </article>
   `;
@@ -223,7 +273,6 @@ function displayFeedback(raw) {
   const container = document.getElementById("feedback-container");
   if (!container) return;
 
-  // IMPORTANT: single wrapper (no nested max-w containers)
   container.className = `${UI.shell} ${UI.stack}`;
 
   const feedback = raw?.feedback && typeof raw?.success !== "undefined" ? raw.feedback : raw;
@@ -232,7 +281,6 @@ function displayFeedback(raw) {
   const rating = scoreToRating(score);
 
   const completeness = computeCompleteness(feedback?.coverage_checklist);
-
   const strengths = Array.isArray(feedback?.strengths) ? feedback.strengths : [];
   const improvements = Array.isArray(feedback?.improvements) ? feedback.improvements : [];
 
@@ -242,9 +290,11 @@ function displayFeedback(raw) {
   container.innerHTML = `
     <!-- Overall -->
     <article class="${UI.cardNoHover} text-center">
-      <!-- ICON_PLACEHOLDER: Replace with your "overall" icon -->
-      <div class="mb-3 flex justify-center">
-        <img src="./icons/feedback-button.png" alt="Overall" class="w-12 h-12 object-contain" />
+      <div class="mb-4 flex justify-center">
+        <div class="${UI.iconBg}">
+          <!-- ICON_PLACEHOLDER: overall icon -->
+          <img src="./icons/feedback-button.png" alt="Overall" class="w-9 h-9 object-contain" />
+        </div>
       </div>
 
       <p class="${UI.headerSub} mb-1">Overall performance</p>
@@ -261,12 +311,14 @@ function displayFeedback(raw) {
       </p>
     </article>
 
-    <!-- Completeness (FULL WIDTH) -->
+    <!-- Completeness -->
     <article class="${UI.card}">
       <div class="flex items-center justify-between gap-3 mb-4">
-        <div class="flex items-center gap-2">
-          <!-- ICON_PLACEHOLDER: Replace with your "completeness" icon -->
-          <img src="./icons/completeness.png" alt="Completeness" class="w-6 h-6 object-contain" />
+        <div class="flex items-center gap-3">
+          <div class="${UI.iconBg}">
+            <!-- ICON_PLACEHOLDER: completeness icon -->
+            <img src="./icons/completeness.png" alt="Completeness" class="w-8 h-8 object-contain" />
+          </div>
           <h3 class="${UI.headerTitle}">Completeness</h3>
         </div>
 
@@ -276,7 +328,9 @@ function displayFeedback(raw) {
       </div>
 
       <p class="${UI.headerSub} mb-4">
-        ${completeness.missed.length ? "Focus first on the missed elements below." : "Great coverage of required elements."}
+        ${completeness.missed.length
+          ? "In the next informed consent discussion, focus on the missed topics below."
+          : "Great coverage of required topics for informed consent discussion."}
       </p>
 
       ${completeness.covered.length ? `
@@ -313,11 +367,13 @@ function displayFeedback(raw) {
       ` : ""}
     </article>
 
-    <!-- Patient-centered checks (FULL WIDTH, UNDER COMPLETENESS) -->
+    <!-- Patient-centered checks -->
     <article class="${UI.card}">
-      <div class="flex items-center gap-2 mb-4">
-        <!-- ICON_PLACEHOLDER: Replace with your "patient-centered checks" icon -->
-        <img src="./icons/need.png" alt="Patient-centered checks" class="w-6 h-6 object-contain" />
+      <div class="flex items-center gap-3 mb-4">
+        <div class="${UI.iconBg}">
+          <!-- ICON_PLACEHOLDER: patient-centered icon -->
+          <img src="./icons/need.png" alt="Patient-centered checks" class="w-8 h-8 object-contain" />
+        </div>
         <h3 class="${UI.headerTitle}">Patient-centered checks</h3>
       </div>
 
@@ -335,8 +391,8 @@ function displayFeedback(raw) {
 
       ${(invited?.improvement || checked?.improvement) ? `
         <div class="mt-4 ${UI.subtleBox}">
-          ${invited?.improvement ? `<div class="mb-2"><span class="font-semibold text-slate-900">Invited questions:</span> ${escapeHtml(invited.improvement)}</div>` : ""}
-          ${checked?.improvement ? `<div><span class="font-semibold text-slate-900">Checked understanding:</span> ${escapeHtml(checked.improvement)}</div>` : ""}
+          ${invited?.improvement ? `<div class="mb-2"><span class="font-semibold text-slate-900">Invited patient's questions:</span> ${escapeHtml(invited.improvement)}</div>` : ""}
+          ${checked?.improvement ? `<div><span class="font-semibold text-slate-900">Checked patient's understanding:</span> ${escapeHtml(checked.improvement)}</div>` : ""}
         </div>
       ` : ""}
 
@@ -346,15 +402,21 @@ function displayFeedback(raw) {
       </div>
     </article>
 
-    <!-- Improvements (FULL WIDTH) -->
+    <!-- Improvements -->
     <article class="${UI.cardNoHover}">
-      <div class="flex items-center justify-between gap-3 mb-4">
-        <div class="flex items-center gap-2">
-          <!-- ICON_PLACEHOLDER: Replace with your "improvement" icon -->
-          <img src="./icons/improvement.png" alt="Areas for improvement" class="w-6 h-6 object-contain" />
-          <h3 class="${UI.headerTitle}">Areas for improvement</h3>
+      <div class="flex items-center gap-3 mb-4">
+        <div class="${UI.iconBg}">
+          <!-- ICON_PLACEHOLDER: improvement icon -->
+          <img src="./icons/improve.png" alt="Improvements" class="w-8 h-8 object-contain" />
         </div>
-        <span class="${UI.headerSub}">${improvements.length ? `${improvements.length} item(s)` : ""}</span>
+        <div class="flex-1">
+          <h3 class="${UI.headerTitle}">
+            What can be improved in your next informed consent discussion?
+          </h3>
+          <p class="${UI.headerSub}">
+            ${improvements.length ? `${improvements.length} improvement suggestion(s)` : ""}
+          </p>
+        </div>
       </div>
 
       ${
@@ -373,34 +435,31 @@ function displayFeedback(raw) {
 
                   <div class="mt-4 bg-blue-50/70 border border-blue-200 rounded-2xl p-4">
                     <p class="text-xs md:text-[13px] text-slate-700">
-                      <span class="font-semibold text-slate-900">Example phrase:</span> ${escapeHtml(i.example_phrase)}
+                      <span class="font-semibold text-slate-900">Example phrase you can use:</span> ${escapeHtml(i.example_phrase)}
                     </p>
                   </div>
                 </div>
               `).join("")}
             </div>`
-          : `<p class="${UI.headerSub}">No improvements returned.</p>`
+          : `<p class="${UI.headerSub}">Great job! There are no further improvement suggestions.</p>`
       }
     </article>
 
-    <!-- Actions -->
+    <!-- Actions (nav-style buttons) -->
     <div class="flex flex-wrap gap-3 justify-center">
-      <button onclick="window.print()" class="${UI.btnWide}">
-        <!-- ICON_PLACEHOLDER: Replace with your print icon -->
-        <img src="./icons/completeness.png" alt="Print" class="w-5 h-5 object-contain" />
-        Print feedback
+      <button onclick="window.print()" class="${UI.btnNav}">
+        <img src="./icons/completeness.png" alt="Print" class="${UI.btnNavIcon}" />
+        <span class="${UI.btnNavText}">Print feedback</span>
       </button>
 
-      <a href="./vignette-library.html" class="${UI.btnWide}">
-        <!-- ICON_PLACEHOLDER: Replace with your library icon -->
-        <img src="./icons/vignette-library-button.png" alt="Library" class="w-5 h-5 object-contain" />
-        Back to library
+      <a href="./vignette-library.html" class="${UI.btnNav}">
+        <img src="./icons/vignette-library-button.png" alt="Library" class="${UI.btnNavIcon}" />
+        <span class="${UI.btnNavText}">Back to library</span>
       </a>
 
-      <a href="./practice-module.html" class="${UI.btnWide}">
-        <!-- ICON_PLACEHOLDER: Replace with your practice icon -->
-        <img src="./icons/practice-button.png" alt="Practice" class="w-5 h-5 object-contain" />
-        Practice again
+      <a href="./practice-module.html" class="${UI.btnNav}">
+        <img src="./icons/practice-button.png" alt="Practice" class="${UI.btnNavIcon}" />
+        <span class="${UI.btnNavText}">Practice again</span>
       </a>
     </div>
   `;
@@ -446,20 +505,16 @@ async function analyzePracticeSession() {
     const fb = data?.feedback ? data.feedback : data;
 
     if (!fb || typeof fb !== "object" || typeof fb.overall_score_0_100 !== "number") {
-      throw new Error("Invalid feedback format received from server.");
+      throw new Error("Invalid feedback format received from the server.");
     }
 
     displayFeedback(data);
 
-    // Optional: if you want the feedback to NOT be reproducible after refresh,
-    // uncomment these two lines to delete the session data after rendering:
-
     localStorage.removeItem(`practiceConversation:${sessionId}`);
     localStorage.removeItem(`practiceVignette:${sessionId}`);
-
   } catch (error) {
     console.error("[feedback-module] Failed:", error);
-    showError(error.message || "Unable to analyze your conversation. Please try again.");
+    showError(error.message || "We are unable to analyze your conversation. Please try again.");
   }
 }
 

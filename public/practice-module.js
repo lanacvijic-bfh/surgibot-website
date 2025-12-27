@@ -47,7 +47,7 @@ function renderNoVignette() {
 
   summary.innerHTML = `
     <div class="text-center">
-      <h2 class="text-sm font-semibold text-slate-900 mb-2">No vignette selected</h2>
+      <h2 class="text-sm font-semibold text-slate-900 mb-2">No patient vignette selected</h2>
       <p class="mb-4">
         Go back to the vignette library and choose a patient case you want to practice with.
       </p>
