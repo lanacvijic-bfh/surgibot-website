@@ -198,6 +198,16 @@ function scoreToRating(score0to100) {
   return "Poor";
 }
 
+/** NEW: color scheme for rating pill (overall performance) */
+function getRatingBadgeClass(score0to100) {
+  const s = Number(score0to100 ?? 0);
+  if (s >= 90) return "bg-green-50 text-green-700 border-green-200";
+  if (s >= 75) return "bg-blue-50 text-blue-700 border-blue-200";
+  if (s >= 60) return "bg-yellow-50 text-yellow-700 border-yellow-200";
+  if (s >= 45) return "bg-orange-50 text-orange-700 border-orange-200";
+  return "bg-red-50 text-red-700 border-red-200";
+}
+
 function getScoreColor(score) {
   const s = Number(score ?? 0);
   if (s >= 85) return "text-green-700 bg-green-50 border border-green-200";
@@ -253,7 +263,7 @@ function renderEvidence(evidence) {
     <div class="mt-3 space-y-2">
       ${ev.slice(0, 2).map((e) => `
         <div class="text-xs md:text-[13px] text-slate-600 bg-slate-50/70 border border-slate-200 rounded-xl px-3 py-2">
-          <span class="font-semibold text-slate-900">${Number.isFinite(e.turn_index) ? `Turn ${e.turn_index}` : "Turn"}</span>:
+          <span class="font-semibold text-slate-900">${Number.isFinite(e.turn_index) ? `Turn ${e.turn_index}` : "Covered in message number"}</span>:
           “${escapeHtml(e.quote || "")}”
         </div>
       `).join("")}
@@ -302,7 +312,7 @@ function renderJargonAnalysis(jargon) {
                     ${
                       t.plain_explanation_quote
                         ? `<div class="mt-3 text-xs md:text-[13px] text-slate-600 bg-slate-50/70 border border-slate-200 rounded-xl px-3 py-2">
-                            <span class="font-semibold text-slate-900">Plain explanation quote:</span>
+                            <span class="font-semibold text-slate-900">Quote from the chat:</span>
                             “${escapeHtml(t.plain_explanation_quote)}”
                           </div>`
                         : ""
@@ -350,7 +360,7 @@ function renderNextSessionFocus(nextFocus) {
 
         ${drills.length
           ? `<div class="mt-4 ${UI.divider} pt-4">
-              <p class="text-sm font-semibold text-slate-900 mb-2">Practice drills to achieve the goal</p>
+              <p class="text-sm font-semibold text-slate-900 mb-2">Actionable practice drills that can help you achieve the goal</p>
               <ul class="list-disc pl-5 space-y-1 ${UI.headerSub}">
                 ${drills.slice(0, 10).map((d) => `<li>${escapeHtml(d)}</li>`).join("")}
               </ul>
@@ -437,6 +447,7 @@ function displayFeedback(raw) {
 
   const score = Number(feedback?.overall_score_0_100 ?? 0);
   const rating = scoreToRating(score);
+  const ratingBadgeClass = getRatingBadgeClass(score); // NEW
 
   const completeness = computeCompleteness(feedback?.coverage_checklist);
 
@@ -464,13 +475,12 @@ function displayFeedback(raw) {
         ${Number.isFinite(score) ? score : 0}/100
       </h2>
 
-      <div class="inline-flex items-center px-4 py-2 rounded-full text-xs md:text-sm font-semibold border border-blue-200 bg-blue-100 text-slate-900">
+      <!-- UPDATED: rating pill uses color scheme based on score -->
+      <div class="inline-flex items-center px-4 py-2 rounded-full text-xs md:text-sm font-semibold border ${ratingBadgeClass}">
         ${rating}
       </div>
 
-      <p class="${UI.headerSub} mt-4 max-w-2xl mx-auto">
-        ${escapeHtml(strengths.length ? strengths.slice(0, 2).join(" • ") : "See the checklist below to improve.")}
-      </p>
+      <!-- REMOVED: sentence under the score/rating -->
     </article>
 
     <!-- Strengths -->
@@ -480,7 +490,7 @@ function displayFeedback(raw) {
           <!-- ICON_PLACEHOLDER: strengths icon -->
           <img src="./icons/power.png" alt="Strengths" class="w-8 h-8 object-contain" />
         </div>
-        <h3 class="${UI.headerTitle}">Strengths</h3>
+        <h3 class="${UI.headerTitle}">Your key strengths</h3>
       </div>
 
       ${
@@ -500,7 +510,7 @@ function displayFeedback(raw) {
             <!-- ICON_PLACEHOLDER: completeness icon -->
             <img src="./icons/completeness.png" alt="Completeness" class="w-8 h-8 object-contain" />
           </div>
-          <h3 class="${UI.headerTitle}">Completeness</h3>
+          <h3 class="${UI.headerTitle}">Completeness of the discussion</h3>
         </div>
 
         <div class="px-4 py-2 rounded-xl text-sm md:text-base font-semibold ${getScoreColor(completeness.score)}">
@@ -510,7 +520,7 @@ function displayFeedback(raw) {
 
       <p class="${UI.headerSub} mb-4">
         ${completeness.missed.length
-          ? "In the next informed consent discussion, focus on the missed topics below."
+          ? "In the next informed consent discussion, focus on the missed or partially covered topics below."
           : "Great coverage of required topics for informed consent discussion."}
       </p>
 
@@ -548,25 +558,25 @@ function displayFeedback(raw) {
       ` : ""}
     </article>
 
-    <!-- Patient-centered checks (NOW same color logic + actionable tips) -->
+    <!-- Patient-centered checks -->
     <article class="${UI.card}">
       <div class="flex items-center gap-3 mb-4">
         <div class="${UI.iconBg}">
           <!-- ICON_PLACEHOLDER: patient-centered icon -->
-          <img src="./icons/need.png" alt="Patient-centered checks" class="w-8 h-8 object-contain" />
+          <img src="./icons/need.png" alt="Patient-centered communication checks" class="w-8 h-8 object-contain" />
         </div>
-        <h3 class="${UI.headerTitle}">Patient-centered checks</h3>
+        <h3 class="${UI.headerTitle}">Patient-centered communication checks</h3>
       </div>
 
       <div class="space-y-4">
-        ${patientCenteredItem("Invited patient questions", invited)}
-        ${patientCenteredItem("Checked patient understanding", checked)}
+        ${patientCenteredItem("Patient's questions were invited", invited)}
+        ${patientCenteredItem("Patient's understanding was checked throughout the discussion", checked)}
       </div>
 
       ${
         pcTips.length
           ? `<div class="mt-5 ${UI.divider} pt-4">
-              <p class="text-sm font-semibold text-slate-900 mb-2">Actionable tips for your next session</p>
+              <p class="text-sm font-semibold text-slate-900 mb-2">Actionable tips for your next practice session</p>
               <ul class="list-disc pl-5 space-y-1 ${UI.headerSub}">
                 ${pcTips.slice(0, 6).map((t) => `<li>${escapeHtml(t)}</li>`).join("")}
               </ul>

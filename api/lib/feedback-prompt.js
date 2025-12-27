@@ -35,7 +35,7 @@ MUST-CHECK coverage items (required):
 6) Surgical resident explained the risks and complications (common and serious)
 7) Surgical resident explained the alternatives (including no surgery if appropriate)
 8) Surgical resident explained patient rights: voluntary consent, ability to withdraw or decline, ability to ask questions, and time to decide (as applicable)
-9) Surgical resident invited patient questions
+9) Surgical resident invited patient's questions
 10) Surgical resident checked for understanding (used teach-back, asked “what questions do you have?”, or summarized and verified)
 11) Surgical resident addressed clarity and jargon: identified medical terms and whether they were explained plainly
 
