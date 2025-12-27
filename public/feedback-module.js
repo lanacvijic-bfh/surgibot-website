@@ -59,7 +59,7 @@ const UI = {
 
   // NEW: buttons like your top navigation items
   btnNav:
-    "inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors",
+  "inline-flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200 text-xs md:text-sm font-semibold text-black hover:bg-blue-200 transition-colors",
   btnNavText: "text-xs font-semibold text-slate-900",
   btnNavIcon: "w-8 h-8 object-contain",
 
@@ -162,7 +162,7 @@ function showLoadingState() {
   container.innerHTML = `
     <article class="${UI.cardNoHover} flex flex-col items-center text-center gap-3 py-10">
       <div class="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-blue-300"></div>
-      <p class="text-base md:text-lg font-semibold text-slate-900">Analyzing your conversation…</p>
+      <p class="text-base md:text-lg font-semibold text-slate-900">We are analyzing your discussion.</p>
       <p class="${UI.headerSub}">This may take a moment</p>
     </article>
   `;
