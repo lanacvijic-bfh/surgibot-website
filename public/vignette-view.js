@@ -1,9 +1,25 @@
-import { vignettes } from "./lib/vignettes.js";
+// vignette-view.js (or whatever this file is named)
+// Loads vignettes from /lib/vignettes.json instead of importing from vignettes.js
+
 import { buildPatientSystemPrompt } from "./lib/patient-prompt.js";
+
+console.log("[vignette-view] script loaded");
 
 function getVignetteIdFromUrl() {
   const params = new URLSearchParams(window.location.search);
   return params.get("vignette") || params.get("id");
+}
+
+async function loadVignettes() {
+  // If your file is in public/lib/vignettes.json, it should be available at /lib/vignettes.json
+  const res = await fetch("/lib/vignettes.json", { cache: "no-store" });
+  if (!res.ok) throw new Error(`Failed to load vignettes.json (${res.status})`);
+
+  const data = await res.json();
+  if (!Array.isArray(data)) {
+    throw new Error("vignettes.json must be an array of vignette objects");
+  }
+  return data;
 }
 
 function renderNotFound() {
@@ -22,9 +38,7 @@ function renderNotFound() {
       </p>
     `;
   }
-  if (main) {
-    main.innerHTML = "";
-  }
+  if (main) main.innerHTML = "";
   if (side) {
     side.innerHTML = `
       <a
@@ -35,9 +49,7 @@ function renderNotFound() {
       </a>
     `;
   }
-  if (prompt) {
-    prompt.textContent = "";
-  }
+  if (prompt) prompt.textContent = "";
 }
 
 function renderVignette(v) {
@@ -47,40 +59,37 @@ function renderVignette(v) {
   const promptEl = document.getElementById("vignette-prompt");
 
   if (header) {
-  header.innerHTML = `
-    <div class="flex flex-col gap-4 pb-4">
-      <div class="flex flex-col gap-3 text-center">
-        <!-- TEXT BLOCK -->
-        <div class="flex-1 min-w-0">
-          <h1 class="text-2xl md:text-4xl font-extrabold text-slate-900 mb-1 break-words">
-            ${v.title}
-          </h1>
-          <p class="text-sm md:text-base text-slate-600">
-            <span class="font-semibold">Specialty:</span> ${v.discipline}
-            · <span class="font-semibold">Difficulty level:</span> ${v.difficulty_level}
-          </p>
-        </div>
+    header.innerHTML = `
+      <div class="flex flex-col gap-4 pb-4">
+        <div class="flex flex-col gap-3 text-center">
+          <div class="flex-1 min-w-0">
+            <h1 class="text-2xl md:text-4xl font-extrabold text-slate-900 mb-1 break-words">
+              ${v.title ?? ""}
+            </h1>
+            <p class="text-sm md:text-base text-slate-600">
+              <span class="font-semibold">Specialty:</span> ${v.discipline ?? ""}
+              · <span class="font-semibold">Difficulty level:</span> ${v.difficulty_level ?? ""}
+            </p>
+          </div>
 
-        <!-- BUTTON BLOCK: centered, larger, black text -->
-        <div class="flex justify-center mt-2">
-          <a
-            href="/practice-module.html?vignette=${encodeURIComponent(v.id)}"
-            class="inline-flex items-center gap-3 px-6 py-3 bg-blue-100 rounded-2xl border border-blue-200 text-sm md:text-base font-semibold text-black hover:bg-blue-200 transition-colors"
-          >
-            <img 
-              src="./icons/practice-button.png" 
-              alt="Practice icon" 
-              class="w-8 h-8"
-            />
-            <span>Practice with this patient</span>
-          </a>
+          <div class="flex justify-center mt-2">
+            <a
+              href="/practice-module.html?vignette=${encodeURIComponent(v.id)}"
+              class="inline-flex items-center gap-3 px-6 py-3 bg-blue-100 rounded-2xl border border-blue-200 text-sm md:text-base font-semibold text-black hover:bg-blue-200 transition-colors"
+            >
+              <img 
+                src="./icons/practice-button.png" 
+                alt="Practice icon" 
+                class="w-8 h-8"
+              />
+              <span>Practice with this patient</span>
+            </a>
+          </div>
         </div>
       </div>
-    </div>
-  `;
-}
+    `;
+  }
 
-  // Display different sections and parameters of the patient vignette
   if (main) {
     main.style.gridColumn = "1 / -1";
 
@@ -113,27 +122,27 @@ function renderVignette(v) {
             <dl class="space-y-4">
               <div class="flex items-start gap-10">
                 <dt class="w-64 font-semibold text-slate-900">Patient's name:</dt>
-                <dd class="flex-1">${v.demographics.name}</dd>
+                <dd class="flex-1">${v.demographics?.name ?? ""}</dd>
               </div>
               <div class="flex items-start gap-10">
                 <dt class="w-64 font-semibold text-slate-900">Age:</dt>
-                <dd class="flex-1">${v.demographics.age}</dd>
+                <dd class="flex-1">${v.demographics?.age ?? ""}</dd>
               </div>
               <div class="flex items-start gap-10">
                 <dt class="w-64 font-semibold text-slate-900">Gender:</dt>
-                <dd class="flex-1">${v.demographics.gender}</dd>
+                <dd class="flex-1">${v.demographics?.gender ?? ""}</dd>
               </div>
               <div class="flex items-start gap-10">
                 <dt class="w-64 font-semibold text-slate-900">Nationality:</dt>
-                <dd class="flex-1">${v.demographics.nationality}</dd>
+                <dd class="flex-1">${v.demographics?.nationality ?? ""}</dd>
               </div>
               <div class="flex items-start gap-10">
                 <dt class="w-64 font-semibold text-slate-900">Education level:</dt>
-                <dd class="flex-1">${v.demographics.education_level}</dd>
+                <dd class="flex-1">${v.demographics?.education_level ?? ""}</dd>
               </div>
               <div class="flex items-start gap-10">
                 <dt class="w-64 font-semibold text-slate-900">Occupation:</dt>
-                <dd class="flex-1">${v.demographics.current_job}</dd>
+                <dd class="flex-1">${v.demographics?.current_job ?? ""}</dd>
               </div>
             </dl>
           </div>
@@ -165,60 +174,66 @@ function renderVignette(v) {
             <dl class="space-y-4">
               <div class="flex items-start gap-10">
                 <dt class="w-64 font-semibold text-slate-900">Current diagnosis:</dt>
-                <dd class="flex-1">${v.clinical_profile.current_diagnosis}</dd>
+                <dd class="flex-1">${v.clinical_profile?.current_diagnosis ?? ""}</dd>
               </div>
               <div class="flex items-start gap-10">
                 <dt class="w-64 font-semibold text-slate-900">Current symptoms:</dt>
-                <dd class="flex-1">${v.clinical_profile.current_symptoms.join(", ")}</dd>
+                <dd class="flex-1">${(v.clinical_profile?.current_symptoms ?? []).join(", ")}</dd>
               </div>
+
               ${
-                v.clinical_profile.other_conditions
+                v.clinical_profile?.other_conditions
                   ? `
-              <div class="flex items-start gap-10">
-                <dt class="w-64 font-semibold text-slate-900">Other conditions:</dt>
-                <dd class="flex-1">${v.clinical_profile.other_conditions}</dd>
-              </div>`
+                <div class="flex items-start gap-10">
+                  <dt class="w-64 font-semibold text-slate-900">Other conditions:</dt>
+                  <dd class="flex-1">${v.clinical_profile.other_conditions}</dd>
+                </div>`
                   : ""
               }
+
               ${
-                v.clinical_profile.medications
+                v.clinical_profile?.medications
                   ? `
-              <div class="flex items-start gap-10">
-                <dt class="w-64 font-semibold text-slate-900">Medications:</dt>
-                <dd class="flex-1">${v.clinical_profile.medications}</dd>
-              </div>`
+                <div class="flex items-start gap-10">
+                  <dt class="w-64 font-semibold text-slate-900">Medications:</dt>
+                  <dd class="flex-1">${v.clinical_profile.medications}</dd>
+                </div>`
                   : ""
               }
+
               ${
-                v.clinical_profile.allergies
+                v.clinical_profile?.allergies
                   ? `
-              <div class="flex items-start gap-10">
-                <dt class="w-64 font-semibold text-slate-900">Allergies:</dt>
-                <dd class="flex-1">${v.clinical_profile.allergies}</dd>
-              </div>`
+                <div class="flex items-start gap-10">
+                  <dt class="w-64 font-semibold text-slate-900">Allergies:</dt>
+                  <dd class="flex-1">${v.clinical_profile.allergies}</dd>
+                </div>`
                   : ""
               }
+
               ${
-                v.clinical_profile.disabilities
+                v.clinical_profile?.disabilities
                   ? `
-              <div class="flex items-start gap-10">
-                <dt class="w-64 font-semibold text-slate-900">Disabilities:</dt>
-                <dd class="flex-1">${v.clinical_profile.disabilities}</dd>
-              </div>`
+                <div class="flex items-start gap-10">
+                  <dt class="w-64 font-semibold text-slate-900">Disabilities:</dt>
+                  <dd class="flex-1">${v.clinical_profile.disabilities}</dd>
+                </div>`
                   : ""
               }
+
               ${
-                v.clinical_profile.cognitive_state
+                v.clinical_profile?.cognitive_state
                   ? `
-              <div class="flex items-start gap-10">
-                <dt class="w-64 font-semibold text-slate-900">Cognitive state:</dt>
-                <dd class="flex-1">${v.clinical_profile.cognitive_state}</dd>
-              </div>`
+                <div class="flex items-start gap-10">
+                  <dt class="w-64 font-semibold text-slate-900">Cognitive state:</dt>
+                  <dd class="flex-1">${v.clinical_profile.cognitive_state}</dd>
+                </div>`
                   : ""
               }
+
               <div class="flex items-start gap-10">
                 <dt class="w-64 font-semibold text-slate-900">Planned surgery:</dt>
-                <dd class="flex-1">${v.clinical_profile.planned_surgery}</dd>
+                <dd class="flex-1">${v.clinical_profile?.planned_surgery ?? ""}</dd>
               </div>
             </dl>
           </div>
@@ -250,19 +265,19 @@ function renderVignette(v) {
             <dl class="space-y-4">
               <div class="flex items-start gap-10">
                 <dt class="w-64 font-semibold text-slate-900">Language proficiency:</dt>
-                <dd class="flex-1">${v.communication_personality.language_proficiency}</dd>
+                <dd class="flex-1">${v.communication_personality?.language_proficiency ?? ""}</dd>
               </div>
               <div class="flex items-start gap-10">
                 <dt class="w-64 font-semibold text-slate-900">Communication style:</dt>
-                <dd class="flex-1">${v.communication_personality.communication_style}</dd>
+                <dd class="flex-1">${v.communication_personality?.communication_style ?? ""}</dd>
               </div>
               <div class="flex items-start gap-10">
                 <dt class="w-64 font-semibold text-slate-900">Psychological profile:</dt>
-                <dd class="flex-1">${v.communication_personality.psychological_profile}</dd>
+                <dd class="flex-1">${v.communication_personality?.psychological_profile ?? ""}</dd>
               </div>
               <div class="flex items-start gap-10">
                 <dt class="w-64 font-semibold text-slate-900">Personality type:</dt>
-                <dd class="flex-1">${v.communication_personality.personality_archetype}</dd>
+                <dd class="flex-1">${v.communication_personality?.personality_archetype ?? ""}</dd>
               </div>
             </dl>
           </div>
@@ -294,23 +309,23 @@ function renderVignette(v) {
             <dl class="space-y-4">
               <div class="flex items-start gap-10">
                 <dt class="w-64 font-semibold text-slate-900">Marital status:</dt>
-                <dd class="flex-1">${v.social_lifestyle.marital_status}</dd>
+                <dd class="flex-1">${v.social_lifestyle?.marital_status ?? ""}</dd>
               </div>
               <div class="flex items-start gap-10">
                 <dt class="w-64 font-semibold text-slate-900">Children:</dt>
-                <dd class="flex-1">${v.social_lifestyle.children}</dd>
+                <dd class="flex-1">${v.social_lifestyle?.children ?? ""}</dd>
               </div>
               <div class="flex items-start gap-10">
                 <dt class="w-64 font-semibold text-slate-900">Key responsibilities:</dt>
-                <dd class="flex-1">${v.social_lifestyle.key_responsibilities}</dd>
+                <dd class="flex-1">${v.social_lifestyle?.key_responsibilities ?? ""}</dd>
               </div>
               <div class="flex items-start gap-10">
                 <dt class="w-64 font-semibold text-slate-900">Social support:</dt>
-                <dd class="flex-1">${v.social_lifestyle.social_support}</dd>
+                <dd class="flex-1">${v.social_lifestyle?.social_support ?? ""}</dd>
               </div>
               <div class="flex items-start gap-10">
                 <dt class="w-64 font-semibold text-slate-900">Hobbies:</dt>
-                <dd class="flex-1">${v.social_lifestyle.hobbies}</dd>
+                <dd class="flex-1">${v.social_lifestyle?.hobbies ?? ""}</dd>
               </div>
             </dl>
           </div>
@@ -342,11 +357,11 @@ function renderVignette(v) {
             <dl class="space-y-4">
               <div class="flex items-start gap-10">
                 <dt class="w-64 font-semibold text-slate-900">Cultural background:</dt>
-                <dd class="flex-1">${v.culture_beliefs.cultural_background}</dd>
+                <dd class="flex-1">${v.culture_beliefs?.cultural_background ?? ""}</dd>
               </div>
               <div class="flex items-start gap-10">
                 <dt class="w-64 font-semibold text-slate-900">Religious affiliation:</dt>
-                <dd class="flex-1">${v.culture_beliefs.religious_affiliation}</dd>
+                <dd class="flex-1">${v.culture_beliefs?.religious_affiliation ?? ""}</dd>
               </div>
             </dl>
           </div>
@@ -366,12 +381,8 @@ function renderVignette(v) {
         const isOpen = !panel.classList.contains("hidden");
 
         // Close all panels
-        main.querySelectorAll("[data-accordion-panel]").forEach((p) => {
-          p.classList.add("hidden");
-        });
-        main.querySelectorAll("[data-accordion-icon]").forEach((icon) => {
-          icon.textContent = "+";
-        });
+        main.querySelectorAll("[data-accordion-panel]").forEach((p) => p.classList.add("hidden"));
+        main.querySelectorAll("[data-accordion-icon]").forEach((icon) => (icon.textContent = "+"));
 
         // Open clicked if it was closed
         if (!isOpen) {
@@ -396,15 +407,22 @@ function renderVignette(v) {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   document.body.style.backgroundColor = "#ffffff";
   document.body.classList.remove("bg-slate-50", "bg-slate-100", "bg-slate-200");
 
-  const id = getVignetteIdFromUrl();
-  const vignette = vignettes.find((v) => String(v.id) === String(id));
-  if (!vignette) {
+  try {
+    const id = getVignetteIdFromUrl();
+    const vignettes = await loadVignettes();
+
+    const vignette = vignettes.find((v) => String(v.id) === String(id));
+    if (!vignette) {
+      renderNotFound();
+    } else {
+      renderVignette(vignette);
+    }
+  } catch (err) {
+    console.error("[vignette-view] failed to load vignettes:", err);
     renderNotFound();
-  } else {
-    renderVignette(vignette);
   }
 });
