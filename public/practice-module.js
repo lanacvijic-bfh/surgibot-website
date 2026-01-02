@@ -1,6 +1,18 @@
-import { vignettes } from "./lib/vignettes.js";
+// practice-module.js
+// Updated to load vignettes from /lib/vignettes.json instead of importing from vignettes.js
 
 console.log("[practice-module] script loaded");
+
+// -----------------------------
+// Load vignettes from JSON (NEW)
+// -----------------------------
+async function loadVignettes() {
+  const res = await fetch("/lib/vignettes.json", { cache: "no-store" });
+  if (!res.ok) throw new Error(`Failed to load vignettes.json (${res.status})`);
+  const data = await res.json();
+  if (!Array.isArray(data)) throw new Error("vignettes.json must be an array of vignette objects");
+  return data;
+}
 
 // -----------------------------
 // Session storage (NEW)
@@ -87,19 +99,19 @@ function renderVignetteSummary(v) {
       <section class="mb-4 rounded-2xl border border-slate-200 bg-white shadow-sm px-4 py-4">
         <dl class="grid grid-cols-[auto,1fr] gap-x-6 gap-y-2 text-[15px] md:text-[12px] text-slate-700">
           <dt class="font-semibold text-slate-900">Name:</dt>
-          <dd>${v.demographics.name}</dd>
+          <dd>${v.demographics?.name ?? ""}</dd>
 
           <dt class="font-semibold text-slate-900">Age:</dt>
-          <dd>${v.demographics.age}</dd>
+          <dd>${v.demographics?.age ?? ""}</dd>
 
           <dt class="font-semibold text-slate-900">Job:</dt>
-          <dd>${v.demographics.current_job}</dd>
+          <dd>${v.demographics?.current_job ?? ""}</dd>
 
           <dt class="font-semibold text-slate-900">Diagnosis:</dt>
-          <dd>${v.clinical_profile.current_diagnosis}</dd>
+          <dd>${v.clinical_profile?.current_diagnosis ?? ""}</dd>
 
           <dt class="font-semibold text-slate-900">Planned surgery:</dt>
-          <dd>${v.clinical_profile.planned_surgery}</dd>
+          <dd>${v.clinical_profile?.planned_surgery ?? ""}</dd>
         </dl>
       </section>
 
@@ -375,7 +387,7 @@ function setupFeedbackButton() {
 // -----------------------------
 // Boot
 // -----------------------------
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   // NEW: always start a fresh session when opening practice module
   sessionId = startNewSession();
   console.log("[practice-module] sessionId:", sessionId);
@@ -400,7 +412,17 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  const vignette = vignettes.find((v) => v.id === id);
+  // Load vignettes from JSON
+  let vignettes;
+  try {
+    vignettes = await loadVignettes();
+  } catch (err) {
+    console.error("[practice-module] failed to load vignettes:", err);
+    renderNoVignette();
+    return;
+  }
+
+  const vignette = vignettes.find((v) => String(v.id) === String(id));
   console.log("[practice-module] matched vignette:", vignette);
 
   if (!vignette) {
@@ -414,7 +436,7 @@ document.addEventListener("DOMContentLoaded", () => {
   messages = [
     {
       role: "assistant",
-      content: `Good day doctor. I'm ${vignette.demographics.name}. I'm here about the surgery. Can you explain what's going to happen?`,
+      content: `Good day doctor. I'm ${vignette.demographics?.name ?? "the patient"}. I'm here about the surgery. Can you explain what's going to happen?`,
     },
   ];
 
