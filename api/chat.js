@@ -54,12 +54,12 @@ export default async function handler(req, res) {
       : `You are a surgical patient in an informed consent conversation. Stay in character, use simple language, ask questions, and keep replies short.`;
 
     const response = await client.responses.create({
-      model: "gpt-4.1-mini",
-      instructions,
-      input: safeMessages,
-      max_output_tokens: 250,
-      temperature: 0.7,
-    });
+    model: "gpt-5.2",   
+    instructions,
+    input: safeMessages,
+    max_output_tokens: 250,
+    temperature: 0.7,
+  });
 
     return res.status(200).json({ text: response.output_text ?? "" });
   } catch (err) {

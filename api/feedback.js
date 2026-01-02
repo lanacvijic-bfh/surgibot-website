@@ -65,7 +65,6 @@ export default async function handler(req, res) {
 
     const transcript = toTurnIndexedTranscript(conversationHistory);
 
-    // ✅ PASS VIGNETTE HERE
     const instructions = buildFeedbackSystemPrompt({ vignette: patientVignette });
 
     const vignetteContext = isLikelyVignette(patientVignette)
@@ -237,7 +236,7 @@ turn_index must match the TURN number you quoted.
 `.trim();
 
     const response = await client.responses.create({
-      model: "gpt-4.1-mini",
+      model: "gpt-5.2",
       instructions,
       input: [{ role: "user", content: userInput }],
       temperature: 0.2,
