@@ -1,11 +1,5 @@
-// practice-module.js
-// Updated to load vignettes from /lib/vignettes.json instead of importing from vignettes.js
-
 console.log("[practice-module] script loaded");
 
-// -----------------------------
-// Load vignettes from JSON (NEW)
-// -----------------------------
 async function loadVignettes() {
   const res = await fetch("/lib/vignettes.json", { cache: "no-store" });
   if (!res.ok) throw new Error(`Failed to load vignettes.json (${res.status})`);
@@ -14,9 +8,6 @@ async function loadVignettes() {
   return data;
 }
 
-// -----------------------------
-// Session storage (NEW)
-// -----------------------------
 const SESSION_ID_KEY = "practiceSessionId";
 
 function createNewSessionId() {
@@ -40,9 +31,6 @@ function getSessionKeys(sessionId) {
   };
 }
 
-// -----------------------------
-// Helpers (vignette selection)
-// -----------------------------
 function getVignetteIdFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("vignette");
@@ -71,17 +59,14 @@ function renderNoVignette() {
     </div>
   `;
 
-  // disable chat if present
   const chatInput = document.getElementById("chatInput");
   const sendBtn = document.getElementById("sendBtn");
   if (chatInput) chatInput.disabled = true;
   if (sendBtn) sendBtn.disabled = true;
 
-  // disable timer button too
   const startTimerBtn = document.getElementById("startTimerBtn");
   if (startTimerBtn) startTimerBtn.disabled = true;
 
-  // disable feedback button too
   const reviewFeedbackBtn = document.getElementById("reviewFeedbackBtn");
   if (reviewFeedbackBtn) reviewFeedbackBtn.disabled = true;
 }
@@ -130,14 +115,10 @@ function renderVignetteSummary(v) {
   `;
 }
 
-// -----------------------------
-// Chat logic
-// -----------------------------
 let selectedVignette = null;
 let messages = [];
 let reviewFeedbackBtn = null;
 
-// NEW: session id for this practice run
 let sessionId = null;
 
 function escapeHtml(str) {
@@ -147,9 +128,6 @@ function escapeHtml(str) {
     .replaceAll(">", "&gt;");
 }
 
-/**
- * Persist state for THIS sessionId (no overwriting!)
- */
 function persistPracticeState() {
   try {
     if (!sessionId) return;
@@ -161,7 +139,6 @@ function persistPracticeState() {
       localStorage.setItem(vignetteKey, JSON.stringify(selectedVignette));
     }
 
-    // Optional: keep a small index of sessions (for future "history")
     const indexKey = "practiceSessionsIndex";
     const idx = JSON.parse(localStorage.getItem(indexKey) || "[]");
     const already = idx.some((s) => s.sessionId === sessionId);
@@ -179,9 +156,6 @@ function persistPracticeState() {
   }
 }
 
-/**
- * Enable feedback button only after user has participated (at least 1 user message)
- */
 function updateFeedbackButtonState() {
   if (!reviewFeedbackBtn) return;
   const hasUserMessage =
@@ -283,9 +257,6 @@ async function sendMessage(userText) {
   }
 }
 
-// -----------------------------
-// 15-minute timer logic
-// -----------------------------
 const SESSION_SECONDS = 15 * 60;
 let timerInterval = null;
 let remainingSeconds = SESSION_SECONDS;
@@ -354,9 +325,6 @@ function resetTimerAndEnableChat() {
   if (send) send.disabled = false;
 }
 
-// -----------------------------
-// Feedback button behavior
-// -----------------------------
 function setupFeedbackButton() {
   reviewFeedbackBtn = document.getElementById("reviewFeedbackBtn");
   if (!reviewFeedbackBtn) return;
@@ -384,15 +352,10 @@ function setupFeedbackButton() {
   });
 }
 
-// -----------------------------
-// Boot
-// -----------------------------
 document.addEventListener("DOMContentLoaded", async () => {
-  // NEW: always start a fresh session when opening practice module
   sessionId = startNewSession();
   console.log("[practice-module] sessionId:", sessionId);
 
-  // init timer display + button
   renderTimer();
 
   const startBtn = document.getElementById("startTimerBtn");
@@ -412,7 +375,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // Load vignettes from JSON
   let vignettes;
   try {
     vignettes = await loadVignettes();

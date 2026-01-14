@@ -1,6 +1,3 @@
-// vignette-library.js
-// Loads vignettes from /lib/vignettes.json and renders cards
-
 console.log("[vignette-library] script loaded");
 
 async function loadVignettes() {
@@ -66,7 +63,6 @@ async function renderVignettes() {
 
   if (!container) return;
 
-  // Optional: clear container before rendering
   container.innerHTML = "";
 
   try {

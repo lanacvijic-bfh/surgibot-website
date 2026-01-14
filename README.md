@@ -1,3 +1,113 @@
-# SurgiBot: AI-based platform for surgical informed consent training
-SurgiBot is a training platform that enables surgical residents to safely practice informed consent discussions with virtual patients.
+# SurgiBot 🩺🤖  
+**AI-powered training platform for surgical informed consent discussions**
+
+You can access the platform on the following URL: https://surgibot-website.vercel.app
+
+SurgiBot is a training platform that enables surgical residents to practice **informed consent discussions** with **virtual patients** in an online and safe environment. The goal is to prepare residents for interactions with vulnerable patients in real-life settings so they can explain surgical procedures, alternative treatment options, risks and benefits and patients' rights in a clear and understandable way, while also learning to recognize different backgrounds and needs patients may have.
+
+---
+
+## Table of contents
+- [Learning outcomes](#learning-outcomes)
+- [Modules](#modules)
+- [Evidence base & co-creation](#evidence-base--co-creation)
+- [Technology](#technology)
+- [Privacy & safety](#privacy--safety)
+- [Project status](#project-status)
+- [Acknowledgments](#acknowledgments)
+- [Contact](#contact)
+
+---
+
+## Learning outcomes
+After completing the training with SurgiBot, surgical residents should be able to:
+- Understand the principles and process of surgical informed consent.
+- Recognize diverse patient needs, backgrounds, and communication styles.
+- Confidently discuss risks, benefits, and alternative treatment options.
+- Apply recommended communication techniques in informed consent discussions.
+
+---
+
+## Modules
+SurgiBot is organized into modules aligned with the learning process:
+
+### 1) Learning module (Step 1: Learn the theory)
+Build a foundation for high-quality informed consent discussions, including:
+- What informed consent is
+- Structure and main steps of the informed consent discussion
+- Patients' needs before, during and after the discussion
+- Recommended communication strategies (e.g., clarity, checking patients' understanding, shared decision-making)
+
+### 2) Vignette library (Step 2: Choose the patient vignette)
+Explore a library of **patient vignettes**—concise, realistic scenarios that blend:
+- demographic & clinical details,
+- patient's communication style and personality traits,
+- social and lifestyle factors,
+- cultural context and beliefs,
+- and unique communication challenges.
+
+Learners select a case that matches their current learning goals.
+
+### 3) Practice module (Step 3: Practice with a virtual patient)
+Conduct a full informed consent discussion with a simulated patient:
+- chat-based conversation in a safe, online environment,
+- guided by a consent workflow (to stay structured),
+- designed to help practice clear explanations and patient-centered communication.
+
+### 4) Feedback module (Step 4: Receive feedback and improve)
+Receive personalized, structured feedback to support reflection and improvement, for example:
+- what was done well,
+- what was missing or unclear,
+- how risks/benefits/alternatives were communicated to the patient,
+- patient's rights and shared decision-making elements,
+- communication tips tailored to the patient's needs.
+
+---
+
+## Evidence base & co-creation
+The content of SurgiBot is based on:
+- a review of relevant guidelines for surgical informed consent,
+- interviews with experienced surgeons from different specialties,
+- a co-creation workshop with patient representatives (e.g., members of patient advisory boards in hospitals, the Swiss Patient Safety Foundation and the Swiss Patient Organisation).
+
+---
+
+## Technology
+SurgiBot uses artificial intelligence (AI) and a large language model (LLM) to:
+- simulate patient responses during practice,
+- generate personalized feedback after the informed consent discussion.
+
+**Model:** GPT-4.1-mini (used for patient simulation + feedback generation)
+
+---
+
+## Privacy & safety
+- **No real patient data:** vignettes are generated with AI and do not include real patient information.
+- SurgiBot is an **educational training tool** and does **not** provide medical advice.
+
+---
+
+## Project status
+SurgiBot is currently in a prototype and proof-of-concept stage.
+Planned improvements include:
+- expanded vignette library (more specialties, complexity levels and patients' backgrounds),
+- validation of patient vignettes by experienced surgeons and educators,
+- implementation of speech-based interaction in the Practice module, 
+- implementation of avatars that represent patients' emotions and reactions in the Practice module,
+- progress tracking and reflective learning prompts for surgical residents.
+
+---
+
+## Acknowledgments
+Designed & developed by **Lana Cvijic**.  
+Thanks to the surgeons and patients' representatives who contributed with their expertise and lived experience to co-create SurgiBot.
+
+---
+
+## Contact
+If you are interested for collaboration and testing of the platform you can reach out via the email: lana.cvijic@bfh.ch
+
+
+
+
 

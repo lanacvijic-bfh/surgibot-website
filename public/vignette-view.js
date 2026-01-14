@@ -1,6 +1,3 @@
-// vignette-view.js (or whatever this file is named)
-// Loads vignettes from /lib/vignettes.json instead of importing from vignettes.js
-
 import { buildPatientSystemPrompt } from "./lib/patient-prompt.js";
 
 console.log("[vignette-view] script loaded");
@@ -11,7 +8,6 @@ function getVignetteIdFromUrl() {
 }
 
 async function loadVignettes() {
-  // If your file is in public/lib/vignettes.json, it should be available at /lib/vignettes.json
   const res = await fetch("/lib/vignettes.json", { cache: "no-store" });
   if (!res.ok) throw new Error(`Failed to load vignettes.json (${res.status})`);
 
@@ -96,7 +92,6 @@ function renderVignette(v) {
     main.innerHTML = `
       <div class="space-y-4 mt-4">
 
-        <!-- Demographics -->
         <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
           <button
             type="button"
@@ -148,7 +143,6 @@ function renderVignette(v) {
           </div>
         </div>
 
-        <!-- Clinical profile -->
         <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
           <button
             type="button"
@@ -239,7 +233,6 @@ function renderVignette(v) {
           </div>
         </div>
 
-        <!-- Communication & personality -->
         <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
           <button
             type="button"
@@ -283,7 +276,6 @@ function renderVignette(v) {
           </div>
         </div>
 
-        <!-- Social & lifestyle -->
         <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
           <button
             type="button"
@@ -331,7 +323,6 @@ function renderVignette(v) {
           </div>
         </div>
 
-        <!-- Culture & beliefs -->
         <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
           <button
             type="button"
@@ -370,7 +361,6 @@ function renderVignette(v) {
       </div>
     `;
 
-    // Accordion behavior
     const buttons = main.querySelectorAll("[data-accordion-button]");
     buttons.forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -380,11 +370,9 @@ function renderVignette(v) {
 
         const isOpen = !panel.classList.contains("hidden");
 
-        // Close all panels
         main.querySelectorAll("[data-accordion-panel]").forEach((p) => p.classList.add("hidden"));
         main.querySelectorAll("[data-accordion-icon]").forEach((icon) => (icon.textContent = "+"));
 
-        // Open clicked if it was closed
         if (!isOpen) {
           panel.classList.remove("hidden");
           const icon = btn.querySelector("[data-accordion-icon]");
@@ -394,13 +382,11 @@ function renderVignette(v) {
     });
   }
 
-  // Hide side column entirely
   if (side) {
     side.innerHTML = "";
     side.style.display = "none";
   }
 
-  // Prompt
   if (promptEl) {
     const promptText = buildPatientSystemPrompt(v);
     promptEl.textContent = promptText;

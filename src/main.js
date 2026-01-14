@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (learnBtn) {
     learnBtn.addEventListener("click", () => {
-      window.location.href = "index.html"; // main / learning module
+      window.location.href = "index.html";
     });
   }
 

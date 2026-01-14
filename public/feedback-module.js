@@ -1,11 +1,3 @@
-// public/feedback-module.js
-// Session-based feedback ONLY.
-// If user opens feedback-module.html without ?session=..., show instructions instead.
-//
-// Storage used (per session):
-// - practiceConversation:<sessionId>
-// - practiceVignette:<sessionId>
-
 function getSessionIdFromUrl() {
   const params = new URLSearchParams(window.location.search);
   return params.get("session");
@@ -44,7 +36,6 @@ function escapeHtml(str) {
   });
 }
 
-/** ---- Design system (match the rest of the website) ---- */
 const UI = {
   shell: "",
 
@@ -81,7 +72,6 @@ function showInfoHowToGetFeedback() {
   container.innerHTML = `
     <article class="${UI.cardNoHover} text-center p-8 md:p-10">
       <div class="mb-4 flex justify-center">
-        <!-- ICON_PLACEHOLDER: Top info icon -->
         <img src="./icons/surgeon.png" alt="Surgeon" class="w-16 h-16 object-contain" />
       </div>
 
@@ -93,7 +83,6 @@ function showInfoHowToGetFeedback() {
         <div class="bg-white border border-blue-200 rounded-2xl p-5">
           <div class="flex items-center gap-3 mb-3">
             <div class="${UI.iconBg}">
-              <!-- ICON_PLACEHOLDER: Step 1 icon -->
               <img src="./icons/vignette-library-button.png" alt="Step 1" class="w-9 h-9 object-contain" />
             </div>
             <div>
@@ -109,7 +98,6 @@ function showInfoHowToGetFeedback() {
         <div class="bg-white border border-blue-200 rounded-2xl p-5">
           <div class="flex items-center gap-3 mb-3">
             <div class="${UI.iconBg}">
-              <!-- ICON_PLACEHOLDER: Step 2 icon -->
               <img src="./icons/practice-button.png" alt="Step 2" class="w-9 h-9 object-contain" />
             </div>
             <div>
@@ -125,7 +113,6 @@ function showInfoHowToGetFeedback() {
         <div class="bg-white border border-blue-200 rounded-2xl p-5">
           <div class="flex items-center gap-3 mb-3">
             <div class="${UI.iconBg}">
-              <!-- ICON_PLACEHOLDER: Step 3 icon -->
               <img src="./icons/feedback-button.png" alt="Step 3" class="w-9 h-9 object-contain" />
             </div>
             <div>
@@ -171,7 +158,6 @@ function showError(message) {
     <article class="${UI.cardNoHover} text-center p-8">
       <div class="mb-4 flex justify-center">
         <div class="${UI.iconBg}">
-          <!-- ICON_PLACEHOLDER: error icon -->
           <img src="./icons/feedback-button.png" alt="Error" class="w-9 h-9 object-contain" />
         </div>
       </div>
@@ -198,7 +184,6 @@ function scoreToRating(score0to100) {
   return "Poor";
 }
 
-/** NEW: color scheme for rating pill (overall performance) */
 function getRatingBadgeClass(score0to100) {
   const s = Number(score0to100 ?? 0);
   if (s >= 90) return "bg-green-50 text-green-700 border-green-200";
@@ -372,11 +357,10 @@ function renderNextSessionFocus(nextFocus) {
   `;
 }
 
-/** NEW: patient-centered "covered / partially / missed" grouping + actionable tips */
 function normalizeStatus(st) {
   if (st === "covered") return "covered";
   if (st === "partially") return "partially";
-  return "missed"; // includes not_covered / undefined
+  return "missed"; 
 }
 
 function patientCenteredItem(label, obj) {
@@ -414,7 +398,6 @@ function patientCenteredItem(label, obj) {
   `;
 }
 
-/** NEW: fixed fallback tips (only used if the model didn't provide improvement text) */
 function defaultPatientCenteredTips(invited, checked) {
   const tips = [];
 
@@ -433,7 +416,6 @@ function defaultPatientCenteredTips(invited, checked) {
     tips.push("Check understanding using a teach-back question (e.g., “Can you summarize what you understood so far?”).");
   }
 
-  // remove duplicates
   return [...new Set(tips.filter(Boolean))];
 }
 
@@ -447,7 +429,7 @@ function displayFeedback(raw) {
 
   const score = Number(feedback?.overall_score_0_100 ?? 0);
   const rating = scoreToRating(score);
-  const ratingBadgeClass = getRatingBadgeClass(score); // NEW
+  const ratingBadgeClass = getRatingBadgeClass(score);
 
   const completeness = computeCompleteness(feedback?.coverage_checklist);
 
@@ -463,10 +445,8 @@ function displayFeedback(raw) {
   const pcTips = defaultPatientCenteredTips(invited, checked);
 
   container.innerHTML = `
-    <!-- Overall -->
     <article class="${UI.cardNoHover} text-center">
       <div class="mb-4 flex justify-center">
-        <!-- ICON_PLACEHOLDER: overall icon (NO BLUE BACKGROUND) -->
         <img src="./icons/surgeon.png" alt="Surgeon" class="w-16 h-16 object-contain" />
       </div>
 
@@ -476,19 +456,15 @@ function displayFeedback(raw) {
       </h2>
 
 
-      <!-- UPDATED: rating pill uses color scheme based on score -->
       <div class="inline-flex items-center px-4 py-2 rounded-full text-xs md:text-sm font-semibold border ${ratingBadgeClass}">
         ${rating}
       </div>
 
-      <!-- REMOVED: sentence under the score/rating -->
     </article>
 
-    <!-- Strengths -->
     <article class="${UI.card}">
       <div class="flex items-center gap-3 mb-4">
         <div class="${UI.iconBg}">
-          <!-- ICON_PLACEHOLDER: strengths icon -->
           <img src="./icons/power.png" alt="Strengths" class="w-8 h-8 object-contain" />
         </div>
         <h3 class="${UI.headerTitle}">Your key strengths</h3>
@@ -503,12 +479,10 @@ function displayFeedback(raw) {
       }
     </article>
 
-    <!-- Completeness -->
     <article class="${UI.card}">
       <div class="flex items-center justify-between gap-3 mb-4">
         <div class="flex items-center gap-3">
           <div class="${UI.iconBg}">
-            <!-- ICON_PLACEHOLDER: completeness icon -->
             <img src="./icons/completeness.png" alt="Completeness" class="w-8 h-8 object-contain" />
           </div>
           <h3 class="${UI.headerTitle}">Completeness of the discussion</h3>
@@ -559,11 +533,9 @@ function displayFeedback(raw) {
       ` : ""}
     </article>
 
-    <!-- Patient-centered checks -->
     <article class="${UI.card}">
       <div class="flex items-center gap-3 mb-4">
         <div class="${UI.iconBg}">
-          <!-- ICON_PLACEHOLDER: patient-centered icon -->
           <img src="./icons/need.png" alt="Patient-centered communication checks" class="w-8 h-8 object-contain" />
         </div>
         <h3 class="${UI.headerTitle}">Patient-centered communication checks</h3>
@@ -586,14 +558,11 @@ function displayFeedback(raw) {
       }
     </article>
 
-    <!-- Jargon analysis -->
     ${renderJargonAnalysis(jargon)}
 
-    <!-- Improvements -->
     <article class="${UI.cardNoHover}">
       <div class="flex items-center gap-3 mb-4">
         <div class="${UI.iconBg}">
-          <!-- ICON_PLACEHOLDER: improvement icon -->
           <img src="./icons/improve.png" alt="Improvements" class="w-8 h-8 object-contain" />
         </div>
         <div class="flex-1">
@@ -628,10 +597,8 @@ function displayFeedback(raw) {
       }
     </article>
 
-    <!-- Next session focus -->
     ${renderNextSessionFocus(nextFocus)}
 
-    <!-- Actions -->
     <div class="flex flex-wrap gap-3 justify-center">
       <button onclick="window.print()" class="${UI.btnNav}">
         <img src="./icons/completeness.png" alt="Print" class="${UI.btnNavIcon}" />
@@ -696,7 +663,6 @@ async function analyzePracticeSession() {
 
     displayFeedback(data);
 
-    // If you want feedback NOT reproducible after refresh:
     localStorage.removeItem(`practiceConversation:${sessionId}`);
     localStorage.removeItem(`practiceVignette:${sessionId}`);
   } catch (error) {

@@ -8,86 +8,83 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
 
-  <body class="bg-slate-50">
-    <!-- Top navigation (same as other pages) -->
-    <header
-      class="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-sm shadow-md z-20"
-    >
-      <div class="max-w-6xl mx-auto flex items-center gap-6 px-4 py-3">
+  <body class="bg-slate-50 min-h-screen flex flex-col">
+    <header class="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-sm shadow-md z-50">
+      <div class="max-w-6xl mx-auto flex items-center justify-between gap-3 px-4 py-2 sm:py-3">
         <a href="index.html" class="flex items-center gap-2 shrink-0">
-          <img
-            src="./icons/surgibot-website-logo.png"
-            alt="SurgiBot icon"
-            class="w-11 h-11"
-          />
-          <span class="text-2xl font-semibold text-slate-900">SurgiBot</span>
+          <img src="./icons/surgibot-website-logo.png" alt="SurgiBot icon" class="w-10 h-10 sm:w-11 sm:h-11" />
+          <span class="text-xl sm:text-2xl font-semibold text-slate-900">SurgiBot</span>
         </a>
 
-        <div class="flex-1 flex justify-center">
-          <div class="flex items-center gap-3">
-            <a href="./learning-module.html" class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl">
-              <img src="./icons/learn-button.png" alt="Learn icon" class="w-8 h-8"/>
-              <span class="text-xs font-semibold text-slate-900">Learning module</span>
-            </a>
+        <nav class="flex items-center gap-2 sm:gap-3">
+          <a
+            href="./learning-module.html"
+            class="flex items-center gap-2 bg-gray-100 rounded-xl p-2 sm:px-4 sm:py-2"
+            aria-label="Learning module"
+          >
+            <img src="./icons/learn-button.png" alt="" class="w-7 h-7 sm:w-8 sm:h-8" />
+            <span class="hidden sm:inline text-xs font-semibold text-slate-900">Learning module</span>
+          </a>
 
-            <a href="./vignette-library.html" class="flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-xl border border-blue-200">
-              <img src="./icons/vignette-library-button.png" alt="Library icon" class="w-8 h-8"/>
-              <span class="text-xs font-semibold text-slate-900">Vignette library</span>
-            </a>
+          <a
+            href="./vignette-library.html"
+            class="flex items-center gap-2 bg-blue-100 rounded-xl border border-blue-200 p-2 sm:px-4 sm:py-2"
+            aria-label="Vignette library"
+          >
+            <img src="./icons/vignette-library-button.png" alt="" class="w-7 h-7 sm:w-8 sm:h-8" />
+            <span class="hidden sm:inline text-xs font-semibold text-slate-900">Vignette library</span>
+          </a>
 
-            <a href="./practice-module.html" class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl">
-              <img src="./icons/practice-button.png" alt="Practice icon" class="w-8 h-8"/>
-              <span class="text-xs font-semibold text-slate-900">Practice module</span>
-            </a>
+          <a
+            href="./practice-module.html"
+            class="flex items-center gap-2 bg-gray-100 rounded-xl p-2 sm:px-4 sm:py-2"
+            aria-label="Practice module"
+          >
+            <img src="./icons/practice-button.png" alt="" class="w-7 h-7 sm:w-8 sm:h-8" />
+            <span class="hidden sm:inline text-xs font-semibold text-slate-900">Practice module</span>
+          </a>
 
-            <a href="./feedback-module.html" class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl">
-              <img src="./icons/feedback-button.png" alt="Feedback icon" class="w-8 h-8"/>
-              <span class="text-xs font-semibold text-slate-900">Feedback module</span>
-            </a>
-          </div>
-        </div>
+          <a
+            href="./feedback-module.html"
+            class="flex items-center gap-2 bg-gray-100 rounded-xl p-2 sm:px-4 sm:py-2"
+            aria-label="Feedback module"
+          >
+            <img src="./icons/feedback-button.png" alt="" class="w-7 h-7 sm:w-8 sm:h-8" />
+            <span class="hidden sm:inline text-xs font-semibold text-slate-900">Feedback module</span>
+          </a>
+        </nav>
       </div>
     </header>
 
-    <main class="pt-24 pb-16">
-  <section class="max-w-5xl mx-auto px-4">
-    <!-- Link back to the vignette library -->
-    <a
-      href="./vignette-library.html"
-      class="inline-flex items-center gap-1 text-s text-slate-500 hover:text-slate-700 mb-4"
-    >
-      ← Back to vignette library
-    </a>
+    <main class="pt-24 pb-16 flex-1">
+      <section class="max-w-5xl mx-auto px-4">
+        <a
+          href="./vignette-library.html"
+          class="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700 mb-4"
+        >
+          ← Back to vignette library
+        </a>
 
-    <!-- Vignette header -->
-    <div id="vignette-header" class="mb-6 border-b border-slate-200 pb-4">
-      <!-- Filled by JS -->
-    </div>
+        <div id="vignette-header" class="mb-6 border-b border-slate-200 pb-4">
+        </div>
 
-    <!-- Two-column layout -->
-    <div class="grid gap-6 md:grid-cols-3">
-      <div class="md:col-span-2 space-y-4" id="vignette-main">
-        <!-- Main sections injected here -->
+        <div class="grid gap-6 md:grid-cols-3">
+          <div class="md:col-span-2 space-y-4" id="vignette-main">
+          </div>
+
+          <aside class="space-y-4" id="vignette-side">
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bg-blue-400 text-white">
+      <div class="max-w-4xl mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-2 text-xs md:text-sm">
+        <p>© 2025 SurgiBot: Master surgical informed consent with AI.</p>
+        <p class="opacity-80">Designed & developed by Lana Cvijic.</p>
       </div>
+    </footer>
 
-      <aside class="space-y-4" id="vignette-side">
-        <!-- Side info (difficulty, tags, button) injected here -->
-      </aside>
-    </div>
-  </section>
-</main>
-
-<!-- Footer -->
-<footer class="mt-12 bg-blue-400 text-white">
-  <div
-    class="max-w-4xl mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-2 text-xs md:text-sm">
-    <p>© 2025 SurgiBot: Master surgical informed consent with AI.</p>
-    <p class="opacity-80">Designed & developed by Lana Cvijic.</p>
-  </div>
-</footer>
-
- 
-    <!-- Page-specific JS -->
     <script type="module" src="./vignette-view.js"></script>
   </body>
 </html>
