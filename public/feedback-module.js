@@ -375,7 +375,7 @@ function renderSurveyInvitation() {
         rel="noopener noreferrer"
         class="${UI.btnNav}"
       >
-        <img src="./icons/survey.png" alt="Survey" class="${UI.btnNavIcon}" />
+        <img src="./icons/click-here.png" alt="Click here" class="${UI.btnNavIcon}" />
         <span class="${UI.btnNavText}">Start the questionnaire</span>
       </a>
     </article>
