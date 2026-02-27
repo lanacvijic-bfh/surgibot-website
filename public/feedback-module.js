@@ -369,15 +369,17 @@ function renderSurveyInvitation() {
         Please complete the short questionnaire about your experience with SurgiBot by clicking the button below.
       </p>
 
-      <a
-        href="https://forms.cloud.microsoft/e/ett0dhJ1Ug"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="${UI.btnNav}"
-      >
-        <img src="./icons/click-here.png" alt="Click here" class="${UI.btnNavIcon}" />
-        <span class="${UI.btnNavText}">Start the questionnaire</span>
-      </a>
+      <div class="flex justify-center">
+        <a
+          href="https://forms.cloud.microsoft/e/ett0dhJ1Ug"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="${UI.btnNav}"
+        >
+          <img src="./icons/click-here.png" alt="Click here" class="${UI.btnNavIcon}" />
+          <span class="${UI.btnNavText}">Start the questionnaire</span>
+        </a>
+      </div>
     </article>
   `;
 }
