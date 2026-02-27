@@ -366,16 +366,16 @@ function renderSurveyInvitation() {
       </div>
 
       <p class="text-sm md:text-base text-gray-700 leading-relaxed mb-4">
-        Now, please use the following link to fill out the questionnaire about your experience with SurgiBot.
+        Please complete the short questionnaire about your experience with SurgiBot by clicking the button below.
       </p>
 
       <a
         href="https://forms.cloud.microsoft/e/ett0dhJ1Ug"
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-blue-200 text-sm font-semibold text-blue-700 hover:bg-blue-100 transition-colors"
+        class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-blue-200 text-sm font-semibold text-black hover:bg-blue-100 transition-colors"
       >
-        Click here to start the questionnaire
+        Start the questionnaire
       </a>
     </article>
   `;
