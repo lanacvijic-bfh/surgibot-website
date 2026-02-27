@@ -267,7 +267,6 @@ function renderJargonAnalysis(jargon) {
     <article class="${UI.card}">
       <div class="flex items-center gap-3 mb-4">
         <div class="${UI.iconBg}">
-          <!-- ICON_PLACEHOLDER: jargon icon -->
           <img src="./icons/language.png" alt="Jargon analysis" class="w-8 h-8 object-contain" />
         </div>
         <h3 class="${UI.headerTitle}">Medical jargon and clarity</h3>
@@ -333,7 +332,6 @@ function renderNextSessionFocus(nextFocus) {
     <article class="${UI.cardNoHover}">
       <div class="flex items-center gap-3 mb-4">
         <div class="${UI.iconBg}">
-          <!-- ICON_PLACEHOLDER: focus icon -->
           <img src="./icons/focus.png" alt="Tips for the next session" class="w-8 h-8 object-contain" />
         </div>
         <h3 class="${UI.headerTitle}">Tips for the next session</h3>
@@ -353,6 +351,32 @@ function renderNextSessionFocus(nextFocus) {
           : ""
         }
       </div>
+    </article>
+  `;
+}
+
+function renderSurveyInvitation() {
+  return `
+    <article class="${UI.cardNoHover} bg-blue-50/70 border-blue-200">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="${UI.iconBg}">
+          <img src="./icons/feedback-button.png" alt="Survey" class="w-8 h-8 object-contain" />
+        </div>
+        <h3 class="${UI.headerTitle}">Share your experience</h3>
+      </div>
+
+      <p class="${UI.headerSub} mb-4">
+        Now, please use the following link to fill out the questionnaire about your experience with SurgiBot.
+      </p>
+
+      <a
+        href="https://forms.cloud.microsoft/e/ett0dhJ1Ug"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-blue-200 text-xs md:text-sm font-semibold text-blue-700 hover:bg-blue-100 transition-colors break-all"
+      >
+        https://forms.cloud.microsoft/e/ett0dhJ1Ug
+      </a>
     </article>
   `;
 }
@@ -615,6 +639,8 @@ function displayFeedback(raw) {
         <span class="${UI.btnNavText}">Practice again</span>
       </a>
     </div>
+
+    ${renderSurveyInvitation()}
   `;
 }
 
