@@ -362,10 +362,10 @@ function renderSurveyInvitation() {
         <div class="${UI.iconBg}">
           <img src="./icons/survey.png" alt="Survey" class="w-8 h-8 object-contain" />
         </div>
-        <h3 class="${UI.headerTitle}">Share your experience</h3>
+        <h3 class="text-base font-semibold text-black">Share your experience</h3>
       </div>
 
-      <p class="${UI.headerSub} mb-4">
+      <p class="text-sm md:text-base text-gray-700 leading-relaxed mb-4">
         Now, please use the following link to fill out the questionnaire about your experience with SurgiBot.
       </p>
 
@@ -373,9 +373,9 @@ function renderSurveyInvitation() {
         href="https://forms.cloud.microsoft/e/ett0dhJ1Ug"
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-blue-200 text-xs md:text-sm font-semibold text-blue-700 hover:bg-blue-100 transition-colors break-all"
+        class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-blue-200 text-sm font-semibold text-blue-700 hover:bg-blue-100 transition-colors"
       >
-        https://forms.cloud.microsoft/e/ett0dhJ1Ug
+        Click here to start the questionnaire
       </a>
     </article>
   `;
