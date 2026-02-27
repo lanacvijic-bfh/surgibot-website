@@ -373,9 +373,10 @@ function renderSurveyInvitation() {
         href="https://forms.cloud.microsoft/e/ett0dhJ1Ug"
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-blue-200 text-sm font-semibold text-black hover:bg-blue-100 transition-colors"
+        class="${UI.btnNav}"
       >
-        Start the questionnaire
+        <img src="./icons/survey.png" alt="Survey" class="${UI.btnNavIcon}" />
+        <span class="${UI.btnNavText}">Start the questionnaire</span>
       </a>
     </article>
   `;
