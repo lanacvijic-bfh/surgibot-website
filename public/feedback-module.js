@@ -360,7 +360,7 @@ function renderSurveyInvitation() {
     <article class="${UI.cardNoHover} bg-blue-50/70 border-blue-200">
       <div class="flex items-center gap-3 mb-3">
         <div class="${UI.iconBg}">
-          <img src="./icons/feedback-button.png" alt="Survey" class="w-8 h-8 object-contain" />
+          <img src="./icons/survey.png" alt="Survey" class="w-8 h-8 object-contain" />
         </div>
         <h3 class="${UI.headerTitle}">Share your experience</h3>
       </div>
