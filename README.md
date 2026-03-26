@@ -3,11 +3,11 @@
 
 You can access the platform on the following URL: https://surgibot-website.vercel.app
 
-SurgiBot is a training platform that enables surgical residents to practice **informed consent discussions** with **virtual patients** in an online and safe environment. The goal is to prepare residents for interactions with vulnerable patients in real-life settings so they can explain surgical procedures, alternative treatment options, risks and benefits and patients' rights in a clear and understandable way, while also learning to recognize different backgrounds and needs patients may have.
+SurgiBot is a training platform that helps surgical residents to practice **informed consent discussions** with **virtual patients** in an online and safe environment. The goal is to prepare surgical residents for interactions with vulnerable patients in real-life settings so that they can explain surgical procedures, alternative treatment options, risks and benefits and patients' rights in a clear and understandable way, while also learning to recognize different backgrounds and needs that patients have.
 
 ---
 
-## Table of contents
+## 📚 Table of contents
 - [Learning outcomes](#learning-outcomes)
 - [Modules](#modules)
 - [Evidence base & co-creation](#evidence-base--co-creation)
@@ -19,7 +19,7 @@ SurgiBot is a training platform that enables surgical residents to practice **in
 
 ---
 
-## Learning outcomes
+## 🤓 Learning outcomes
 After completing the training with SurgiBot, surgical residents should be able to:
 - Understand the principles and process of surgical informed consent.
 - Recognize diverse patient needs, backgrounds, and communication styles.
@@ -28,7 +28,7 @@ After completing the training with SurgiBot, surgical residents should be able t
 
 ---
 
-## Modules
+## 🤖 Modules
 SurgiBot is organized into modules aligned with the learning process:
 
 ### 1) Learning module (Step 1: Learn the theory)
@@ -64,7 +64,7 @@ Receive personalized, structured feedback to support reflection and improvement,
 
 ---
 
-## Evidence base & co-creation
+## 🧠 Evidence base & co-design approach
 The content of SurgiBot is based on:
 - a review of relevant guidelines for surgical informed consent,
 - interviews with experienced surgeons from different specialties,
@@ -72,7 +72,7 @@ The content of SurgiBot is based on:
 
 ---
 
-## Technology
+## 👩‍💻 Technology
 SurgiBot uses artificial intelligence (AI) and a large language model (LLM) to:
 - simulate patient responses during practice,
 - generate personalized feedback after the informed consent discussion.
@@ -81,33 +81,30 @@ SurgiBot uses artificial intelligence (AI) and a large language model (LLM) to:
 
 ---
 
-## Privacy & safety
+## ⛑️ Privacy & safety
 - **No real patient data:** vignettes are generated with AI and do not include real patient information.
 - SurgiBot is an **educational training tool** and does **not** provide medical advice.
 
 ---
 
-## Project status
+## 🎯 Project status (April 2026)
 SurgiBot is currently in a prototype and proof-of-concept stage.
-Planned improvements include:
-- expanded vignette library (more specialties, complexity levels and patients' backgrounds),
+
+Right now, we are conducting an evaluation of SurgiBot with medical students and faculty members. In addition, we are implementing the speech-based interaction in the Practice module. The new version of SurgiBot should be available by July 2026. 
+
+Another possible improvements for SurgiBot include:
+- expanded vignette library (more surgical specialties, complexity levels and patients' backgrounds),
 - validation of patient vignettes by experienced surgeons and educators,
-- implementation of speech-based interaction in the Practice module, 
 - implementation of avatars that represent patients' emotions and reactions in the Practice module,
 - progress tracking and reflective learning prompts for surgical residents.
-
 ---
 
-## Acknowledgments
+## ✅ Acknowledgments
 Designed & developed by **Lana Cvijic**.  
 Thanks to the surgeons and patients' representatives who contributed with their expertise and lived experience to co-create SurgiBot.
 
 ---
 
-## Contact
-If you are interested for collaboration and testing of the platform you can reach out via the email: lana.cvijic@bfh.ch
-
-
-
-
+## 📩 Contact
+If you are interested for collaboration and testing of the platform you can reach out via the email: ***lana.cvijic@bfh.ch***
 
