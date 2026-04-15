@@ -7,6 +7,11 @@ function getVignetteIdFromUrl() {
   return params.get("vignette") || params.get("id");
 }
 
+function getSessionIdFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("session");
+}
+
 async function loadVignettes() {
   const res = await fetch("/lib/vignettes.json", { cache: "no-store" });
   if (!res.ok) throw new Error(`Failed to load vignettes.json (${res.status})`);
@@ -49,6 +54,10 @@ function renderNotFound() {
 }
 
 function renderVignette(v) {
+  const sessionId = getSessionIdFromUrl();
+  const practiceUrl = sessionId
+    ? `/practice-module.html?vignette=${encodeURIComponent(v.id)}&session=${encodeURIComponent(sessionId)}`
+    : `/practice-module.html?vignette=${encodeURIComponent(v.id)}`;
   const header = document.getElementById("vignette-header");
   const main = document.getElementById("vignette-main");
   const side = document.getElementById("vignette-side");
@@ -70,7 +79,7 @@ function renderVignette(v) {
 
           <div class="flex justify-center mt-2">
             <a
-              href="/practice-module.html?vignette=${encodeURIComponent(v.id)}"
+              href="${practiceUrl}"
               class="inline-flex items-center gap-3 px-6 py-3 bg-blue-100 rounded-2xl border border-blue-200 text-sm md:text-base font-semibold text-black hover:bg-blue-200 transition-colors"
             >
               <img 

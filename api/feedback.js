@@ -3,6 +3,150 @@ import { buildFeedbackSystemPrompt } from "./lib/feedback-prompt.js";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+function extractResponseText(response) {
+  if (typeof response?.output_text === "string" && response.output_text.trim()) {
+    return response.output_text.trim();
+  }
+
+  const outputs = Array.isArray(response?.output) ? response.output : [];
+  const chunks = [];
+
+  for (const item of outputs) {
+    if (item?.type !== "message" || item?.role !== "assistant") continue;
+    const content = Array.isArray(item.content) ? item.content : [];
+
+    for (const block of content) {
+      if (block?.type === "output_text" && typeof block.text === "string") {
+        chunks.push(block.text);
+      }
+      if (block?.type === "refusal" && typeof block.refusal === "string") {
+        chunks.push(block.refusal);
+      }
+    }
+  }
+
+  return chunks.join("\n").trim();
+}
+
+function extractStructuredJson(response) {
+  if (response && typeof response.output_parsed === "object" && response.output_parsed !== null) {
+    return response.output_parsed;
+  }
+
+  if (response && typeof response.parsed === "object" && response.parsed !== null) {
+    return response.parsed;
+  }
+
+  const outputs = Array.isArray(response?.output) ? response.output : [];
+
+  for (const item of outputs) {
+    if (item && typeof item.parsed === "object" && item.parsed !== null) {
+      return item.parsed;
+    }
+
+    const content = Array.isArray(item?.content) ? item.content : [];
+    for (const block of content) {
+      if (block && typeof block.parsed === "object" && block.parsed !== null) {
+        return block.parsed;
+      }
+      if (block && typeof block.json === "object" && block.json !== null) {
+        return block.json;
+      }
+    }
+  }
+
+  return null;
+}
+
+function isValidEvidenceArray(value) {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (item) =>
+        item &&
+        Number.isInteger(item.turn_index) &&
+        item.turn_index >= 0 &&
+        typeof item.quote === "string"
+    )
+  );
+}
+
+function isValidFeedbackShape(value) {
+  if (!value || typeof value !== "object") return false;
+
+  const checklistValid =
+    Array.isArray(value.coverage_checklist) &&
+    value.coverage_checklist.every(
+      (item) =>
+        item &&
+        typeof item.item === "string" &&
+        ["covered", "partially", "not_covered"].includes(item.status) &&
+        typeof item.quality_note === "string" &&
+        isValidEvidenceArray(item.evidence)
+    );
+
+  const understanding = value.understanding_and_questions;
+  const invited = understanding?.invited_questions;
+  const checked = understanding?.checked_understanding;
+
+  const understandingValid =
+    understanding &&
+    typeof understanding === "object" &&
+    invited &&
+    checked &&
+    ["covered", "partially", "not_covered"].includes(invited.status) &&
+    typeof invited.improvement === "string" &&
+    isValidEvidenceArray(invited.evidence) &&
+    ["covered", "partially", "not_covered"].includes(checked.status) &&
+    typeof checked.improvement === "string" &&
+    isValidEvidenceArray(checked.evidence);
+
+  const jargon = value.jargon_analysis;
+  const jargonValid =
+    jargon &&
+    Array.isArray(jargon.medical_terms_found) &&
+    jargon.medical_terms_found.every(
+      (item) =>
+        item &&
+        typeof item.term === "string" &&
+        Number.isInteger(item.turn_index) &&
+        item.turn_index >= 0 &&
+        typeof item.explained_plainly === "boolean" &&
+        typeof item.plain_explanation_quote === "string"
+    ) &&
+    typeof jargon.overall_assessment === "string" &&
+    Array.isArray(jargon.suggestions) &&
+    jargon.suggestions.every((item) => typeof item === "string");
+
+  const improvementsValid =
+    Array.isArray(value.improvements) &&
+    value.improvements.every(
+      (item) =>
+        item &&
+        typeof item.area === "string" &&
+        typeof item.why_it_matters === "string" &&
+        typeof item.actionable_tip === "string" &&
+        typeof item.example_phrase === "string"
+    );
+
+  const nextSessionValid =
+    value.next_session_focus &&
+    typeof value.next_session_focus.goal === "string" &&
+    Array.isArray(value.next_session_focus.practice_drills) &&
+    value.next_session_focus.practice_drills.every((item) => typeof item === "string");
+
+  return (
+    typeof value.overall_score_0_100 === "number" &&
+    checklistValid &&
+    understandingValid &&
+    jargonValid &&
+    Array.isArray(value.strengths) &&
+    value.strengths.every((item) => typeof item === "string") &&
+    improvementsValid &&
+    nextSessionValid
+  );
+}
+
 function sanitizeMessages(raw) {
   if (!Array.isArray(raw)) return [];
   return raw
@@ -27,7 +171,6 @@ function isLikelyVignette(v) {
 }
 
 function toTurnIndexedTranscript(messages) {
-  // role:user = surgeon; role:assistant = patient (based on your practice module)
   return messages
     .map((m, idx) => {
       const speaker = m.role === "user" ? "SURGEON" : "PATIENT";
@@ -237,11 +380,11 @@ turn_index must match the TURN number you quoted.
 `.trim();
 
     const response = await client.responses.create({
-      model: "gpt-4.1-mini",
+      model: "gpt-5",
       instructions,
       input: [{ role: "user", content: userInput }],
-      temperature: 0.2,
-      max_output_tokens: 1500,
+      max_output_tokens: 5000,
+      reasoning: { effort: "low" },
       text: {
         format: {
           type: "json_schema",
@@ -252,8 +395,46 @@ turn_index must match the TURN number you quoted.
       },
     });
 
-    const out = response.output_text ?? "";
-    const feedback = JSON.parse(out);
+    const structuredFeedback = extractStructuredJson(response);
+    if (isValidFeedbackShape(structuredFeedback)) {
+      return res.status(200).json({ success: true, feedback: structuredFeedback });
+    }
+
+    const out = extractResponseText(response);
+    if (!out) {
+      console.error("[/api/feedback] Empty model response:", {
+        status: response?.status,
+        output: response?.output,
+      });
+      return res.status(502).json({
+        success: false,
+        error: "The model returned an empty feedback response. Please try again.",
+      });
+    }
+
+    let feedback;
+    try {
+      feedback = JSON.parse(out);
+    } catch (parseError) {
+      console.error("[/api/feedback] Invalid JSON from model:", {
+        message: parseError?.message,
+        preview: out.slice(0, 1000),
+      });
+      return res.status(502).json({
+        success: false,
+        error: "The model returned incomplete feedback. Please try again.",
+      });
+    }
+
+    if (!isValidFeedbackShape(feedback)) {
+      console.error("[/api/feedback] Feedback shape validation failed:", {
+        keys: feedback && typeof feedback === "object" ? Object.keys(feedback) : null,
+      });
+      return res.status(502).json({
+        success: false,
+        error: "The model returned incomplete feedback. Please try again.",
+      });
+    }
 
     return res.status(200).json({ success: true, feedback });
   } catch (err) {

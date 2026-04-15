@@ -3,6 +3,41 @@ import { buildPatientSystemPrompt } from "./lib/patient-prompt.js";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+function toChatCompletionMessages(instructions, messages) {
+  return [
+    { role: "developer", content: instructions },
+    ...messages.map((message) => ({
+      role: message.role,
+      content: message.content,
+    })),
+  ];
+}
+
+function extractResponseText(response) {
+  if (typeof response?.output_text === "string" && response.output_text.trim()) {
+    return response.output_text.trim();
+  }
+
+  const outputs = Array.isArray(response?.output) ? response.output : [];
+  const chunks = [];
+
+  for (const item of outputs) {
+    if (item?.type !== "message" || item?.role !== "assistant") continue;
+    const content = Array.isArray(item.content) ? item.content : [];
+
+    for (const block of content) {
+      if (block?.type === "output_text" && typeof block.text === "string") {
+        chunks.push(block.text);
+      }
+      if (block?.type === "refusal" && typeof block.refusal === "string") {
+        chunks.push(block.refusal);
+      }
+    }
+  }
+
+  return chunks.join("\n").trim();
+}
+
 function sanitizeMessages(raw) {
   if (!Array.isArray(raw)) return [];
   return raw
@@ -15,7 +50,7 @@ function sanitizeMessages(raw) {
     .map((m) => ({ role: m.role, content: m.content.slice(0, 4000) }));
 }
 
-function isLikelyVignette(v) {
+function isLikelyVignette(v) { 
   return (
     v &&
     typeof v === "object" &&
@@ -51,17 +86,41 @@ export default async function handler(req, res) {
 
     const instructions = isLikelyVignette(vignette)
       ? buildPatientSystemPrompt(vignette)
-      : `You are a surgical patient in an informed consent conversation. Stay in character, use simple language, ask questions, and keep replies short.`;
+      : `You are a surgical patient in an informed consent conversation. Stay in character at all times, use simple language ask questions, and keep replies short.`;
 
     const response = await client.responses.create({
-      model: "gpt-4.1-mini",
+      model: "gpt-5",
       instructions,
       input: safeMessages,
-      max_output_tokens: 250,
-      temperature: 0.7,
+      max_output_tokens: 500,
+      reasoning: { effort: "low" },
     });
 
-    return res.status(200).json({ text: response.output_text ?? "" });
+    let text = extractResponseText(response);
+    if (!text) {
+      console.error("[/api/chat] Empty model response:", {
+        model: "gpt-5",
+        status: response?.status,
+        output: response?.output,
+      });
+
+      const fallback = await client.chat.completions.create({
+        model: "gpt-5",
+        messages: toChatCompletionMessages(instructions, safeMessages),
+        max_completion_tokens: 500,
+        reasoning_effort: "low",
+      });
+
+      text = fallback.choices?.[0]?.message?.content?.trim?.() ?? "";
+    }
+
+    if (!text) {
+      return res.status(502).json({
+        error: "The model returned an empty response. Please try again.",
+      });
+    }
+
+    return res.status(200).json({ text });
   } catch (err) {
     console.error("[/api/chat] Error:", err);
     return res.status(err?.status ?? 500).json({

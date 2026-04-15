@@ -77,7 +77,10 @@ SurgiBot uses artificial intelligence (AI) and a large language model (LLM) to:
 - simulate patient responses during practice,
 - generate personalized feedback after the informed consent discussion.
 
-**Model:** GPT-4.1-mini (used for patient simulation + feedback generation)
+**Model used in this project:** GPT-5
+
+- Patient simulation (`/api/chat`): GPT-5
+- Feedback generation (`/api/feedback`): GPT-5
 
 ---
 
@@ -107,4 +110,3 @@ Thanks to the surgeons and patients' representatives who contributed with their 
 
 ## 📩 Contact
 If you are interested for collaboration and testing of the platform you can reach out via the email: ***lana.cvijic@bfh.ch***
-

@@ -83,14 +83,6 @@ OUTPUT JSON SCHEMA (exact keys):
       "example_phrase": string
     }
   ],
-  "safety_flags": [
-    {
-      "flag": string,
-      "severity": "low" | "medium" | "high",
-      "evidence": [{ "turn_index": number, "quote": string }],
-      "safer_alternative": string
-    }
-  ],
   "next_session_focus": {
     "goal": string,
     "practice_drills": [string]

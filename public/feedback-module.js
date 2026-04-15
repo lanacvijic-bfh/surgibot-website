@@ -144,7 +144,7 @@ function showLoadingState() {
     <article class="${UI.cardNoHover} flex flex-col items-center text-center gap-3 py-10">
       <div class="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-blue-300"></div>
       <p class="text-base md:text-lg font-semibold text-slate-900">Analyzing your discussion</p>
-      <p class="${UI.headerSub}">This may take a moment</p>
+      <p class="${UI.headerSub}">This may take a moment as we analyze your informed consent discussion in detail to provide helpful feedback</p>
     </article>
   `;
 }
@@ -163,7 +163,7 @@ function showError(message) {
       </div>
 
       <h3 class="text-base md:text-lg font-semibold text-slate-900 mb-2">
-        Unable to generate feedback
+        Sorry! We were unable to generate your feedback
       </h3>
       <p class="${UI.headerSub} mb-6">${escapeHtml(message)}</p>
 
@@ -210,7 +210,7 @@ function statusBadge(status) {
 
 function statusLabel(status) {
   if (status === "covered") return "Covered";
-  if (status === "partially") return "Partially";
+  if (status === "partially") return "Partially covered";
   return "Missed";
 }
 
@@ -305,7 +305,7 @@ function renderJargonAnalysis(jargon) {
                 `;
               }).join("")}
             </div>`
-          : `<p class="${UI.headerSub}">No medical terms detected (or none were returned).</p>`
+          : `<p class="${UI.headerSub}">No medical terms detected.</p>`
       }
 
       ${
@@ -434,13 +434,13 @@ function defaultPatientCenteredTips(invited, checked) {
   if ((invited?.improvement || "").trim()) {
     tips.push(invited.improvement.trim());
   } else if (invStatus !== "covered") {
-    tips.push("Explicitly invite patient questions to encourage engagement and clarify concerns.");
+    tips.push("Invite patients' questions to encourage engagement and to clarify concerns.");
   }
 
   if ((checked?.improvement || "").trim()) {
     tips.push(checked.improvement.trim());
   } else if (chkStatus !== "covered") {
-    tips.push("Check understanding using a teach-back question (e.g., “Can you summarize what you understood so far?”).");
+    tips.push("Check patients' understanding by asking the question like “May you outline what we discussed in your own words?”.");
   }
 
   return [...new Set(tips.filter(Boolean))];
@@ -494,7 +494,7 @@ function displayFeedback(raw) {
         <div class="${UI.iconBg}">
           <img src="./icons/power.png" alt="Strengths" class="w-8 h-8 object-contain" />
         </div>
-        <h3 class="${UI.headerTitle}">Your key strengths</h3>
+        <h3 class="${UI.headerTitle}">Key strengths</h3>
       </div>
 
       ${
@@ -502,7 +502,7 @@ function displayFeedback(raw) {
           ? `<ul class="list-disc pl-5 space-y-1 ${UI.headerSub}">
               ${strengths.slice(0, 10).map((s) => `<li>${escapeHtml(s)}</li>`).join("")}
             </ul>`
-          : `<p class="${UI.headerSub}">No strengths were returned.</p>`
+          : `<p class="${UI.headerSub}">No strengths were found.</p>`
       }
     </article>
 
@@ -512,7 +512,7 @@ function displayFeedback(raw) {
           <div class="${UI.iconBg}">
             <img src="./icons/completeness.png" alt="Completeness" class="w-8 h-8 object-contain" />
           </div>
-          <h3 class="${UI.headerTitle}">Completeness of the discussion</h3>
+          <h3 class="${UI.headerTitle}">Completeness</h3>
         </div>
 
         <div class="px-4 py-2 rounded-xl text-sm md:text-base font-semibold ${getScoreColor(completeness.score)}">
@@ -523,7 +523,7 @@ function displayFeedback(raw) {
       <p class="${UI.headerSub} mb-4">
         ${completeness.missed.length
           ? "In the next informed consent discussion, focus on the missed or partially covered topics below."
-          : "Great coverage of required topics for informed consent discussion."}
+          : "Congratulations! You showed the great coverage of required topics for an informed consent discussion."}
       </p>
 
       ${completeness.covered.length ? `
@@ -696,7 +696,7 @@ async function analyzePracticeSession() {
     localStorage.removeItem(`practiceVignette:${sessionId}`);
   } catch (error) {
     console.error("[feedback-module] Failed:", error);
-    showError(error.message || "We are unable to analyze your conversation. Please try again.");
+    showError(error.message || "We are unable to analyze your discussion. Please try again.");
   }
 }
 
