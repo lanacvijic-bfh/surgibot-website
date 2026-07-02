@@ -86,20 +86,28 @@ SurgiBot uses artificial intelligence (AI) and a large language model (LLM) to:
 
 ## ⛑️ Privacy & safety
 - **No real patient data:** vignettes are generated with AI and do not include real patient information.
-- SurgiBot is an **educational training tool** and does **not** provide medical advice.
+- SurgiBot is an **educational training tool** and does **not** provide medical advice or assistance in decision support.
 
 ---
 
-## 🎯 Project status (April 2026)
-SurgiBot is currently in a prototype and proof-of-concept stage.
+## 🎯 Project status (July 2026)
 
-Right now, we are conducting an evaluation of SurgiBot with medical students and faculty members. In addition, we are implementing the speech-based interaction in the Practice module. The new version of SurgiBot should be available by July 2026. 
+SurgiBot is currently in a **prototype and proof-of-concept stage**.
 
-Another possible improvements for SurgiBot include:
-- expanded vignette library (more surgical specialties, complexity levels and patients' backgrounds),
-- validation of patient vignettes by experienced surgeons and educators,
-- implementation of avatars that represent patients' emotions and reactions in the Practice module,
-- progress tracking and reflective learning prompts for surgical residents.
+A formative usability evaluation of the first SurgiBot prototype has already been conducted with participants from medical education and clinical practice. The evaluation provided insights into the platform’s usability, perceived usefulness, acceptance, and areas for improvement. These findings are now being used to guide the next development iteration.
+
+The main improvement areas identified include:
+
+- making the interaction with simulated patients more realistic
+- improving the Practice module through speech-based interaction
+- refining the platform workflow and user interface
+- improving access to vignette information during practice
+- enhancing the feedback provided after the simulated discussion
+
+Right now, the focus is on the **iterative improvement of SurgiBot based on usability testing results** and on the **implementation of speech-based interaction in the Practice module**. This development step aims to make the simulated informed consent discussions more similar to real clinical conversations, where spoken communication plays a central role. 
+
+The next version of SurgiBot is expected to be available by the **end of summer 2026**. This version should provide a more realistic and user-friendly training experience for surgical residents and serve as the basis for further evaluation of the platform’s educational value.
+
 ---
 
 ## ✅ Acknowledgments
